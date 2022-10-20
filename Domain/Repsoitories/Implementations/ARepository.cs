@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Domain.Repsoitories.Interfaces;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Repsoitories.Implementations;
 
