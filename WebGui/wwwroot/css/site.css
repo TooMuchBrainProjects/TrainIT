@@ -9,7 +9,8 @@ h1:focus {
 }
 
 a, .btn-link {
-    color: #0071c1;
+    color: inherit;
+    text-decoration: none;
 }
 
 .btn-primary {
