@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Model.Entities;
 
-[Table("EXCERSISES")]
-public class Excercise
+[Table("EXERCISES")]
+public class Exercise
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("EXERCISE_ID")]
@@ -29,7 +29,6 @@ public class Excercise
     [Column("SET")]
     public int Set { get; set; }
     
-    //must be defined in fluent API
     [Required]
     [Column("USER_ID")]
     public int UserId { get; set; }

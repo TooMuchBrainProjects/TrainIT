@@ -15,7 +15,6 @@ public class User
     [Column("NAME")]
     public string Name { get; set; }
     
-    //must be unique 
     [Required, StringLength(100)]
     [Column("EMAIL")]
     public string Email { get; set; }
