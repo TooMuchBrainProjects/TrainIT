@@ -1,7 +1,13 @@
-﻿<div class="navbar">
+﻿<MudNavMenu>
+    <MudNavLink Href="/" Match="NavLinkMatch.All"><ion-icon name="podium"></ion-icon></MudNavLink>
+    <MudNavLink Href="/exercise" Match="NavLinkMatch.Prefix"><ion-icon name="fitness"></ion-icon></MudNavLink>
+    <MudNavLink Href="/profile"  Match="NavLinkMatch.Prefix"><ion-icon name="person"></ion-icon></MudNavLink>
+</MudNavMenu>
+
+@*<nav class="navbar navbar-dark bg-dark">
     <div class="navbar-item">
         <a href="/">
-            <ion-icon name="home"></ion-icon>
+            <ion-icon name="podium"></ion-icon>
         </a>
     </div>
     <div class="navbar-item">
@@ -14,7 +20,7 @@
             <ion-icon name="person"></ion-icon>
         </a>
     </div>
-</div>
+</nav>*@
 
 @code {
     

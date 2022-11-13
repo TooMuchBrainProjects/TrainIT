@@ -1,8 +1,8 @@
 ﻿using System.Linq.Expressions;
-using Domain.Repsoitories.Interfaces;
+using Domain.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace Domain.Repsoitories.Implementations;
+namespace Domain.Repositories.Implementations;
 
 public class ARepository<TEntity> : IRepository<TEntity> where TEntity : class {
     protected DbContext _context;
