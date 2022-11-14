@@ -8,7 +8,7 @@ public class Preset
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("PRESET_ID")]
-    public int PresetId { get; set; }
+    public int Id { get; set; }
     
     [Required, StringLength(100)]
     [Column("NAME")] 

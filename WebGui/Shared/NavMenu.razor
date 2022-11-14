@@ -1,27 +1,7 @@
-﻿<MudNavMenu>
-    <MudNavLink Href="/" Match="NavLinkMatch.All"><ion-icon name="podium"></ion-icon></MudNavLink>
-    <MudNavLink Href="/exercise" Match="NavLinkMatch.Prefix"><ion-icon name="fitness"></ion-icon></MudNavLink>
-    <MudNavLink Href="/profile"  Match="NavLinkMatch.Prefix"><ion-icon name="person"></ion-icon></MudNavLink>
-</MudNavMenu>
-
-@*<nav class="navbar navbar-dark bg-dark">
-    <div class="navbar-item">
-        <a href="/">
-            <ion-icon name="podium"></ion-icon>
-        </a>
-    </div>
-    <div class="navbar-item">
-        <a href="/exercise">
-            <ion-icon name="fitness"></ion-icon>
-        </a>
-    </div>
-    <div class="navbar-item">
-        <a href="/profile">
-            <ion-icon name="person"></ion-icon>
-        </a>
-    </div>
-</nav>*@
-
-@code {
-    
-}
+﻿<MudAppBar Bottom="true" Fixed="true" Color="Color.Primary" Elevation="1" Style="height: 7vh">
+    <MudContainer Style="display: flex; flex-direction: row; justify-content: space-around">
+        <MudIconButton Href="/" Icon="@Icons.Material.Filled.BarChart" Color="Color.Inherit"/>
+        <MudIconButton Href="/exercises" Icon="@Icons.Material.Filled.FitnessCenter" Color="Color.Inherit"/>
+        <MudIconButton Href="/profile" Icon="@Icons.Material.Filled.Person" Color="Color.Inherit"/>
+    </MudContainer>
+</MudAppBar>

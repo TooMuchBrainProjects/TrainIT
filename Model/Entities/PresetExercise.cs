@@ -7,11 +7,10 @@ public class PresetExercise
 {
     [Column("PRESET_ID")] 
     public int PresetId { get; set; }
-
     public Preset Preset { get; set; }
+    
     
     [Column("EXERCISE_ID")] 
     public int ExerciseId { get; set; }
-
     public Exercise Exercise { get; set; }
 }

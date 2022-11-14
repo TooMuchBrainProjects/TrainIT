@@ -1,25 +1,25 @@
 ﻿@page "/"
 
 <MudContainer Class="mt-8">
-    <h1>Statistics</h1>
-</MudContainer>
+    <MudStack Spacing="16">
+         <h1 class="ms-4">Statistics</h1>
 
-<MudContainer Style="display: flex; justify-content: space-evenly; flex-direction: column; min-height: 69vh">
+        <MudChart ChartType="ChartType.Line" ChartSeries="@Series" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels" Width="100%" ChartOptions="@options"></MudChart>
+
+        <MudTimeline TimelineOrientation="TimelineOrientation.Horizontal" TimelinePosition="TimelinePosition.Top">
+            <MudTimelineItem>
+                <MudText Align="Align.Center">Item A</MudText>
+            </MudTimelineItem>
+            <MudTimelineItem Color="Color.Primary">
+                <MudText Align="Align.Center">Item B</MudText>
+            </MudTimelineItem>
+            <MudTimelineItem>
+                <MudText Align="Align.Center">Item C</MudText>
+            </MudTimelineItem>
+        </MudTimeline>
+    </MudStack>
+</MudContainer>
     
-    <MudChart ChartType="ChartType.Line" ChartSeries="@Series" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels" Width="100%" Height="120%" ChartOptions="@options"></MudChart>
-
-    <MudTimeline TimelineOrientation="TimelineOrientation.Horizontal" TimelinePosition="TimelinePosition.Top">
-        <MudTimelineItem>
-            <MudText Align="Align.Center">Item A</MudText>
-        </MudTimelineItem>
-        <MudTimelineItem Color="Color.Primary">
-            <MudText Align="Align.Center">Item B</MudText>
-        </MudTimelineItem>
-        <MudTimelineItem>
-            <MudText Align="Align.Center">Item C</MudText>
-        </MudTimelineItem>
-    </MudTimeline>
-</MudContainer>
 
 
 @code {

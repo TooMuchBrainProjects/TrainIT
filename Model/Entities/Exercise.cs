@@ -14,25 +14,16 @@ public class Exercise
     [Column("NAME")]
     public string Name { get; set; }
     
-    [Required, StringLength(100)]
+    [StringLength(100)]
     [Column("MACHINE")]
     public string Machine { get; set; }
     
-    [Column("DESCRIPTION",TypeName = "LONGTEXT")]
+    [Column("DESCRIPTION", TypeName = "TEXT")]
     public string Description { get; set; }
-    
-    [Required]
-    [Column("REPETITION")]
-    public int Repetition { get; set; }
-    
-    [Required]
-    [Column("SET")]
-    public int Set { get; set; }
-    
+
     [Required]
     [Column("USER_ID")]
     public int UserId { get; set; }
-    
     public User User { get; set; }
     
 }

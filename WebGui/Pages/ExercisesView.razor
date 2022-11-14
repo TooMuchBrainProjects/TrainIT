@@ -1,0 +1,43 @@
+﻿@page "/exercises"
+
+<MudContainer Class="mt-8">
+    <MudStack Spacing="16">
+        <h1 class="ms-4">Exercises</h1>
+        
+        
+        <MudDatePicker Label="Choose date" @ref="_picker" @bind-Date="date" AutoClose="true" MaxDate="@maxDate" class="mx-4">
+            <PickerActions>
+                <MudButton Class="mr-auto align-self-start" OnClick="Today">Today</MudButton>
+            </PickerActions>
+        </MudDatePicker>
+        
+        <MudDivider/>
+        
+    </MudStack>
+</MudContainer>
+<MudList Clickable="true" Style="width: 100vw">
+    <MudListItem Text="Inbox" Icon="@Icons.Material.Filled.Inbox" />
+    <MudListItem Text="Sent" Icon="@Icons.Material.Filled.Send" />
+    <MudListItem Text="Trash" />
+    <MudListItem Text="Spam" />
+</MudList>
+
+<MudMenu Icon="@Icons.Material.Filled.Add">
+    <MudMenuItem>Profile</MudMenuItem>
+    <MudMenuItem>My account</MudMenuItem>
+    <MudMenuItem>Logout</MudMenuItem>
+</MudMenu>
+
+<MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Add" />
+
+@code {
+    MudDatePicker _picker;
+    DateTime? date = DateTime.Today;
+    DateTime? maxDate = DateTime.Today;
+
+    private async Task Today()
+    {
+        await _picker.GoToDate(DateTime.Today);
+        _picker.Close();
+    }
+}
