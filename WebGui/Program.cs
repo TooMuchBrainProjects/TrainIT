@@ -31,6 +31,8 @@ builder.Services.AddBlazoredLocalStorage();
 
 // Repositories
 builder.Services.AddScoped<IRepository<User>, UserRepository>();
+builder.Services.AddScoped<IRepository<Exercise>, ExerciseRepository>();
+builder.Services.AddScoped<IRepository<SubExercise>, SubExerciseRepository>();
 
 var app = builder.Build();
 

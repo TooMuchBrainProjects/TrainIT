@@ -1,43 +1,77 @@
 ﻿@page "/exercises"
+@using Model.Entities
+@using Domain.Repositories.Interfaces
+@inject IRepository<SubExercise> SubExerciseRepository;
 
 <MudContainer Class="mt-8">
     <MudStack Spacing="16">
         <h1 class="ms-4">Exercises</h1>
-        
-        
+
+
         <MudDatePicker Label="Choose date" @ref="_picker" @bind-Date="date" AutoClose="true" MaxDate="@maxDate" class="mx-4">
             <PickerActions>
                 <MudButton Class="mr-auto align-self-start" OnClick="Today">Today</MudButton>
             </PickerActions>
         </MudDatePicker>
-        
+
         <MudDivider/>
-        
+
     </MudStack>
 </MudContainer>
 <MudList Clickable="true" Style="width: 100vw">
-    <MudListItem Text="Inbox" Icon="@Icons.Material.Filled.Inbox" />
-    <MudListItem Text="Sent" Icon="@Icons.Material.Filled.Send" />
-    <MudListItem Text="Trash" />
-    <MudListItem Text="Spam" />
+    @foreach (var subexercise in SubExercises)
+    {
+        <MudListItem>
+            <MudGrid>
+                <MudItem xs="7">
+                    @subexercise.Exercise.Name
+                </MudItem>
+                <MudItem xs="3">
+                    @subexercise.Weight
+                </MudItem>
+                <MudItem xs="2">
+                    <MudIcon Icon="@Icons.Filled.ArrowForwardIos" Title="Next"/>
+                </MudItem>
+            </MudGrid>
+        </MudListItem>
+    }
 </MudList>
 
-<MudMenu Icon="@Icons.Material.Filled.Add">
-    <MudMenuItem>Profile</MudMenuItem>
-    <MudMenuItem>My account</MudMenuItem>
-    <MudMenuItem>Logout</MudMenuItem>
-</MudMenu>
 
-<MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Add" />
+<MudStack>
+    <MudPopover Open="@_addOptionsAreOpen" Class="pa-4">
+        <div class="d-flex flex-column">
+            <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.PlusOne" OnClick="@ToggleAddOptionsOpen" Class="mb-4"/>
+            <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.HdrPlus" OnClick="@ToggleAddOptionsOpen"/>
+        </div>
+    </MudPopover>
+    <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Add" OnClick="@ToggleAddOptionsOpen"/>
+</MudStack>
+
 
 @code {
     MudDatePicker _picker;
     DateTime? date = DateTime.Today;
     DateTime? maxDate = DateTime.Today;
+    public bool _addOptionsAreOpen;
+
+    public List<SubExercise> SubExercises { get; set; }
 
     private async Task Today()
     {
         await _picker.GoToDate(DateTime.Today);
         _picker.Close();
+    }
+
+    public void ToggleAddOptionsOpen()
+    {
+        _addOptionsAreOpen = !_addOptionsAreOpen;
+    }
+    
+    
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        SubExercises = SubExerciseRepository.ReadAll();
     }
 }
