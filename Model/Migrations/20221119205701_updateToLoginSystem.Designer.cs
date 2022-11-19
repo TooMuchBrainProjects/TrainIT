@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Model.Configurations;
 
@@ -10,9 +11,10 @@ using Model.Configurations;
 namespace Model.Migrations
 {
     [DbContext(typeof(TrainITDbContext))]
-    partial class TrainITDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221119205701_updateToLoginSystem")]
+    partial class updateToLoginSystem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -1,14 +1,17 @@
 ﻿@page "/exercises"
 @using Model.Entities
 @using Domain.Repositories.Interfaces
-@inject IRepository<SubExercise> SubExerciseRepository;
+@using WebGui.Services
+@inject UserService UserService;
+@inject ISubExerciseRepository SubExerciseRepository;
+@attribute [Authorize]
 
 <MudContainer Class="mt-8">
     <MudStack Spacing="16">
         <h1 class="ms-4">Exercises</h1>
 
 
-        <MudDatePicker Label="Choose date" @ref="_picker" @bind-Date="date" AutoClose="true" MaxDate="@maxDate" class="mx-4">
+        <MudDatePicker  Label="Choose date" @ref="_picker" Date="date" DateChanged="HandleDateChangeAsync" AutoClose="true" MaxDate="@maxDate" class="mx-4">
             <PickerActions>
                 <MudButton Class="mr-auto align-self-start" OnClick="Today">Today</MudButton>
             </PickerActions>
@@ -18,24 +21,29 @@
 
     </MudStack>
 </MudContainer>
-<MudList Clickable="true" Style="width: 100vw">
-    @foreach (var subexercise in SubExercises)
-    {
-        <MudListItem>
-            <MudGrid>
-                <MudItem xs="7">
-                    @subexercise.Exercise.Name
-                </MudItem>
-                <MudItem xs="3">
-                    @subexercise.Weight
-                </MudItem>
-                <MudItem xs="2">
-                    <MudIcon Icon="@Icons.Filled.ArrowForwardIos" Title="Next"/>
-                </MudItem>
-            </MudGrid>
-        </MudListItem>
-    }
-</MudList>
+
+<DataInit Data="SubExercises">
+    <ChildContent>
+        <MudList Clickable="true" Style="width: 100vw">
+            @foreach (var subexercise in SubExercises)
+            {
+                <MudListItem>
+                    <MudGrid>
+                        <MudItem xs="7">
+                            @subexercise.Exercise.Name
+                        </MudItem>
+                        <MudItem xs="3">
+                            @subexercise.Weight
+                        </MudItem>
+                        <MudItem xs="2">
+                            <MudIcon Icon="@Icons.Filled.ArrowForwardIos" Title="Next"/>
+                        </MudItem>
+                    </MudGrid>
+                </MudListItem>
+            }
+        </MudList>
+    </ChildContent>
+</DataInit>
 
 
 <MudStack>
@@ -53,9 +61,9 @@
     MudDatePicker _picker;
     DateTime? date = DateTime.Today;
     DateTime? maxDate = DateTime.Today;
-    public bool _addOptionsAreOpen;
+    bool _addOptionsAreOpen;
 
-    public List<SubExercise> SubExercises { get; set; }
+    public List<SubExercise> SubExercises { get; set; } = null!;
 
     private async Task Today()
     {
@@ -67,11 +75,23 @@
     {
         _addOptionsAreOpen = !_addOptionsAreOpen;
     }
-    
-    
-    protected override void OnInitialized()
+
+    async void HandleDateChangeAsync(DateTime? dateTime)
     {
-        base.OnInitialized();
-        SubExercises = SubExerciseRepository.ReadAll();
+        try
+        {
+            date = dateTime;
+            SubExercises = await SubExerciseRepository.GetSubExercisesByDate(UserService.CurrentUser!.Id, new DateOnly(date.Value.Year, date.Value.Month, date.Value.Day));
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
+
+    protected override async Task OnInitializedAsync()
+    {
+        SubExercises = await SubExerciseRepository.GetSubExercisesByDate(UserService.CurrentUser!.Id, new DateOnly(date.Value.Year, date.Value.Month, date.Value.Day));
+    }
+
 }

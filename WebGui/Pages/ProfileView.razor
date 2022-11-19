@@ -1,63 +1,37 @@
 ﻿@page "/profile"
 @using Model.Entities
 @using Domain.Repositories.Interfaces
+@using WebGui.Services
 @inject IRepository<User> UserRepository;
-@inject Blazored.LocalStorage.ISyncLocalStorageService localStorage;
+@inject UserService UserService;
+@attribute [Authorize]
 
 <PageTitle>Profile</PageTitle>
 
-@if (IsLoggedIn)
-{
-    <h3>@User?.Name</h3>
-}
-else
-{
-    <button @onclick="LogIn">Log In</button>
-    <button @onclick="SignUp">Register</button>
-}
+<AuthorizeView>
+    <Authorized>
+        <h3>@UserService.CurrentUser!.Name</h3>
+    </Authorized>
+    <Authorizing></Authorizing>
+    <NotAuthorized>
+        <a href="/auth/login">Log In</a>
+        <a href="/auth/register">Register</a>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
-    public User? User { get; set; }
-    public bool IsLoggedIn { get; set; }
     
-    private int? userId { get; set; }
-
-    protected override void OnInitialized()
+    
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
-
-        try
+        if (await UserService.IsAuthenticated())
         {
-             userId = Int32.Parse(localStorage.GetItem<string>("USER_ID"));
-
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Could parse USER_ID in int!");
-            Console.WriteLine(e.Message);
-        }
-
-        if (userId.HasValue)
-        {
-            IsLoggedIn = true;
-            User = UserRepository.Read(userId.Value);
+            
         }
         else
         {
-            IsLoggedIn = false;
-            Console.WriteLine("User is not logged in!");
+            
         }
-
-        // localStorage.SetItem("name", "John Smith");
     }
 
-    private void LogIn()
-    {
-        
-    }
-
-    private void SignUp()
-    {
-        
-    }
 }

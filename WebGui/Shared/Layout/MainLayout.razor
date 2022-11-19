@@ -1,0 +1,30 @@
+﻿@using WebGui.Services
+@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
+@inject UserService UserService
+
+<MudThemeProvider IsDarkMode="true"/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+
+<MudLayout>
+    <MudMainContent Style="padding: 0;">
+        @Body
+    </MudMainContent>
+    <NavMenu/>
+</MudLayout>
+
+@code {
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+            return;
+        
+        if (!await UserService.IsAuthenticated())
+        {
+            NavigationManager.NavigateTo("/auth/register");
+        }
+    }
+
+}
