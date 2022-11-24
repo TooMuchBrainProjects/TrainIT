@@ -1,6 +1,8 @@
 ﻿@page "/"
 @attribute [Authorize]
 
+
+@* maybe AuthorizedView *@
 <MudContainer Class="mt-8">
     <MudStack Spacing="16">
          <h1 class="ms-4">Statistics</h1>
@@ -25,8 +27,8 @@
 
 @code {
     private int SelectedIndex = -1; //default value cannot be 0 -> first selectedindex is 0.
-    
-    public List<ChartSeries> Series { get; private set; }
+
+    public List<ChartSeries> Series { get; private set; } = null!;
     private readonly ChartOptions options = new();
     public string[] XAxisLabels = {};
 

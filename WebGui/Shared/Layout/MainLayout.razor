@@ -1,4 +1,5 @@
 ﻿@using WebGui.Services
+@using WebGui.Pages
 @inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
 @inject UserService UserService
@@ -15,7 +16,9 @@
 </MudLayout>
 
 @code {
-
+    
+    public bool IsDarkMode { get; set; }
+    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender)

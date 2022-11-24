@@ -1,37 +1,67 @@
 ﻿@page "/profile"
 @using Model.Entities
 @using Domain.Repositories.Interfaces
+@using Microsoft.EntityFrameworkCore.Diagnostics
 @using WebGui.Services
-@inject IRepository<User> UserRepository;
 @inject UserService UserService;
 @attribute [Authorize]
 
-<PageTitle>Profile</PageTitle>
+<MudContainer Class="mt-8">
+    <MudStack Spacing="4">
+        <h1 class="ms-4 mb-12">Profile</h1>
 
-<AuthorizeView>
-    <Authorized>
-        <h3>@UserService.CurrentUser!.Name</h3>
-    </Authorized>
-    <Authorizing></Authorizing>
-    <NotAuthorized>
-        <a href="/auth/login">Log In</a>
-        <a href="/auth/register">Register</a>
-    </NotAuthorized>
-</AuthorizeView>
+        <MudPaper class="pa-4" Elevation="3">
+            <div Style="@($"color:{Colors.Amber.Darken2};")">Username:</div>
+            @if (UserService.CurrentUser != null)
+            {
+                <p style="font-size: 1.6rem;">
+                    @UserService.CurrentUser?.Name
+                </p>
+            }
+            else
+            {
+                <p style="font-size: 1.6rem;">
+                    Loading...
+                </p>
+            }
+        </MudPaper>
+
+        <MudPaper class="pa-4" Elevation="3">
+            <div Style="@($"color:{Colors.Amber.Darken2};")">E-Mail Address:</div>
+            
+            @if (UserService.CurrentUser != null)
+            {
+                <p style="font-size: 1.6rem;">
+                    @UserService.CurrentUser?.Email
+                </p>
+            }
+            else
+            {
+                <p style="font-size: 1.6rem;">
+                    Loading...
+                </p>
+            }
+        </MudPaper>
+
+        <MudPaper class="px-4 py-1" Elevation="3">
+            <div style="display: flex; justify-content: space-between; align-items: center">
+                <div Style="@($"color:{Colors.Amber.Darken2};")">Darkmode:</div>
+                <MudCheckBox @bind-Checked="@IsDarkMode"></MudCheckBox>
+            </div>
+        </MudPaper>
+
+        <MudPaper class="px-4 py-1" Elevation="3">
+            <div style="display: flex; justify-content: space-between; align-items: center">
+                <div Style="@($"color:{Colors.Amber.Darken2};")">Other Option:</div>
+                <MudCheckBox @bind-Checked="@IsDarkMode"></MudCheckBox>
+            </div>
+        </MudPaper>
+
+    </MudStack>
+</MudContainer>
 
 @code {
-    
-    
-    protected override async Task OnInitializedAsync()
-    {
-        if (await UserService.IsAuthenticated())
-        {
-            
-        }
-        else
-        {
-            
-        }
-    }
+
+    public bool IsDarkMode { get; set; }
 
 }
