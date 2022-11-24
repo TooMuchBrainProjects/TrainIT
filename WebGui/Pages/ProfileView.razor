@@ -4,6 +4,7 @@
 @using Microsoft.EntityFrameworkCore.Diagnostics
 @using WebGui.Services
 @inject UserService UserService;
+@inject ProtectedLocalStorage ProtectedLocalStorage;
 @attribute [Authorize]
 
 <MudContainer Class="mt-8">
@@ -28,7 +29,7 @@
 
         <MudPaper class="pa-4" Elevation="3">
             <div Style="@($"color:{Colors.Amber.Darken2};")">E-Mail Address:</div>
-            
+
             @if (UserService.CurrentUser != null)
             {
                 <p style="font-size: 1.6rem;">
@@ -45,15 +46,10 @@
 
         <MudPaper class="px-4 py-1" Elevation="3">
             <div style="display: flex; justify-content: space-between; align-items: center">
-                <div Style="@($"color:{Colors.Amber.Darken2};")">Darkmode:</div>
-                <MudCheckBox @bind-Checked="@IsDarkMode"></MudCheckBox>
-            </div>
-        </MudPaper>
-
-        <MudPaper class="px-4 py-1" Elevation="3">
-            <div style="display: flex; justify-content: space-between; align-items: center">
-                <div Style="@($"color:{Colors.Amber.Darken2};")">Other Option:</div>
-                <MudCheckBox @bind-Checked="@IsDarkMode"></MudCheckBox>
+                <div Style="@($"color:{Colors.Amber.Darken2};")">DarkMode:</div>
+                <MudCheckBox T="bool?" CheckedChanged="ToggleTheme" Checked="IsDarkMode" TriState="true" Color="Color.Secondary">
+                    @(IsDarkMode == null ? "Auto" : (IsDarkMode == true) ? "Dark" : "Light")
+                </MudCheckBox>
             </div>
         </MudPaper>
 
@@ -62,6 +58,30 @@
 
 @code {
 
-    public bool IsDarkMode { get; set; }
+    [CascadingParameter]
+    public MainLayout MainLayout { get; set; }
+
+    public bool? IsDarkMode { get; set; }
+
+    public void ToggleTheme(bool? Changedtheme)
+    {
+        IsDarkMode = Changedtheme;
+        MainLayout.ToggleDarkMode(IsDarkMode);
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        var darkModeResult = await ProtectedLocalStorage.GetAsync<bool?>("DarkMode");
+        
+        Console.Clear();
+        Console.WriteLine(darkModeResult);
+
+        IsDarkMode = null;
+        if (darkModeResult.Success && darkModeResult.Value.HasValue)
+        {
+            IsDarkMode = darkModeResult.Value.Value;
+        }
+        StateHasChanged();
+    }
 
 }

@@ -3,31 +3,57 @@
 @inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
 @inject UserService UserService
+@inject ProtectedLocalStorage ProtectedLocalStorage;
 
-<MudThemeProvider IsDarkMode="true"/>
+<MudThemeProvider IsDarkMode="@_isDarkMode" @ref="@_mudThemeProvider"/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 
 <MudLayout>
     <MudMainContent Style="padding: 0;">
-        @Body
+        <CascadingValue Value="this">
+            @Body
+        </CascadingValue>
     </MudMainContent>
     <NavMenu/>
 </MudLayout>
 
 @code {
-    
-    public bool IsDarkMode { get; set; }
-    
+
+    public bool _isDarkMode;
+    private MudThemeProvider _mudThemeProvider;
+
+    public async void ToggleDarkMode(bool? ChangedDarkMode)
+    {
+        if (ChangedDarkMode.HasValue)
+        {
+            _isDarkMode = ChangedDarkMode.Value;
+        }
+        else
+        {
+            _isDarkMode = await _mudThemeProvider.GetSystemPreference();
+        }
+        StateHasChanged();
+        await ProtectedLocalStorage.SetAsync("DarkMode", ChangedDarkMode);
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender)
             return;
-        
+
         if (!await UserService.IsAuthenticated())
         {
             NavigationManager.NavigateTo("/auth/register");
         }
-    }
 
+        var darkModeResult = await ProtectedLocalStorage.GetAsync<bool?>("DarkMode");
+
+        _isDarkMode = await _mudThemeProvider.GetSystemPreference();
+        if (darkModeResult.Success && darkModeResult.Value.HasValue)
+        {
+            _isDarkMode = darkModeResult.Value.Value;
+        }
+        StateHasChanged();
+    }
 }

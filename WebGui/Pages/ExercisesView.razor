@@ -46,8 +46,8 @@
 </DataInit>
 
 
-<MudStack>
-    <MudPopover Open="@_addOptionsAreOpen" Class="pa-4">
+<MudStack Style="position: fixed; bottom: 9vh; right: 2vh;">
+    <MudPopover Open="@_addOptionsAreOpen" Fixed="true" Style="background: none; box-shadow: none;">
         <div class="d-flex flex-column">
             <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.PlusOne" OnClick="@ToggleAddOptionsOpen" Class="mb-4"/>
             <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.FilterList" OnClick="@ToggleAddOptionsOpen"/>
