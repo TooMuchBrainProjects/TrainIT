@@ -72,9 +72,6 @@
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
         var darkModeResult = await ProtectedLocalStorage.GetAsync<bool?>("DarkMode");
-        
-        Console.Clear();
-        Console.WriteLine(darkModeResult);
 
         IsDarkMode = null;
         if (darkModeResult.Success && darkModeResult.Value.HasValue)

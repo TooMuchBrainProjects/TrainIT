@@ -11,50 +11,44 @@
         <h1 class="ms-4">Exercises</h1>
 
 
-        <MudDatePicker  Label="Choose date" @ref="_picker" Date="date" DateChanged="HandleDateChangeAsync" AutoClose="true" MaxDate="@maxDate" class="mx-4">
+        <MudDatePicker Label="Choose date" @ref="_picker" Date="date" DateChanged="HandleDateChangeAsync" AutoClose="true" MaxDate="@maxDate" class="mx-4">
             <PickerActions>
                 <MudButton Class="mr-auto align-self-start" OnClick="Today">Today</MudButton>
             </PickerActions>
         </MudDatePicker>
 
         <MudDivider/>
-
     </MudStack>
+    
+    <DataInit Data="SubExercises">
+        <ChildContent>
+            <MudList Clickable="true">
+                @foreach (var subexercise in SubExercises)
+                {
+                    <MudListItem>
+                        <MudGrid>
+                            <MudItem xs="9">
+                                @subexercise.Exercise.Name
+                            </MudItem>
+                            <MudItem xs="2" Style="text-align: end;">
+                                @Math.Round(subexercise.Weight, 2)
+                            </MudItem>
+                            <MudItem xs="1">
+                                <MudIcon Icon="@Icons.Filled.ArrowForwardIos" Title="Next"/>
+                            </MudItem>
+                        </MudGrid>
+                    </MudListItem>
+                }
+            </MudList>
+        </ChildContent>
+    </DataInit>
 </MudContainer>
 
-<DataInit Data="SubExercises">
-    <ChildContent>
-        <MudList Clickable="true" Style="width: 100vw">
-            @foreach (var subexercise in SubExercises)
-            {
-                <MudListItem>
-                    <MudGrid>
-                        <MudItem xs="7">
-                            @subexercise.Exercise.Name
-                        </MudItem>
-                        <MudItem xs="3">
-                            @subexercise.Weight
-                        </MudItem>
-                        <MudItem xs="2">
-                            <MudIcon Icon="@Icons.Filled.ArrowForwardIos" Title="Next"/>
-                        </MudItem>
-                    </MudGrid>
-                </MudListItem>
-            }
-        </MudList>
-    </ChildContent>
-</DataInit>
 
-
-<MudStack Style="position: fixed; bottom: 9vh; right: 2vh;">
-    <MudPopover Open="@_addOptionsAreOpen" Fixed="true" Style="background: none; box-shadow: none;">
-        <div class="d-flex flex-column">
-            <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.PlusOne" OnClick="@ToggleAddOptionsOpen" Class="mb-4"/>
-            <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.FilterList" OnClick="@ToggleAddOptionsOpen"/>
-        </div>
-    </MudPopover>
-    <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Add" OnClick="@ToggleAddOptionsOpen"/>
-</MudStack>
+<div Style="position: fixed; bottom: 9vh; right: 2vh; display: grid; gap: 1rem;">
+    <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.PlusOne" OnClick="@ToggleAddOptionsOpen"/>
+    <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.FilterList" OnClick="@ToggleAddOptionsOpen"/>
+</div>
 
 
 @code {
@@ -78,6 +72,8 @@
 
     async void HandleDateChangeAsync(DateTime? dateTime)
     {
+        Console.WriteLine((date));
+        Console.WriteLine(dateTime);
         try
         {
             date = dateTime;
@@ -91,6 +87,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        Console.WriteLine(UserService.CurrentUser.Id);
         SubExercises = await SubExerciseRepository.GetSubExercisesByDate(UserService.CurrentUser!.Id, new DateOnly(date.Value.Year, date.Value.Month, date.Value.Day));
     }
 

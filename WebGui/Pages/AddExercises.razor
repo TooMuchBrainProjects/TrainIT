@@ -1,0 +1,41 @@
+﻿@page "/addexercises"
+@page "/addexercises/{PresetId:int?}"
+@using Model.Entities
+@using Domain.Repositories.Interfaces
+@using WebGui.Services
+@inject UserService UserService;
+@inject ISubExerciseRepository SubExerciseRepository;
+@attribute [Authorize]
+
+<MudContainer Class="mt-8">
+    <MudStack Spacing="16">
+        <h1 class="ms-4">All Exercises</h1>
+
+        <MudDivider/>
+    </MudStack>
+    
+    <DataInit Data="">
+        <ChildContent>
+            <MudList Clickable="true">
+                @foreach (var subexercise in )
+                {
+                    
+                }
+            </MudList>
+        </ChildContent>
+    </DataInit>
+</MudContainer>
+
+
+<div Style="position: fixed; bottom: 9vh; right: 2vh; display: grid; gap: 1rem;">
+    <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.ArrowForwardIos" OnClick="@ExercisesChosen"/>
+</div>
+
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        
+    }
+
+}

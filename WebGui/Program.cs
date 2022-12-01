@@ -8,6 +8,7 @@ using Model.Configurations;
 using Model.Entities;
 using WebGui.Data;
 using MudBlazor.Services;
+using View.Services;
 using WebGui.Services;
 
 var builder = WebApplication.CreateBuilder(args);
