@@ -1,0 +1,21 @@
+﻿@page "/login"
+@using Model.Entities
+
+<EditForm Model="User">
+    <DataAnnotationsValidator/>
+    <div class="form-row">
+        <div class="form-group col-md-5">
+            <label for="userEmail" class="small
+                text-info">Email:</label>
+            <InputText class="form-control
+                       form-control-sm" id="userEmail"
+                       placeholder="Email Adresse"
+                       @bind-Value="@User.Email"/>
+            <ValidationMessage For="()=> User.Email"/>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    public User User { get; set; } = new ();
+}
