@@ -42,11 +42,6 @@
         if (!firstRender)
             return;
 
-        if (!await UserService.IsAuthenticated())
-        {
-            NavigationManager.NavigateTo("/auth/register");
-        }
-
         var darkModeResult = await ProtectedLocalStorage.GetAsync<bool?>("DarkMode");
 
         _isDarkMode = await _mudThemeProvider.GetSystemPreference();

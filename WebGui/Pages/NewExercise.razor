@@ -6,45 +6,51 @@
 @using WebGui.Services
 @inherits CancellationComponent
 
-<MudGrid>
-    <MudItem xs="12" sm="7">
-        <MudPaper Class="pa-4">
-            <div @onkeydown="@TryRegister">
-                <MudForm @ref="_form">
-                    @if (_error is not null)
-                    {
-                        <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="() => _error = null">
-                            @(_error)
-                        </MudAlert>
-                    }
-                    <MudTextField
-                        T="string"
-                        InputMode="InputMode.text" InputType="InputType.Text" Immediate="true"
-                        Counter="100" MaxLength="100"
-                        Label="Exercise" HelperText="Min. 4, Max. 100 characters | Allowed chars: A-Z 0-9 . _ - "
-                        @bind-Value="RegUser.Name"
-                        For="() => RegUser.Name"/>
-                    <MudTextField
-                        T="string"
-                        InputMode="InputMode.text" InputType="InputType.Text" Immediate="true"
-                        Counter="50" MaxLength="50"
-                        Label="Email"
-                        @bind-Value="RegUser.Email"
-                        For="() => RegUser.Email"/>
-                    <MudTextField
-                        T="string"
-                        InputMode="InputMode.text" InputType="_passwordInputType" Immediate="true"
-                        Label="Password" HelperText="Choose a strong password | Min 6 chars"
-                        Adornment="Adornment.End"
-                        AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="ShowPwd"
-                        @bind-Value="RegUser.Password"
-                        For="() => RegUser.Password"/>
-                </MudForm>
-            </div>
-        </MudPaper>
-    </MudItem>
-</MudGrid>
+<AuthorizeView>
+    <Authorized>
+        <MudGrid>
+            <MudItem xs="12" sm="7">
+                <MudPaper Class="pa-4">
+                    <div @onkeydown="@TryRegister">
+                        <MudForm @ref="_form">
+                            @if (_error is not null)
+                            {
+                                <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="() => _error = null">
+                                    @(_error)
+                                </MudAlert>
+                            }
+                            <MudTextField
+                                T="string"
+                                InputMode="InputMode.text" InputType="InputType.Text" Immediate="true"
+                                Counter="100" MaxLength="100"
+                                Label="Exercise" HelperText="Min. 4, Max. 100 characters | Allowed chars: A-Z 0-9 . _ - "
+                                @bind-Value="RegUser.Name"
+                                For="() => RegUser.Name"/>
+                            <MudTextField
+                                T="string"
+                                InputMode="InputMode.text" InputType="InputType.Text" Immediate="true"
+                                Counter="50" MaxLength="50"
+                                Label="Email"
+                                @bind-Value="RegUser.Email"
+                                For="() => RegUser.Email"/>
+                            @*<MudTextField
+                                T="string"
+                                InputMode="InputMode.text" InputType="_passwordInputType" Immediate="true"
+                                Label="Password" HelperText="Choose a strong password | Min 6 chars"
+                                Adornment="Adornment.End"
+                                AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="ShowPwd"
+                                @bind-Value="RegUser.Password"
+                                For="() => RegUser.Password"/>*@
+                        </MudForm>
+                    </div>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    </Authorized>
+    <NotAuthorized>
 
+    </NotAuthorized>
+</AuthorizeView>
 
 
 @code {
@@ -57,37 +63,47 @@
     InputType _passwordInputType = InputType.Password;
 
     User RegUser { get; } = new();
-    
-    async void TryRegister(KeyboardEventArgs e) {
+
+    async void TryRegister(KeyboardEventArgs e)
+    {
         if (e.Code is "Enter" or "NumpadEnter")
             await HandleNewExerciseAsync();
     }
 
-    async Task HandleNewExerciseAsync() {
-        try {
+    async Task HandleNewExerciseAsync()
+    {
+        try
+        {
             if (!await _form.IsFormValidAsync()) return;
             _isRegistering = true;
             await UserService.RegisterAsync(RegUser);
             await UserService.LoginAsync(new LoginModel(RegUser.Name, RegUser.Email, RegUser.Password));
         }
-        catch (DuplicateEmailException) {
+        catch (DuplicateEmailException)
+        {
             _error = "Invalid email!";
         }
-        catch (LoginException) {
+        catch (LoginException)
+        {
             _error = "Invalid email or Password!";
         }
-        catch (TaskCanceledException) {
+        catch (TaskCanceledException)
+        {
             Logger.LogInformation("Login canceled");
         }
-        catch (OperationCanceledException) {
+        catch (OperationCanceledException)
+        {
             Logger.LogInformation("Login canceled");
         }
-        catch (Exception e) {
+        catch (Exception e)
+        {
             Logger.LogCritical("Login failed: {Message} \n", e.Message);
             Logger.LogCritical("Login failed: {StackTrace} \n", e.StackTrace);
         }
-        finally {
+        finally
+        {
             _isRegistering = false;
         }
     }
+
 }

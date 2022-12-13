@@ -1,27 +1,34 @@
 ﻿@page "/"
-@attribute [Authorize]
 
 
-@* maybe AuthorizedView *@
-<MudContainer Class="mt-8">
-    <MudStack Spacing="16">
-         <h1 class="ms-4">Statistics</h1>
+<AuthorizeView>
+    <Authorized>
+        <MudContainer Class="mt-8">
+            <MudStack Spacing="16">
+                 <h1 class="ms-4">Statistics</h1>
+        
+                <MudChart ChartType="ChartType.Bar" ChartSeries="@Series" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels" Width="100%" ChartOptions="@options"></MudChart>
+        
+                <MudTimeline TimelineOrientation="TimelineOrientation.Horizontal" TimelinePosition="TimelinePosition.Top">
+                    <MudTimelineItem>
+                        <MudText Align="Align.Center">Item A</MudText>
+                    </MudTimelineItem>
+                    <MudTimelineItem Color="Color.Primary">
+                        <MudText Align="Align.Center">Item B</MudText>
+                    </MudTimelineItem>
+                    <MudTimelineItem>
+                        <MudText Align="Align.Center">Item C</MudText>
+                    </MudTimelineItem>
+                </MudTimeline>
+            </MudStack>
+        </MudContainer>
+    </Authorized>
+    <NotAuthorized>
+        <Login></Login>
+    </NotAuthorized>
+</AuthorizeView>
 
-        <MudChart ChartType="ChartType.Bar" ChartSeries="@Series" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels" Width="100%" ChartOptions="@options"></MudChart>
 
-        <MudTimeline TimelineOrientation="TimelineOrientation.Horizontal" TimelinePosition="TimelinePosition.Top">
-            <MudTimelineItem>
-                <MudText Align="Align.Center">Item A</MudText>
-            </MudTimelineItem>
-            <MudTimelineItem Color="Color.Primary">
-                <MudText Align="Align.Center">Item B</MudText>
-            </MudTimelineItem>
-            <MudTimelineItem>
-                <MudText Align="Align.Center">Item C</MudText>
-            </MudTimelineItem>
-        </MudTimeline>
-    </MudStack>
-</MudContainer>
     
 
 
