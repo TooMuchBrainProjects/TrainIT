@@ -18,7 +18,8 @@ public class Exercise
     [Column("MACHINE")]
     public string Machine { get; set; }
     
-    [Column("DESCRIPTION", TypeName = "TEXT")]
+    [DataType(DataType.Text)]
+    [Column("DESCRIPTION")]
     public string Description { get; set; }
 
     [Required]
