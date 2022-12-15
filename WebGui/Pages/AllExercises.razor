@@ -1,0 +1,85 @@
+﻿@page "/allexercises"
+@page "/allexercises/{PresetId:int?}"
+@using Model.Entities
+@using Domain.Repositories.Interfaces
+@using WebGui.Services
+@inject UserService UserService;
+@inject ISubExerciseRepository SubExerciseRepository;
+@inject IRepository<Preset> PresetRepository;
+@inject IRepository<Exercise> ExerciseRepository;
+
+<AuthorizeView>
+    <Authorized>
+        <MudContainer Class="mt-8">
+            <MudStack Spacing="16">
+                @if (Preset == null)
+                {
+                    <h1 class="ms-4">All Exercises</h1>
+                }
+                else
+                {
+                    <h1 class="ms-4">@Preset.Name</h1>
+                }
+
+                <MudDivider/>
+            </MudStack>
+
+            <DataInit Data="Exercises">
+                <ChildContent Context="exercises">
+                    <MudList Clickable="false">
+                        @for (var i = 0; i < exercises.Count; i++)
+                        {
+                            <MudListItem>
+                                <MudGrid>
+                                    <MudItem xs="3">
+                                        <MudCheckBox @bind-Checked="ChosenExercises[i]" Color="Color.Primary"></MudCheckBox>
+                                    </MudItem>
+                                    <MudItem xs="9">
+                                        @exercises[i].Name
+                                    </MudItem>
+                                </MudGrid>
+                            </MudListItem>
+                        }
+                    </MudList>
+                </ChildContent>
+            </DataInit>
+        </MudContainer>
+
+        <div Style="position: fixed; bottom: 9vh; right: 2vh;">
+            <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Check" OnClick="AddSubExercises"/>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+
+    [Parameter]
+    public int? PresetId { get; set; }
+
+    public Preset Preset { get; set; }
+
+    public List<Exercise> Exercises { get; set; }
+    public List<bool> ChosenExercises { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (PresetId != null)
+        {
+            Preset = await PresetRepository.ReadAsync(PresetId.Value);
+    // Exercises = await ExerciseRepository.ReadAsync(e => e.)
+        }
+        else
+        {
+            Exercises = await ExerciseRepository.ReadAsync(e => e.UserId == UserService.CurrentUser.Id);
+        }
+    }
+
+    public void AddSubExercises()
+    {
+    }
+
+}

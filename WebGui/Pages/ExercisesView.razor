@@ -46,8 +46,12 @@
         </MudContainer>
 
         <div Style="position: fixed; bottom: 9vh; right: 2vh; display: grid; gap: 1rem;">
-            <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.PlusOne" OnClick="@ToggleAddOptionsOpen"/>
-            <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.FilterList" OnClick="@ToggleAddOptionsOpen"/>
+            <a href="/presets">
+                <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.FilterList"/>
+            </a>
+            <a href="/allexercises">
+                <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.PlusOne"/>
+            </a>
         </div>
     </Authorized>
     <NotAuthorized>
@@ -92,8 +96,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Logger.LogInformation($"UserId: {UserService.CurrentUser.Id}");
-        SubExercises = await SubExerciseRepository.GetSubExercisesByDate(UserService.CurrentUser!.Id, new DateOnly(date.Value.Year, date.Value.Month, date.Value.Day));
+        if (UserService.CurrentUser != null)
+        {
+            Logger.LogInformation($"UserId: {UserService.CurrentUser.Id}");
+            SubExercises = await SubExerciseRepository.GetSubExercisesByDate(UserService.CurrentUser!.Id, new DateOnly(date.Value.Year, date.Value.Month, date.Value.Day));
+        }
     }
 
 }

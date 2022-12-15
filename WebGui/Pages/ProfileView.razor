@@ -11,7 +11,7 @@
         <MudContainer Class="mt-8">
             <MudStack Spacing="4">
                 <h1 class="ms-4 mb-12">Profile</h1>
-        
+
                 <MudPaper class="pa-4" Elevation="3">
                     <div Style="@($"color:{Colors.Amber.Darken2};")">Username:</div>
                     @if (UserService.CurrentUser != null)
@@ -27,10 +27,10 @@
                         </p>
                     }
                 </MudPaper>
-        
+
                 <MudPaper class="pa-4" Elevation="3">
                     <div Style="@($"color:{Colors.Amber.Darken2};")">E-Mail Address:</div>
-        
+
                     @if (UserService.CurrentUser != null)
                     {
                         <p style="font-size: 1.6rem;">
@@ -44,7 +44,7 @@
                         </p>
                     }
                 </MudPaper>
-        
+
                 <MudPaper class="px-4 py-1" Elevation="3">
                     <div style="display: flex; justify-content: space-between; align-items: center">
                         <div Style="@($"color:{Colors.Amber.Darken2};")">DarkMode:</div>
@@ -53,12 +53,16 @@
                         </MudCheckBox>
                     </div>
                 </MudPaper>
-        
+
+                <div style="display: flex; justify-content: space-between; align-items: center">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UserService.LogoutAsync">Log Out</MudButton>
+                </div>
+
             </MudStack>
         </MudContainer>
     </Authorized>
     <NotAuthorized>
-        
+
     </NotAuthorized>
 </AuthorizeView>
 

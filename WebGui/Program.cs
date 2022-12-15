@@ -37,6 +37,7 @@ builder.Services.AddMudServices();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRepository<Exercise>, ExerciseRepository>();
 builder.Services.AddScoped<ISubExerciseRepository, SubExerciseRepository>();
+builder.Services.AddScoped<IRepository<Preset>, PresetRepository>();
 
 builder.Services.AddLogging(); // the default Logger
 
