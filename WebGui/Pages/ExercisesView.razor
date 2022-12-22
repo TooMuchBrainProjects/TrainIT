@@ -12,12 +12,19 @@
             <MudStack Spacing="16">
                 <h1 class="ms-4">Exercises</h1>
 
-                <MudDatePicker Label="Choose date" @ref="_picker" Date="date" DateChanged="HandleDateChangeAsync" AutoClose="true" MaxDate="@maxDate" class="mx-4">
-                    <PickerActions Context="_">
-                        <MudButton Class="mr-auto align-self-start" OnClick="Today">Today</MudButton>
-                    </PickerActions>
-                </MudDatePicker>
-
+                <MudCardActions>
+                    <MudButton OnClick="PrevDate">
+                        <MudIcon Icon="@Icons.Material.Filled.ArrowBackIos" Title="Prev"/>
+                    </MudButton>
+                    <MudDatePicker Label="Choose date" @ref="_picker" Date="date" DateChanged="HandleDateChangeAsync" AutoClose="true" MaxDate="@maxDate" class="mx-4">
+                        <PickerActions Context="_">
+                            <MudButton Class="mr-auto align-self-start" OnClick="Today">Today</MudButton>
+                        </PickerActions>
+                    </MudDatePicker>
+                    <MudButton OnClick="NextDate">
+                        <MudIcon Icon="@Icons.Material.Filled.ArrowForwardIos" Title="Next"/>
+                    </MudButton>
+                </MudCardActions>
                 <MudDivider/>
             </MudStack>
 
@@ -26,7 +33,7 @@
                     <MudList Clickable="true">
                         @foreach (var subexercise in subExercises)
                         {
-                            <MudListItem>
+                            <MudListItem OnClick="EditSubexercise">
                                 <MudGrid>
                                     <MudItem xs="9">
                                         @subexercise.Exercise.Name
@@ -35,7 +42,7 @@
                                         @Math.Round(subexercise.Weight, 2)
                                     </MudItem>
                                     <MudItem xs="1">
-                                        <MudIcon Icon="@Icons.Filled.ArrowForwardIos" Title="Next"/>
+                                        <MudIcon Icon="@Icons.Filled.ArrowForwardIos"/>
                                     </MudItem>
                                 </MudGrid>
                             </MudListItem>
@@ -88,8 +95,6 @@
 
     async void HandleDateChangeAsync(DateTime? dateTime)
     {
-        Logger.LogInformation(dateTime.ToString());
-        Logger.LogInformation(date.ToString());
         try
         {
             date = dateTime;
@@ -100,6 +105,28 @@
         {
             Console.WriteLine(e);
         }
+    }
+
+    async Task PrevDate()
+    {
+        date = date.Value.AddDays(-1);
+        SubExercises = await SubExerciseRepository.GetSubExercisesByDate(UserService.CurrentUser!.Id, new DateOnly(date.Value.Year, date.Value.Month, date.Value.Day));
+        StateHasChanged();
+    }
+
+    async Task NextDate()
+    {
+        if (date.Value != maxDate.Value)
+        {
+            date = date.Value.AddDays(1);
+            SubExercises = await SubExerciseRepository.GetSubExercisesByDate(UserService.CurrentUser!.Id, new DateOnly(date.Value.Year, date.Value.Month, date.Value.Day));
+            StateHasChanged();
+        }
+    }
+
+    async Task EditSubexercise()
+    {
+        
     }
 
     protected override async Task OnInitializedAsync()

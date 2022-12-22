@@ -27,17 +27,10 @@
             <DataInit Data="Exercises">
                 <ChildContent Context="exercises">
                     <MudList Clickable="false">
-                        @for (var i = 0; i < exercises.Count; i++)
+                        @foreach (var exercise in exercises)
                         {
                             <MudListItem>
-                                <MudGrid>
-                                    <MudItem xs="3">
-                                        <MudCheckBox @bind-Checked="ChosenExercises[i]" Color="Color.Primary"></MudCheckBox>
-                                    </MudItem>
-                                    <MudItem xs="9">
-                                        @exercises[i].Name
-                                    </MudItem>
-                                </MudGrid>
+                                <MudCheckBox Color="Color.Primary" Value="@exercise.Name" @bind-Checked="@exercise.IsSelected"></MudCheckBox>
                             </MudListItem>
                         }
                     </MudList>
@@ -63,7 +56,6 @@
     public Preset Preset { get; set; }
 
     public List<Exercise> Exercises { get; set; }
-    public List<bool> ChosenExercises { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -80,6 +72,7 @@
 
     public void AddSubExercises()
     {
+    // Exercises = Exercises.Where(e => e.IsSelected == true).ToList();
     }
 
 }
