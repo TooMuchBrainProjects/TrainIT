@@ -55,7 +55,14 @@
         </div>
     </Authorized>
     <NotAuthorized>
-
+        <MudContainer Class="mt-8">
+            <MudStack Spacing="4">
+                <h1 class="ms-4 mb-12">You are not logged in!</h1>
+                <MudPaper class="pa-4" Elevation="3">
+                    <div>Please click <a href="/login" style="color: yellow;">here</a> in order to get redirected to the Log In site!</div>
+                </MudPaper>
+            </MudStack>
+        </MudContainer>
     </NotAuthorized>
 </AuthorizeView>
 
@@ -81,12 +88,13 @@
 
     async void HandleDateChangeAsync(DateTime? dateTime)
     {
-        Console.WriteLine((date));
-        Console.WriteLine(dateTime);
+        Logger.LogInformation(dateTime.ToString());
+        Logger.LogInformation(date.ToString());
         try
         {
             date = dateTime;
             SubExercises = await SubExerciseRepository.GetSubExercisesByDate(UserService.CurrentUser!.Id, new DateOnly(date.Value.Year, date.Value.Month, date.Value.Day));
+            StateHasChanged();
         }
         catch (Exception e)
         {

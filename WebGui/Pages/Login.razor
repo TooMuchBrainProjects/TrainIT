@@ -5,22 +5,16 @@
 @using Model.Entities.Models
 @using WebGui.Services
 @inherits CancellationComponent
+@inject NavigationManager NavigationManager;
 
 
-<MudCard Class="position-relative w-100">
-    <MudCardHeader>
-        <MudText Typo="Typo.h5">Login</MudText>
-        <AuthorizeView>
-            <Authorized>
-                <MudSpacer/>
-                <MudText Typo="Typo.subtitle1" Color="Color.Info">You are already logged in, but you can still change accounts</MudText>
-            </Authorized>
-        </AuthorizeView>
-    </MudCardHeader>
-    <MudCardContent>
+<MudContainer Class="mt-8">
+    <MudStack Spacing="4">
+        <h1 class="ms-4 mb-12">Log In</h1>
         <div @onkeydown="@TryLogin">
             <MudForm @ref="_from">
-                @if (_error is not null) {
+                @if (_error is not null)
+                {
                     <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="() => _error = null">
                         @(_error)
                     </MudAlert>
@@ -39,25 +33,25 @@
                     For="() => Model.Password"/>
             </MudForm>
         </div>
-        <MudOverlay @bind-Visible="_isLoggingIn" DarkBackground="true" AutoClose="false" LockScroll="true" Absolute="true">
+        <MudOverlay @bind-Visible="_isLoggingIn" DarkBackground="true" AutoClose="false" LockScroll="true" Absolute="true" Style="position: fixed; top: 0; bottom: 0; left: 0; right: 0;">
             <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
         </MudOverlay>
-    </MudCardContent>
-    <MudCardActions>
-        <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Primary" OnClick="async () => await HandleLoginAsync()">Login</MudButton>
-        <MudSpacer/>
-        <a href="auth/register">
-            <MudText Typo="Typo.subtitle1">
-                Don't have an account?
-            </MudText>
-        </a>
-    </MudCardActions>
-</MudCard>
+        <MudCardActions>
+            <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Primary" OnClick="async () => await HandleLoginAsync()">Login</MudButton>
+            <MudSpacer/>
+            <a href="/register">
+                <MudText Typo="Typo.subtitle1">
+                    Don't have an account?
+                </MudText>
+            </a>
+        </MudCardActions>
+    </MudStack>
+</MudContainer>
 
 
 @code {
     bool _isLoggingIn;
-    
+
     MudForm _from = null!;
     string? _error;
 
@@ -68,45 +62,57 @@
 
     LoginModel Model { get; } = new();
 
-    void ShowPwd() {
-        if (_isShow) {
+    void ShowPwd()
+    {
+        if (_isShow)
+        {
             _isShow = false;
             _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
             _passwordInputType = InputType.Password;
         }
-        else {
+        else
+        {
             _isShow = true;
             _passwordInputIcon = Icons.Material.Filled.Visibility;
             _passwordInputType = InputType.Text;
         }
     }
 
-    async void TryLogin(KeyboardEventArgs e) {
+    async void TryLogin(KeyboardEventArgs e)
+    {
         if (e.Code is "Enter" or "NumpadEnter")
             await HandleLoginAsync();
     }
 
-    async Task HandleLoginAsync() {
-        try {
+    async Task HandleLoginAsync()
+    {
+        try
+        {
             if (!await _from.IsFormValidAsync()) return;
             _isLoggingIn = true;
             await UserService.LoginAsync(Model);
+            NavigationManager.NavigateTo("/");
         }
-        catch (LoginException) {
+        catch (LoginException)
+        {
     // this is the only exception that can be thrown by the login method (we wrote that ourselves :))
             _error = "Invalid username or password";
         }
-        catch (TaskCanceledException) {
+        catch (TaskCanceledException)
+        {
             Logger.LogInformation("Login canceled");
         }
-        catch (OperationCanceledException) {
+        catch (OperationCanceledException)
+        {
             Logger.LogInformation("Login canceled");
         }
-        catch (Exception e) {
+        catch (Exception e)
+        {
             Logger.LogCritical("Login failed: {Message} \n", e.Message);
             Logger.LogCritical("Login failed: {StackTrace} \n", e.StackTrace);
         }
-        finally {
+        finally
+        {
             _isLoggingIn = false;
         }
     }

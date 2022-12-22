@@ -5,10 +5,10 @@
     <Authorized>
         <MudContainer Class="mt-8">
             <MudStack Spacing="16">
-                 <h1 class="ms-4">Statistics</h1>
-        
+                <h1 class="ms-4">Statistics</h1>
+
                 <MudChart ChartType="ChartType.Bar" ChartSeries="@Series" @bind-SelectedIndex="@SelectedIndex" XAxisLabels="@XAxisLabels" Width="100%" ChartOptions="@options"></MudChart>
-        
+
                 <MudTimeline TimelineOrientation="TimelineOrientation.Horizontal" TimelinePosition="TimelinePosition.Top">
                     <MudTimelineItem>
                         <MudText Align="Align.Center">Item A</MudText>
@@ -24,12 +24,16 @@
         </MudContainer>
     </Authorized>
     <NotAuthorized>
-        <Login></Login>
+        <MudContainer Class="mt-8">
+            <MudStack Spacing="4">
+                <h1 class="ms-4 mb-12">You are not logged in!</h1>
+                <MudPaper class="pa-4" Elevation="3">
+                    <div>Please click <a href="/login" style="color: yellow;">here</a> in order to get redirected to the Log In site!</div>
+                </MudPaper>
+            </MudStack>
+        </MudContainer>
     </NotAuthorized>
 </AuthorizeView>
-
-
-    
 
 
 @code {
@@ -37,7 +41,7 @@
 
     public List<ChartSeries> Series { get; private set; } = null!;
     private readonly ChartOptions options = new();
-    public string[] XAxisLabels = {};
+    public string[] XAxisLabels = { };
 
     protected override void OnInitialized()
     {
@@ -47,9 +51,9 @@
         };
 
         options.InterpolationOption = InterpolationOption.NaturalSpline;
-        // options.DisableLegend = true;
-        
-        XAxisLabels = new [] { "Jan", "Feb", "Mar", "Apr" };
+    // options.DisableLegend = true;
+
+        XAxisLabels = new[] { "Jan", "Feb", "Mar", "Apr" };
     }
 
 }
