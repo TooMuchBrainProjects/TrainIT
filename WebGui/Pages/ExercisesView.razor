@@ -98,7 +98,7 @@
         try
         {
             date = dateTime;
-            SubExercises = await SubExerciseRepository.GetSubExercisesByDate(UserService.CurrentUser!.Id, new DateOnly(date.Value.Year, date.Value.Month, date.Value.Day));
+            SubExercises = await SubExerciseRepository.GetSubexercisesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(date.Value.Year, date.Value.Month, date.Value.Day));
             StateHasChanged();
         }
         catch (Exception e)
@@ -110,7 +110,7 @@
     async Task PrevDate()
     {
         date = date.Value.AddDays(-1);
-        SubExercises = await SubExerciseRepository.GetSubExercisesByDate(UserService.CurrentUser!.Id, new DateOnly(date.Value.Year, date.Value.Month, date.Value.Day));
+        SubExercises = await SubExerciseRepository.GetSubexercisesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(date.Value.Year, date.Value.Month, date.Value.Day));
         StateHasChanged();
     }
 
@@ -119,7 +119,7 @@
         if (date.Value != maxDate.Value)
         {
             date = date.Value.AddDays(1);
-            SubExercises = await SubExerciseRepository.GetSubExercisesByDate(UserService.CurrentUser!.Id, new DateOnly(date.Value.Year, date.Value.Month, date.Value.Day));
+            SubExercises = await SubExerciseRepository.GetSubexercisesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(date.Value.Year, date.Value.Month, date.Value.Day));
             StateHasChanged();
         }
     }
@@ -134,7 +134,7 @@
         if (UserService.CurrentUser != null)
         {
             Logger.LogInformation($"UserId: {UserService.CurrentUser.Id}");
-            SubExercises = await SubExerciseRepository.GetSubExercisesByDate(UserService.CurrentUser!.Id, new DateOnly(date.Value.Year, date.Value.Month, date.Value.Day));
+            SubExercises = await SubExerciseRepository.GetSubexercisesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(date.Value.Year, date.Value.Month, date.Value.Day));
         }
     }
 

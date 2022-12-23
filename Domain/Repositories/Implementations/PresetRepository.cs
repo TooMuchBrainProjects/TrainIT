@@ -11,13 +11,36 @@ public class PresetRepository : ARepository<Preset>, IPresetRepository
     {
     }
 
-    public async Task<List<Preset>> GetPresetByUserId(int userId, CancellationToken ct = default)
+    public async Task<Preset> GetPresetById(int presetId, CancellationToken ct = default)
     {
-        return await Context.Presets
-            .Join(Context.PresetExercises, p => p.Id, eep => eep.PresetId, (p, eep) => new { p, eep })
-            .Join(Context.Exercises, eep => eep.eep.ExerciseId, e => e.Id, (eep, e) => new { eep, e })
-            .Where(result => result.e.UserId == 1)
-            .Select(result => result.eep.p)
-            .ToListAsync();
+        return await Table
+            .Where(p => p.Id == presetId)
+            .FirstAsync(cancellationToken: ct);
+    }
+
+    public async Task<List<Preset>> GetPresetsByUser(int userId, CancellationToken ct = default)
+    {
+        return await
+            (Context.Set<Preset>()
+                .Join(Context.Set<PresetExercise>(), preset => preset.Id, presetExercise => presetExercise.PresetId,
+                    (preset, presetExercise) => new { preset, PresetExercise = presetExercise })
+                .Join(Context.Set<Exercise>(), @t => @t.PresetExercise.ExerciseId, exercise => exercise.Id,
+                    (@t, exercise) => new { @t, Exercise = exercise })
+                .Where(@t => @t.Exercise.UserId == userId)
+                .Select(@t => @t.@t.preset))
+            .ToListAsync(cancellationToken: ct);
+    }
+
+    public async Task<List<Preset>> GetPresetsByExercise(int exerciseId, CancellationToken ct = default)
+    {
+        return await
+            (Context.Set<Preset>()
+                .Join(Context.Set<PresetExercise>(), preset => preset.Id, presetExercise => presetExercise.PresetId,
+                    (preset, presetExercise) => new { preset, presetExercise })
+                .Join(Context.Set<Exercise>(), @t => @t.presetExercise.ExerciseId, exercise => exercise.Id,
+                    (@t, exercise) => new { @t, exercise })
+                .Where(@t => @t.exercise.Id == exerciseId)
+                .Select(@t => @t.@t.preset))
+            .ToListAsync(cancellationToken: ct);
     }
 }

@@ -9,9 +9,7 @@ namespace Domain.Repositories.Implementations;
 
 public class UserRepository : ARepository<User>, IUserRepository
 {
-    public UserRepository(TrainITDbContext context) : base(context)
-    {
-    }
+    public UserRepository(TrainITDbContext context) : base(context) { }
     
     public async Task<User?> FindByEmailAsync(string email, CancellationToken ct = default) {
         var user = await Table
