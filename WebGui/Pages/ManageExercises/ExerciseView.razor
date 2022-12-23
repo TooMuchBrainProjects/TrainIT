@@ -1,9 +1,5 @@
 ﻿@page "/exerciseview"
 @page "/exerciseview/{WorkoutId:int?}"
-@inject UserService UserService;
-@inject IActivityRepository ActivityRepository;
-@inject IRepository<Workout> PresetRepository;
-@inject IRepository<Exercise> ExerciseRepository;
 
 <AuthorizeView>
     <Authorized>
@@ -17,13 +13,12 @@
                 {
                     <h1 class="ms-4">@Workout.Name</h1>
                 }
-
                 <MudDivider/>
             </MudStack>
 
             <DataInit Data="Exercises">
                 <ChildContent Context="exercises">
-                    <MudList Clickable="false">
+                    <MudList Clickable="true">
                         @foreach (var exercise in exercises)
                         {
                             <MudListItem>
@@ -50,20 +45,20 @@
     [Parameter]
     public int? WorkoutId { get; set; }
 
-    public Workout Workout { get; set; }
+    public Workout? Workout { get; set; }
 
     public List<Exercise> Exercises { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        if (WorkoutId != null)
+        if (WorkoutId.HasValue)
         {
-            Workout = await PresetRepository.ReadAsync(WorkoutId.Value);
-            // Exercises = await ExerciseRepository.ReadAsync(e => e.)
+            Workout = await WorkoutRepository.GetWorkoutById(WorkoutId.Value);
+            Exercises = await ExerciseRepository.GetExercisesByWorkout(WorkoutId.Value);
         }
         else
         {
-            Exercises = await ExerciseRepository.ReadAsync(e => e.UserId == UserService.CurrentUser.Id);
+            Exercises = await ExerciseRepository.GetExercisesByUser(UserService.CurrentUser!.Id);
         }
     }
 

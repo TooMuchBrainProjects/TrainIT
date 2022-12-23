@@ -20,4 +20,8 @@
       <ProjectReference Include="..\Model\Model.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Shared\Auth\AccountMenu.razor" />
+    </ItemGroup>
+
 </Project>

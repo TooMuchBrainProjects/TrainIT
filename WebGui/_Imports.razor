@@ -8,9 +8,10 @@
 @using Microsoft.AspNetCore.Components.Routing
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
-@using Microsoft.JSInterop
 @using Microsoft.AspNetCore.Components
+
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedLocalStorage ProtectedLocalStorage
 
 @using MudBlazor
 
@@ -27,7 +28,6 @@
 @using Model.Entities
 @using Model.Entities.Models
 
-
 @using WebGui
 @using WebGui.Components
 @using WebGui.Pages
@@ -37,5 +37,14 @@
 @using WebGui.Pages.ManageWorkouts
 @using WebGui.Services
 @using WebGui.Shared
-@using WebGui.Shared.Auth
 @using WebGui.Shared.Layout
+
+
+@inject UserService UserService
+@inject NavigationManager NavigationManager
+@inject IUserRepository UserRepository
+@inject IActivityRepository ActivityRepository
+@inject IWorkoutRepository WorkoutRepository
+@inject IExerciseRepository ExerciseRepository
+@inject ILogger<Login> Logger
+@inherits CancellationComponent

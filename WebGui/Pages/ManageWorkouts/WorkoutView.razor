@@ -1,6 +1,23 @@
-﻿@page "/presetview"
-<h3>Presets</h3>
+﻿@page "/workoutview"
+
+<AuthorizeView>
+    <Authorized>
+        <MudContainer Class="mt-8">
+            <MudStack Spacing="16">
+                <h1 class="ms-4">Workouts</h1>
+                
+                
+            </MudStack>
+        </MudContainer>
+    </Authorized>
+</AuthorizeView>
 
 @code {
-    
+    public IList<Workout> Workouts { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Workouts = await WorkoutRepository.GetWorkoutsByUser(UserService.CurrentUser!.Id);
+    }
+
 }

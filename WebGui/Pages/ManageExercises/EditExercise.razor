@@ -1,15 +1,11 @@
-﻿@page "/editexercise"
-@inject UserService UserService
-@inject ILogger<Login> Logger
-@inherits CancellationComponent
-@inject IRepository<Exercise> ExerciseRepository
-
+﻿@page "/editexercise/{ExerciseId:int}"
 
 <AuthorizeView>
     <Authorized>
         <MudContainer Class="mt-8">
             <MudStack Spacing="16">
                 <h1 class="ms-4">New exercise</h1>
+                <MudDivider/>
                 <MudGrid Style="width: 100%;margin: 0">
                     <MudItem xs="12">
                         <MudPaper Class="pa-4">
@@ -49,7 +45,7 @@
             </MudStack>
         </MudContainer>
         <div Style="position: fixed; bottom: 9vh; right: 2vh; display: grid; gap: 1rem;">
-            <a href="/allexercises">
+            <a href="/exerciseview">
                 <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Check"/>
             </a>
         </div>
@@ -66,8 +62,11 @@
     string? _error;
 
     bool _isShow;
+    
+    [Parameter]
+    public int ExerciseId { get; set; }
 
-    Exercise Exercise { get; set; } = new();
+    Exercise Exercise { get; set; }
 
     async void TryAdd(KeyboardEventArgs e)
     {
@@ -93,6 +92,11 @@
         {
             _isExercise = false;
         }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Exercise = await ExerciseRepository.GetExerciseById(ExerciseId);
     }
 
 }

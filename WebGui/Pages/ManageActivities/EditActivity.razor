@@ -1,10 +1,4 @@
 ﻿@page "/editactivity/{ActivityId:int}"
-@inject UserService UserService
-@inject ILogger<Login> Logger
-@inherits CancellationComponent
-@inject IActivityRepository ActivityRepository
-@inject IExerciseRepository ExerciseRepository
-
 
 <AuthorizeView>
     <Authorized>
