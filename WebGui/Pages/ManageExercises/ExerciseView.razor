@@ -45,9 +45,9 @@
     [Parameter]
     public int? WorkoutId { get; set; }
 
-    public Workout? Workout { get; set; }
+    Workout? Workout { get; set; }
 
-    public List<Exercise> Exercises { get; set; }
+    List<Exercise> Exercises { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {

@@ -20,21 +20,21 @@
 
 @code {
 
-    public bool _isDarkMode;
-    private MudThemeProvider _mudThemeProvider;
+    bool _isDarkMode;
+    private MudThemeProvider? _mudThemeProvider;
 
-    public async void ToggleDarkMode(bool? ChangedDarkMode)
+    public async void ToggleDarkMode(bool? changedDarkMode)
     {
-        if (ChangedDarkMode.HasValue)
+        if (changedDarkMode.HasValue)
         {
-            _isDarkMode = ChangedDarkMode.Value;
+            _isDarkMode = changedDarkMode.Value;
         }
         else
         {
-            _isDarkMode = await _mudThemeProvider.GetSystemPreference();
+            _isDarkMode = await _mudThemeProvider!.GetSystemPreference();
         }
         StateHasChanged();
-        await ProtectedLocalStorage.SetAsync("DarkMode", ChangedDarkMode);
+        await ProtectedLocalStorage.SetAsync("DarkMode", changedDarkMode!);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -44,7 +44,7 @@
 
         var darkModeResult = await ProtectedLocalStorage.GetAsync<bool?>("DarkMode");
 
-        _isDarkMode = await _mudThemeProvider.GetSystemPreference();
+        _isDarkMode = await _mudThemeProvider!.GetSystemPreference();
         if (darkModeResult.Success && darkModeResult.Value.HasValue)
         {
             _isDarkMode = darkModeResult.Value.Value;

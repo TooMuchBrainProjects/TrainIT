@@ -70,9 +70,9 @@
 
     bool _isShow;
 
-    Activity Activity { get; set; }
+    Activity Activity { get; set; } = null!;
 
-    Exercise Exercise { get; set; }
+    Exercise Exercise { get; set; } = null!;
 
     [Parameter]
     public int ActivityId { get; set; }

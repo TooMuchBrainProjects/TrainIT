@@ -8,12 +8,12 @@
 
                 <MudCardActions>
                     <MudIconButton OnClick="PrevDate" Icon="@Icons.Material.Filled.ArrowBackIos" aria-label="previous day"></MudIconButton>
-                    <MudDatePicker Label="Choose date" @ref="_picker" Date="date" DateChanged="HandleDateChangeAsync" AutoClose="true" MaxDate="@maxDate" class="mx-4">
+                    <MudDatePicker Label="Choose date" @ref="_picker" Date="_date" DateChanged="HandleDateChangeAsync" AutoClose="true" MaxDate="@_maxDate" class="mx-4">
                         <PickerActions Context="_">
                             <MudButton Class="mr-auto align-self-start" OnClick="Today">Today</MudButton>
                         </PickerActions>
                     </MudDatePicker>
-                    <MudIconButton OnClick="NextDate" Icon="@Icons.Material.Filled.ArrowForwardIos" Disabled="@nextButtonDisabled" aria-label="next day"></MudIconButton>
+                    <MudIconButton OnClick="NextDate" Icon="@Icons.Material.Filled.ArrowForwardIos" Disabled="@_nextButtonDisabled" aria-label="next day"></MudIconButton>
                 </MudCardActions>
                 <MudDivider/>
             </MudStack>
@@ -65,35 +65,28 @@
 
 
 @code {
-    MudDatePicker _picker;
-    DateTime date = DateTime.Today;
-    DateTime maxDate = DateTime.Today;
-    bool nextButtonDisabled = false;
+    MudDatePicker? _picker;
+    DateTime _date = DateTime.Today;
+    readonly DateTime _maxDate = DateTime.Today;
+    bool _nextButtonDisabled = false;
 
-    public List<Activity> Activities { get; set; } = null!;
+    List<Activity> Activities { get; set; } = null!;
 
     private async Task Today()
     {
-        await _picker.GoToDate(DateTime.Today);
+        await _picker!.GoToDate(DateTime.Today);
         _picker.Close();
     }
 
-    async void HandleDateChangeAsync(DateTime? dateTime)
+    async Task HandleDateChangeAsync(DateTime? dateTime)
     {
         try
         {
-            date = dateTime!.Value;
+            _date = dateTime!.Value;
             
-            if (date == maxDate)
-            {
-                nextButtonDisabled = true;
-            }
-            else
-            {
-                nextButtonDisabled = false;
-            }
+            _nextButtonDisabled = _date == _maxDate;
             
-            Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(date.Year, date.Month, date.Day));
+            Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(_date.Year, _date.Month, _date.Day));
             StateHasChanged();
         }
         catch (Exception e)
@@ -104,28 +97,29 @@
 
     async Task PrevDate()
     {
-        HandleDateChangeAsync(date.AddDays(-1));
+        await HandleDateChangeAsync(_date.AddDays(-1));
     }
 
     async Task NextDate()
     {
-        HandleDateChangeAsync(date.AddDays(1));
+        await HandleDateChangeAsync(_date.AddDays(1));
     }
 
     async Task EditActivity()
     {
+        
     }
 
     protected override async Task OnInitializedAsync()
     {
         if (UserService.CurrentUser != null)
         {
-            Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(date.Year, date.Month, date.Day));
+            Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(_date.Year, _date.Month, _date.Day));
         }
 
-        if (date == maxDate)
+        if (_date == _maxDate)
         {
-            nextButtonDisabled = true;
+            _nextButtonDisabled = true;
         }
     }
 }

@@ -66,7 +66,7 @@
     [Parameter]
     public int ExerciseId { get; set; }
 
-    Exercise Exercise { get; set; }
+    Exercise Exercise { get; set; } = null!;
 
     async void TryAdd(KeyboardEventArgs e)
     {
@@ -79,8 +79,8 @@
         try
         {
             if (!await _form.IsFormValidAsync()) return;
-            Exercise.User = UserService.CurrentUser;
-            Exercise.UserId = UserService.CurrentUser.Id;
+            Exercise.User = UserService.CurrentUser!;
+            Exercise.UserId = UserService.CurrentUser!.Id;
             await ExerciseRepository.CreateAsync(Exercise);
             _isExercise = true;
         }

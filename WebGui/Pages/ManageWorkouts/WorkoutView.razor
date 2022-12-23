@@ -13,7 +13,7 @@
 </AuthorizeView>
 
 @code {
-    public IList<Workout> Workouts { get; set; }
+    IList<Workout> Workouts { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
