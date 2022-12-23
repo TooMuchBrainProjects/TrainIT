@@ -1,15 +1,17 @@
-﻿@page "/NewExercise"
+﻿@page "/editactivity/{ActivityId:int}"
 @inject UserService UserService
 @inject ILogger<Login> Logger
 @inherits CancellationComponent
-@inject IRepository<Exercise> ExerciseRepository
+@inject IActivityRepository ActivityRepository
+@inject IExerciseRepository ExerciseRepository
 
 
 <AuthorizeView>
     <Authorized>
         <MudContainer Class="mt-8">
             <MudStack Spacing="16">
-                <h1 class="ms-4">New exercise</h1>
+                <h1 class="ms-4">Edit Exercise</h1>
+
                 <MudGrid Style="width: 100%;margin: 0">
                     <MudItem xs="12">
                         <MudPaper Class="pa-4">
@@ -21,26 +23,33 @@
                                             @(_error)
                                         </MudAlert>
                                     }
+                                    <div>
+                                        <b>Name: </b>@Exercise.Name
+                                    </div>
+                                    <div>
+                                        <b>Machine: </b>@Exercise.Machine
+                                    </div>
+                                    <div>
+                                        <b>Description: </b>@Exercise.Description
+                                    </div>
                                     <MudTextField
-                                        T="string"
+                                        T="decimal"
                                         InputMode="InputMode.text" InputType="InputType.Text" Immediate="true"
-                                        Counter="100" MaxLength="100"
-                                        Label="Name"
-                                        @bind-Value="Exercise.Name"
-                                        For="() => Exercise.Name"/>
+                                        Label="Weight"
+                                        @bind-Value="Activity.Weight"
+                                        For="() => Activity.Weight"/>
                                     <MudTextField
-                                        T="string"
+                                        T="int"
                                         InputMode="InputMode.text" InputType="InputType.Text" Immediate="true"
-                                        Counter="100" MaxLength="100"
-                                        Label="Machine"
-                                        @bind-Value="Exercise.Machine"
-                                        For="() => Exercise.Machine"/>
+                                        Label="Set"
+                                        @bind-Value="Activity.Set"
+                                        For="() => Activity.Set"/>
                                     <MudTextField
-                                        T="string"
+                                        T="int"
                                         InputMode="InputMode.text" InputType="InputType.Text" Immediate="true"
-                                        Label="Description"
-                                        @bind-Value="Exercise.Description"
-                                        For="() => Exercise.Description"/>
+                                        Label="Repetition"
+                                        @bind-Value="Activity.Repetition"
+                                        For="() => Activity.Repetition"/>
                                 </MudForm>
                             </div>
                         </MudPaper>
@@ -49,10 +58,10 @@
             </MudStack>
         </MudContainer>
         <div Style="position: fixed; bottom: 9vh; right: 2vh; display: grid; gap: 1rem;">
-                    <a href="/allexercises">
-                        <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Check"/>
-                    </a>
-                </div> 
+            <a href="/activityview">
+                <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Check"/>
+            </a>
+        </div>
     </Authorized>
     <NotAuthorized>
 
@@ -67,7 +76,12 @@
 
     bool _isShow;
 
-    Exercise Exercise { get; set; } = new();
+    Activity Activity { get; set; }
+
+    Exercise Exercise { get; set; }
+
+    [Parameter]
+    public int ActivityId { get; set; }
 
     async void TryAdd(KeyboardEventArgs e)
     {
@@ -80,9 +94,6 @@
         try
         {
             if (!await _form.IsFormValidAsync()) return;
-            Exercise.User = UserService.CurrentUser;
-            Exercise.UserId = UserService.CurrentUser.Id;
-            await ExerciseRepository.CreateAsync(Exercise);
             _isExercise = true;
         }
         catch (Exception e)
@@ -93,6 +104,12 @@
         {
             _isExercise = false;
         }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Activity = await ActivityRepository.GetActivityById(ActivityId);
+        Exercise = await ExerciseRepository.GetExerciseByActivity(ActivityId);
     }
 
 }

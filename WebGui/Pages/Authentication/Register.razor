@@ -1,15 +1,13 @@
 ﻿@page "/register"
 @inject UserService UserService
 @inject ILogger<Login> Logger
-@using Domain.Exceptions
-@using Model.Entities.Models
-@using WebGui.Services
 @inherits CancellationComponent
 
 
 <MudContainer Class="mt-8">
     <MudStack Spacing="4">
         <h1 class="ms-4 mb-12">Sign Up</h1>
+        
         <div @onkeydown="@TryRegister">
             <MudForm @ref="_form">
                 @if (_error is not null)

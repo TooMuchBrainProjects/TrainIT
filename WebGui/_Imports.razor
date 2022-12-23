@@ -12,17 +12,30 @@
 @using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 
-@using WebGui
 @using MudBlazor
 
+@using Domain
+@using Domain.Exceptions
+@using Domain.Extensions
+@using Domain.Repositories
+@using Domain.Repositories.Implementations
+@using Domain.Repositories.Interfaces
+
+@using Model
+@using Model.Configurations
+@using Model.Entities
+@using Model.Entities
+@using Model.Entities.Models
+
+
+@using WebGui
 @using WebGui.Components
+@using WebGui.Pages
+@using WebGui.Pages.Authentication
+@using WebGui.Pages.ManageActivities
+@using WebGui.Pages.ManageExercises
+@using WebGui.Pages.ManageWorkouts
+@using WebGui.Services
 @using WebGui.Shared
 @using WebGui.Shared.Auth
 @using WebGui.Shared.Layout
-
-@using View.Services
-
-
-@using Domain.Repositories.Interfaces
-@using Domain.Extensions
-@using Model.Entities

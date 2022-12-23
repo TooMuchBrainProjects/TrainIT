@@ -1,24 +1,21 @@
-﻿@page "/allexercises"
-@page "/allexercises/{PresetId:int?}"
-@using Model.Entities
-@using Domain.Repositories.Interfaces
-@using WebGui.Services
+﻿@page "/exerciseview"
+@page "/exerciseview/{WorkoutId:int?}"
 @inject UserService UserService;
-@inject ISubExerciseRepository SubExerciseRepository;
-@inject IRepository<Preset> PresetRepository;
+@inject IActivityRepository ActivityRepository;
+@inject IRepository<Workout> PresetRepository;
 @inject IRepository<Exercise> ExerciseRepository;
 
 <AuthorizeView>
     <Authorized>
         <MudContainer Class="mt-8">
             <MudStack Spacing="16">
-                @if (Preset == null)
+                @if (Workout == null)
                 {
                     <h1 class="ms-4">All Exercises</h1>
                 }
                 else
                 {
-                    <h1 class="ms-4">@Preset.Name</h1>
+                    <h1 class="ms-4">@Workout.Name</h1>
                 }
 
                 <MudDivider/>
@@ -39,7 +36,7 @@
         </MudContainer>
 
         <div Style="position: fixed; bottom: 9vh; right: 2vh;">
-            <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Check" OnClick="AddSubExercises"/>
+            <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Check" OnClick="AddActivities"/>
         </div>
     </Authorized>
     <NotAuthorized>
@@ -51,18 +48,18 @@
 @code {
 
     [Parameter]
-    public int? PresetId { get; set; }
+    public int? WorkoutId { get; set; }
 
-    public Preset Preset { get; set; }
+    public Workout Workout { get; set; }
 
     public List<Exercise> Exercises { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        if (PresetId != null)
+        if (WorkoutId != null)
         {
-            Preset = await PresetRepository.ReadAsync(PresetId.Value);
-    // Exercises = await ExerciseRepository.ReadAsync(e => e.)
+            Workout = await PresetRepository.ReadAsync(WorkoutId.Value);
+            // Exercises = await ExerciseRepository.ReadAsync(e => e.)
         }
         else
         {
@@ -70,9 +67,9 @@
         }
     }
 
-    public void AddSubExercises()
+    public void AddActivities()
     {
-    // Exercises = Exercises.Where(e => e.IsSelected == true).ToList();
+        // Exercises = Exercises.Where(e => e.IsSelected == true).ToList();
     }
 
 }

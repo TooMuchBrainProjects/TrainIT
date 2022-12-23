@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Model.Entities;
 
-[Table("SUB_EXERCISES")]
-public class SubExercise
+[Table("ACTIVITIES")]
+public class Activity
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    [Column("SUB_EXERCISE_ID")]
+    [Column("ACTIVITY_ID")]
     public int Id { get; set; }
 
     [Required]

@@ -19,82 +19,12 @@ namespace Model.Migrations
                 .HasAnnotation("ProductVersion", "6.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("Model.Entities.Exercise", b =>
+            modelBuilder.Entity("Model.Entities.Activity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("EXERCISE_ID");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("DESCRIPTION");
-
-                    b.Property<string>("Machine")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)")
-                        .HasColumnName("MACHINE");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)")
-                        .HasColumnName("NAME");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("USER_ID");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("EXERCISES");
-                });
-
-            modelBuilder.Entity("Model.Entities.Preset", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("PRESET_ID");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)")
-                        .HasColumnName("NAME");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PRESETS");
-                });
-
-            modelBuilder.Entity("Model.Entities.PresetExercise", b =>
-                {
-                    b.Property<int>("ExerciseId")
-                        .HasColumnType("int")
-                        .HasColumnName("EXERCISE_ID");
-
-                    b.Property<int>("PresetId")
-                        .HasColumnType("int")
-                        .HasColumnName("PRESET_ID");
-
-                    b.HasKey("ExerciseId", "PresetId");
-
-                    b.HasIndex("PresetId");
-
-                    b.ToTable("PRESET_HAS_EXERCISES_JT");
-                });
-
-            modelBuilder.Entity("Model.Entities.SubExercise", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("SUB_EXERCISE_ID");
+                        .HasColumnName("ACTIVITY_ID");
 
                     b.Property<DateOnly>("DateValue")
                         .HasColumnType("date")
@@ -120,7 +50,42 @@ namespace Model.Migrations
 
                     b.HasIndex("ExerciseId");
 
-                    b.ToTable("SUB_EXERCISES");
+                    b.ToTable("ACTIVITIES");
+                });
+
+            modelBuilder.Entity("Model.Entities.Exercise", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("EXERCISE_ID");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("DESCRIPTION");
+
+                    b.Property<string>("Machine")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("MACHINE");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("NAME");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("USER_ID");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("EXERCISES");
                 });
 
             modelBuilder.Entity("Model.Entities.User", b =>
@@ -155,6 +120,52 @@ namespace Model.Migrations
                     b.ToTable("USERS");
                 });
 
+            modelBuilder.Entity("Model.Entities.Workout", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("WORKOUT_ID");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("NAME");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WORKOUTS");
+                });
+
+            modelBuilder.Entity("Model.Entities.WorkoutExercise", b =>
+                {
+                    b.Property<int>("ExerciseId")
+                        .HasColumnType("int")
+                        .HasColumnName("EXERCISE_ID");
+
+                    b.Property<int>("WorkoutId")
+                        .HasColumnType("int")
+                        .HasColumnName("WORKOUT_ID");
+
+                    b.HasKey("ExerciseId", "WorkoutId");
+
+                    b.HasIndex("WorkoutId");
+
+                    b.ToTable("WORKOUT_HAS_EXERCISES_JT");
+                });
+
+            modelBuilder.Entity("Model.Entities.Activity", b =>
+                {
+                    b.HasOne("Model.Entities.Exercise", "Exercise")
+                        .WithMany()
+                        .HasForeignKey("ExerciseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Exercise");
+                });
+
             modelBuilder.Entity("Model.Entities.Exercise", b =>
                 {
                     b.HasOne("Model.Entities.User", "User")
@@ -166,7 +177,7 @@ namespace Model.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Model.Entities.PresetExercise", b =>
+            modelBuilder.Entity("Model.Entities.WorkoutExercise", b =>
                 {
                     b.HasOne("Model.Entities.Exercise", "Exercise")
                         .WithMany()
@@ -174,26 +185,15 @@ namespace Model.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Model.Entities.Preset", "Preset")
+                    b.HasOne("Model.Entities.Workout", "Workout")
                         .WithMany()
-                        .HasForeignKey("PresetId")
+                        .HasForeignKey("WorkoutId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Exercise");
 
-                    b.Navigation("Preset");
-                });
-
-            modelBuilder.Entity("Model.Entities.SubExercise", b =>
-                {
-                    b.HasOne("Model.Entities.Exercise", "Exercise")
-                        .WithMany()
-                        .HasForeignKey("ExerciseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Exercise");
+                    b.Navigation("Workout");
                 });
 #pragma warning restore 612, 618
         }

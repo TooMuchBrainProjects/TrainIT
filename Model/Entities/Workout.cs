@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Model.Entities;
 
-[Table("PRESETS")]
-public class Preset
+[Table("WORKOUTS")]
+public class Workout
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    [Column("PRESET_ID")]
+    [Column("WORKOUT_ID")]
     public int Id { get; set; }
     
     [Required, StringLength(100)]

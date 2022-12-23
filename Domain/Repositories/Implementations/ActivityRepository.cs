@@ -5,19 +5,19 @@ using Model.Entities;
 
 namespace Domain.Repositories.Implementations;
 
-public class SubExerciseRepository : ARepository<SubExercise>, ISubExerciseRepository
+public class ActivityRepository : ARepository<Activity>, IActivityRepository
 {
-    public SubExerciseRepository(TrainITDbContext context) : base(context) { }
+    public ActivityRepository(TrainITDbContext context) : base(context) { }
 
 
-    public async Task<SubExercise> GetSubexerciseById(int subexerciseId, CancellationToken ct = default)
+    public async Task<Activity> GetActivityById(int subexerciseId, CancellationToken ct = default)
     {
         return await Table
             .Where(s => s.Id == subexerciseId)
             .FirstAsync(cancellationToken: ct);
     }
 
-    public async Task<List<SubExercise>> GetSubexercisesByUser(int userId, CancellationToken ct = default)
+    public async Task<List<Activity>> GetActivitiesByUser(int userId, CancellationToken ct = default)
     {
         return await Table
             .Include(s => s.Exercise)
@@ -25,7 +25,7 @@ public class SubExerciseRepository : ARepository<SubExercise>, ISubExerciseRepos
             .ToListAsync(cancellationToken: ct);
     }
 
-    public async Task<List<SubExercise>> GetSubexercisesByDate(DateOnly date, CancellationToken ct = default)
+    public async Task<List<Activity>> GetActivitiesByDate(DateOnly date, CancellationToken ct = default)
     {
         return await Table
             .Include(s => s.Exercise)
@@ -33,7 +33,7 @@ public class SubExerciseRepository : ARepository<SubExercise>, ISubExerciseRepos
             .ToListAsync(cancellationToken: ct);
     }
 
-    public async Task<List<SubExercise>> GetSubexercisesByUserByDate(int userId, DateOnly date, CancellationToken ct = default)
+    public async Task<List<Activity>> GetActivitiesByUserByDate(int userId, DateOnly date, CancellationToken ct = default)
     {
         return await Table
             .Include(s => s.Exercise)

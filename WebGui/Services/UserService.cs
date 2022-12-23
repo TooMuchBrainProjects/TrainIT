@@ -3,9 +3,8 @@ using Domain.Repositories.Interfaces;
 using Microsoft.AspNetCore.Components.Authorization;
 using Model.Entities;
 using Model.Entities.Models;
-using WebGui.Services;
 
-namespace View.Services;
+namespace WebGui.Services;
 
 public class UserService {
     private readonly CustomAuthStateProvider _authenticationStateProvider;

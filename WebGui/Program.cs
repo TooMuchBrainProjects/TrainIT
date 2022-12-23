@@ -8,7 +8,6 @@ using Model.Configurations;
 using Model.Entities;
 using WebGui.Data;
 using MudBlazor.Services;
-using View.Services;
 using WebGui.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,9 +34,9 @@ builder.Services.AddMudServices();
 
 // Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IRepository<Exercise>, ExerciseRepository>();
-builder.Services.AddScoped<ISubExerciseRepository, SubExerciseRepository>();
-builder.Services.AddScoped<IRepository<Preset>, PresetRepository>();
+builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
+builder.Services.AddScoped<IWorkoutRepository, WorkoutRepository>();
+builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
 
 builder.Services.AddLogging(); // the default Logger
 
