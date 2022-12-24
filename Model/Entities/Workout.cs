@@ -13,4 +13,8 @@ public class Workout
     [Required, StringLength(100)]
     [Column("NAME")] 
     public string Name { get; set; }
+    
+    [DataType(DataType.Text)]
+    [Column("DESCRIPTION")]
+    public string Description { get; set; }
 }

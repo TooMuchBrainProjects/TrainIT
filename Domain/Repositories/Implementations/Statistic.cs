@@ -85,12 +85,12 @@ public class Statistic : IStatistic
         return Series;
     }
 
-    public string[] GetDatesToString()
+    public List<string> GetDatesToString()
     {
-        return Dates.ToArray();
+        return Dates;
     }
 
-    public string[] GenerateTrainingDays(IActivityRepository activityRepository, int userId)
+    public List<string> GenerateTrainingDays(IActivityRepository activityRepository, int userId)
     {
         activityRepository.GetActivitiesByUser(userId);
         throw new NotImplementedException();

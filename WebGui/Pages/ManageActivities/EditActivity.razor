@@ -1,75 +1,62 @@
-﻿@page "/editactivity/{ActivityId:int}"
+﻿@page "/editactivity/{SelectedDate:datetime}/{ActivityId:int}"
 
 <AuthorizeView>
     <Authorized>
         <MudContainer Class="mt-8">
-            <MudStack Spacing="16">
-                <h1 class="ms-4">Edit Exercise</h1>
+            <MudStack Spacing="4">
+                <h1 class="ms-4 mb-12">Edit Activity</h1>
 
-                <MudGrid Style="width: 100%;margin: 0">
-                    <MudItem xs="12">
-                        <MudPaper Class="pa-4">
-                            <div @onkeydown="@TryAdd">
-                                <MudForm @ref="_form">
-                                    @if (_error is not null)
-                                    {
-                                        <MudAlert Severity="Severity.Error" ShowCloseIcon="true" CloseIconClicked="() => _error = null">
-                                            @(_error)
-                                        </MudAlert>
-                                    }
-                                    <div>
-                                        <b>Name: </b>@Exercise.Name
-                                    </div>
-                                    <div>
-                                        <b>Machine: </b>@Exercise.Machine
-                                    </div>
-                                    <div>
-                                        <b>Description: </b>@Exercise.Description
-                                    </div>
-                                    <MudTextField
-                                        T="decimal"
-                                        InputMode="InputMode.text" InputType="InputType.Text" Immediate="true"
-                                        Label="Weight"
-                                        @bind-Value="Activity.Weight"
-                                        For="() => Activity.Weight"/>
-                                    <MudTextField
-                                        T="int"
-                                        InputMode="InputMode.text" InputType="InputType.Text" Immediate="true"
-                                        Label="Set"
-                                        @bind-Value="Activity.Set"
-                                        For="() => Activity.Set"/>
-                                    <MudTextField
-                                        T="int"
-                                        InputMode="InputMode.text" InputType="InputType.Text" Immediate="true"
-                                        Label="Repetition"
-                                        @bind-Value="Activity.Repetition"
-                                        For="() => Activity.Repetition"/>
-                                </MudForm>
-                            </div>
+                <MudForm>
+                    <MudStack Spacing="4">
+                        <MudPaper class="pa-4" Elevation="3">
+                            <MudStack Spacing="3">
+
+                                <MudTextField @bind-Value="Exercise.Name" Label="Name" Variant="Variant.Outlined"
+                                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.TextFormat" AdornmentColor="Color.Secondary"
+                                              Counter="100" MaxLength="100"
+                                              Immediate="true"/>
+                                <MudTextField @bind-Value="Exercise.Machine" Label="Machine" Variant="Variant.Outlined"
+                                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.FitnessCenter" AdornmentColor="Color.Secondary"
+                                              Counter="100" MaxLength="100"
+                                              Immediate="true"/>
+                                <MudTextField @bind-Value="Exercise.Description" Label="Description" Variant="Variant.Outlined"
+                                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.Description" AdornmentColor="Color.Secondary"
+                                              Immediate="true"
+                                              Lines="3"/>
+                            </MudStack>
                         </MudPaper>
-                    </MudItem>
-                </MudGrid>
+                        <MudPaper class="pa-4" Elevation="3">
+                            <MudStack Spacing="3">
+                                <MudTextField @bind-Value="Activity.Weight" Label="Weight" Variant="Variant.Outlined"
+                                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.MonitorWeight" AdornmentColor="Color.Secondary"
+                                              InputMode="InputMode.numeric" InputType="InputType.Text"
+                                              Immediate="true"/>
+                                <MudTextField @bind-Value="Activity.Set" Label="Set" Variant="Variant.Outlined"
+                                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.MonitorWeight" AdornmentColor="Color.Secondary"
+                                              InputMode="InputMode.numeric" InputType="InputType.Text"
+                                              Immediate="true"/>
+                                <MudTextField @bind-Value="Activity.Repetition" Label="Repetition" Variant="Variant.Outlined"
+                                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.MonitorWeight" AdornmentColor="Color.Secondary"
+                                              InputMode="InputMode.numeric" InputType="InputType.Text"
+                                              Immediate="true"/>
+                            </MudStack>
+                        </MudPaper>
+                    </MudStack>
+                </MudForm>
+
             </MudStack>
         </MudContainer>
         <div Style="position: fixed; bottom: 9vh; right: 2vh; display: grid; gap: 1rem;">
-            <a href="/activityview">
-                <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Check"/>
-            </a>
+            <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Check" OnClick="SaveActivityChanges"/>
         </div>
     </Authorized>
-    <NotAuthorized>
-
-    </NotAuthorized>
 </AuthorizeView>
 
 
 @code {
-    bool _isExercise;
-    MudForm _form = null!;
-    string? _error;
-
-    bool _isShow;
-
+    [Parameter]
+    public DateTime SelectedDate { get; set; }
+    
     Activity Activity { get; set; } = null!;
 
     Exercise Exercise { get; set; } = null!;
@@ -77,27 +64,11 @@
     [Parameter]
     public int ActivityId { get; set; }
 
-    async void TryAdd(KeyboardEventArgs e)
+    async Task SaveActivityChanges()
     {
-        if (e.Code is "Enter" or "NumpadEnter")
-            await HandleNewExerciseAsync();
-    }
-
-    async Task HandleNewExerciseAsync()
-    {
-        try
-        {
-            if (!await _form.IsFormValidAsync()) return;
-            _isExercise = true;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e.Message);
-        }
-        finally
-        {
-            _isExercise = false;
-        }
+        await ActivityRepository.UpdateAsync(Activity);
+        await ExerciseRepository.UpdateAsync(Exercise);
+        NavigationManager.NavigateTo($"/activityview/{SelectedDate:yyyy-MM-dd}");
     }
 
     protected override async Task OnInitializedAsync()

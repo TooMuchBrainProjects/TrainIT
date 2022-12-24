@@ -1,4 +1,5 @@
 ﻿@page "/activityview"
+@page "/activityview/{SelectedDate:datetime?}"
 
 <AuthorizeView>
     <Authorized>
@@ -23,7 +24,7 @@
                     <MudList Clickable="true">
                         @foreach (var activity in activities)
                         {
-                            <MudListItem OnClick="EditActivity">
+                            <MudListItem OnClick="() => EditActivity(activity.Id)">
                                 <MudGrid>
                                     <MudItem xs="9">
                                         @activity.Exercise.Name
@@ -43,12 +44,8 @@
         </MudContainer>
 
         <div Style="position: fixed; bottom: 9vh; right: 2vh; display: grid; gap: 1rem;">
-            <a href="/workoutview">
-                <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.FilterList"/>
-            </a>
-            <a href="/exerciseview">
-                <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.PlusOne"/>
-            </a>
+            <MudFab OnClick="NavigateToWorkoutView" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.FilterList"/>
+            <MudFab OnClick="NavigateToExerciseView" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.PlusOne"/>
         </div>
     </Authorized>
     <NotAuthorized>
@@ -65,6 +62,9 @@
 
 
 @code {
+    [Parameter]
+    public DateTime? SelectedDate { get; set; }
+    
     MudDatePicker? _picker;
     DateTime _date = DateTime.Today;
     readonly DateTime _maxDate = DateTime.Today;
@@ -105,9 +105,19 @@
         await HandleDateChangeAsync(_date.AddDays(1));
     }
 
-    async Task EditActivity()
+    async Task EditActivity(int activityId)
     {
-        
+        NavigationManager.NavigateTo($"/editactivity/{_date:yyyy-MM-dd}/{activityId}");
+    }
+
+    private void NavigateToWorkoutView()
+    {
+        NavigationManager.NavigateTo($"/workoutview/{_date:yyyy-MM-dd}");
+    }
+
+    private void NavigateToExerciseView()
+    {
+        NavigationManager.NavigateTo($"/exerciseview/{_date:yyyy-MM-dd}");
     }
 
     protected override async Task OnInitializedAsync()
@@ -121,5 +131,11 @@
         {
             _nextButtonDisabled = true;
         }
+
+        if (SelectedDate.HasValue)
+        {
+            _date = SelectedDate.Value;
+        }
     }
+
 }

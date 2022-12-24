@@ -18,23 +18,23 @@ public class ExerciseRepository : ARepository<Exercise>, IExerciseRepository
             .FirstAsync(cancellationToken: ct);
     }
 
-    public async Task<Exercise> GetExerciseByActivity(int subExerciseId, CancellationToken ct = default)
+    public async Task<Exercise> GetExerciseByActivity(int activityId, CancellationToken ct = default)
     {
         return await Context.Set<Exercise>()
-            .Join(Context.Set<Activity>(), exercise => exercise.Id, subExercise => subExercise.ExerciseId,
-                (exercise, subExercise) => new { exercise, subExercise })
-            .Where(@t => @t.subExercise.Id == subExerciseId)
+            .Join(Context.Set<Activity>(), exercise => exercise.Id, activity => activity.ExerciseId,
+                (exercise, activity) => new { exercise, activity = activity })
+            .Where(@t => @t.activity.Id == activityId)
             .Select(@t => @t.exercise)
             .FirstAsync(cancellationToken: ct);
     }
 
-    public async Task<List<Exercise>> GetExercisesByActivities(IEnumerable<int> subExerciseIds,
+    public async Task<List<Exercise>> GetExercisesByActivities(IEnumerable<int> activityIds,
         CancellationToken ct = default)
     {
         return await Context.Set<Exercise>()
-            .Join(Context.Set<Activity>(), exercise => exercise.Id, subExercise => subExercise.ExerciseId,
-                (exercise, subExercise) => new { exercise, subExercise })
-            .Where(@t => subExerciseIds.Contains(@t.subExercise.Id))
+            .Join(Context.Set<Activity>(), exercise => exercise.Id, activity => activity.ExerciseId,
+                (exercise, activity) => new { exercise, activity = activity })
+            .Where(@t => activityIds.Contains(@t.activity.Id))
             .Select(@t => @t.exercise)
             .ToListAsync(cancellationToken: ct);
     }
@@ -51,11 +51,11 @@ public class ExerciseRepository : ARepository<Exercise>, IExerciseRepository
     {
         return await Context.Set<Exercise>()
             .Join(Context.Set<WorkoutExercise>(), exercise => exercise.Id,
-                presetExercise => presetExercise.ExerciseId,
-                (exercise, presetExercise) => new { exercise, presetExercise })
-            .Join(Context.Set<Workout>(), @t => @t.presetExercise.ExerciseId, preset => preset.Id,
-                (@t, preset) => new { @t, preset })
-            .Where(@t => @t.preset.Id == workoutId)
+                workoutExercise => workoutExercise.ExerciseId,
+                (exercise, workoutExercise) => new { exercise, workoutExercise = workoutExercise })
+            .Join(Context.Set<Workout>(), @t => @t.workoutExercise.ExerciseId, workout => workout.Id,
+                (@t, workout) => new { @t, workout = workout })
+            .Where(@t => @t.workout.Id == workoutId)
             .Select(@t => @t.@t.exercise)
             .ToListAsync(cancellationToken: ct);
     }
@@ -65,11 +65,11 @@ public class ExerciseRepository : ARepository<Exercise>, IExerciseRepository
     {
         return await Context.Set<Exercise>()
             .Join(Context.Set<WorkoutExercise>(), exercise => exercise.Id,
-                presetExercise => presetExercise.ExerciseId,
-                (exercise, presetExercise) => new { exercise, presetExercise })
-            .Join(Context.Set<Workout>(), @t => @t.presetExercise.ExerciseId, preset => preset.Id,
-                (@t, preset) => new { @t, preset })
-            .Where(@t => @t.preset.Id == workoutId)
+                workoutExercise => workoutExercise.ExerciseId,
+                (exercise, workoutExercise) => new { exercise, workoutExercise = workoutExercise })
+            .Join(Context.Set<Workout>(), @t => @t.workoutExercise.ExerciseId, workout => workout.Id,
+                (@t, workout) => new { @t, workout = workout })
+            .Where(@t => @t.workout.Id == workoutId)
             .Where(@t => @t.@t.exercise.UserId == userId)
             .Select(@t => @t.@t.exercise)
             .ToListAsync(cancellationToken: ct);

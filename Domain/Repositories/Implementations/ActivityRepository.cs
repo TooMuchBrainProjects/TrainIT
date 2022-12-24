@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Model.Configurations;
 using Model.Entities;
+using MudBlazor;
 
 namespace Domain.Repositories.Implementations;
 
@@ -39,5 +40,21 @@ public class ActivityRepository : ARepository<Activity>, IActivityRepository
             .Include(s => s.Exercise)
             .Where(s => s.Exercise.UserId == userId && s.DateValue == date)
             .ToListAsync(cancellationToken: ct);
+    }
+
+    public async Task<List<Activity>> GetLastActivitiesByExercises(IEnumerable<int> exerciseIds, CancellationToken ct = default)
+    {
+        return await
+            (from exercise in Context.Set<Exercise>()
+                join activity in Context.Set<Activity>()
+                    on exercise.Id equals activity.ExerciseId
+                where exerciseIds.Contains(activity.ExerciseId)
+                where activity.DateValue == (
+                    from activity2 in Context.Set<Activity>()
+                    where activity2.ExerciseId == exercise.Id
+                    select activity2.DateValue
+                ).Max()
+                select activity
+            ).ToListAsync(cancellationToken: ct);
     }
 }

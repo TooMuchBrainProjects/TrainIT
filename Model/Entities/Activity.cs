@@ -21,7 +21,7 @@ public class Activity
 
     [Required]
     [Column("WEIGHT")]
-    public decimal Weight { get; set; }
+    public float Weight { get; set; }
     
     [Required]
     [Column("REPETITION")]

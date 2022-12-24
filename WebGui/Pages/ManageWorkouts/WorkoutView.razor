@@ -1,23 +1,54 @@
-﻿@page "/workoutview"
+﻿@page "/workoutview/{SelectedDate:datetime}"
 
 <AuthorizeView>
     <Authorized>
         <MudContainer Class="mt-8">
             <MudStack Spacing="16">
                 <h1 class="ms-4">Workouts</h1>
-                
-                
+
+                <DataInit Data="Workouts">
+                    <ChildContent Context="workouts">
+                        <MudList Clickable="true">
+                            @foreach (var workout in workouts)
+                            {
+                                <MudListItem OnClick="() => NavigateToExerciseView(workout.Id)">
+                                    <MudGrid>
+                                        <MudItem xs="10">
+                                            @workout.Name
+                                        </MudItem>
+                                        <MudItem xs="2">
+                                            <MudIconButton Icon="@Icons.Material.Filled.ArrowForwardIos" Color="Color.Surface" aria-label="edit-exercise" OnClick="() => EditWorkout(workout.Id)"></MudIconButton>
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    </ChildContent>
+                </DataInit>
             </MudStack>
         </MudContainer>
     </Authorized>
 </AuthorizeView>
 
 @code {
-    IList<Workout> Workouts { get; set; } = null!;
+
+    [Parameter]
+    public DateTime SelectedDate { get; set; }
+
+    List<Workout> Workouts { get; set; } = null!;
+
+    void EditWorkout(int workoutId)
+    {
+        NavigationManager.NavigateTo($"/editworkout/{SelectedDate:yyyy-MM-dd}/{workoutId}");
+    }
+
+    void NavigateToExerciseView(int workoutId)
+    {
+        NavigationManager.NavigateTo($"/exerciseview/{SelectedDate:yyyy-MM-dd}/{workoutId}");
+    }
 
     protected override async Task OnInitializedAsync()
     {
         Workouts = await WorkoutRepository.GetWorkoutsByUser(UserService.CurrentUser!.Id);
     }
-
 }

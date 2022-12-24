@@ -1,17 +1,20 @@
-﻿@page "/exerciseview"
-@page "/exerciseview/{WorkoutId:int?}"
+﻿@page "/exerciseview/{SelectedDate:datetime}"
+@page "/exerciseview/{SelectedDate:datetime}/{WorkoutId:int?}"
 
 <AuthorizeView>
     <Authorized>
         <MudContainer Class="mt-8">
-            <MudStack Spacing="16">
+            <MudStack Spacing="8">
                 @if (Workout == null)
                 {
                     <h1 class="ms-4">All Exercises</h1>
                 }
                 else
                 {
-                    <h1 class="ms-4">@Workout.Name</h1>
+                    <h1 class="ms-4">
+                        Workout: <br/>
+                        @Workout.Name
+                    </h1>
                 }
                 <MudDivider/>
             </MudStack>
@@ -22,7 +25,15 @@
                         @foreach (var exercise in exercises)
                         {
                             <MudListItem>
-                                <MudCheckBox Color="Color.Primary" Value="@exercise.Name" @bind-Checked="@exercise.IsSelected"></MudCheckBox>
+                                <MudGrid>
+                                    <MudItem xs="10">
+                                        <MudCheckBox Color="Color.Primary" Label="@exercise.Name" @bind-Checked="@exercise.IsSelected"></MudCheckBox>
+                                    </MudItem>
+                                    <MudItem xs="2">
+                                        <MudIconButton Icon="@Icons.Material.Filled.ArrowForwardIos" Color="Color.Surface" aria-label="edit-exercise" OnClick="() => EditExercise(exercise.Id)"></MudIconButton>
+                                    </MudItem>
+                                </MudGrid>
+
                             </MudListItem>
                         }
                     </MudList>
@@ -41,6 +52,8 @@
 
 
 @code {
+    [Parameter]
+    public DateTime SelectedDate { get; set; }
 
     [Parameter]
     public int? WorkoutId { get; set; }
@@ -62,9 +75,25 @@
         }
     }
 
-    public void AddActivities()
+    void EditExercise(int exerciseId)
     {
-        // Exercises = Exercises.Where(e => e.IsSelected == true).ToList();
+        NavigationManager.NavigateTo($"/editexercise/{SelectedDate:yyyy-MM-dd}/{exerciseId}");
+    }
+
+    async Task AddActivities()
+    {
+        Exercises = Exercises.Where(e => e.IsSelected == true).ToList();
+
+        var lastActivities = await ActivityRepository.GetLastActivitiesByExercises(Exercises.Select(exercise => exercise.Id).ToList());
+        
+        var newActivities = Exercises.Select((t, i) => new Activity()
+        {
+            ExerciseId = t.Id, Exercise = t, DateValue = DateOnly.FromDateTime(SelectedDate), Repetition = lastActivities[i].Repetition, Set = lastActivities[i].Set, Weight = lastActivities[i].Weight
+        }).ToList();
+
+        await ActivityRepository.CreateAsync(newActivities);
+        
+        NavigationManager.NavigateTo($"/activityview/{SelectedDate:yyyy-MM-dd}");
     }
 
 }
