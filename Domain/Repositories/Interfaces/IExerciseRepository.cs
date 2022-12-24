@@ -4,6 +4,12 @@ namespace Domain.Repositories.Interfaces;
 
 public interface IExerciseRepository : IRepository<Exercise>
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="exerciseId"></param>
+    /// <param name="ct"></param>
+    /// <returns></returns>
     Task<Exercise> GetExerciseById(int exerciseId, CancellationToken ct = default);
     Task<Exercise> GetExerciseByActivity(int subExerciseId, CancellationToken ct = default);
     Task<List<Exercise>> GetExercisesByActivities(IEnumerable<int> subExerciseIds, CancellationToken ct = default);

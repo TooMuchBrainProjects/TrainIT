@@ -10,10 +10,10 @@ public class ActivityRepository : ARepository<Activity>, IActivityRepository
     public ActivityRepository(TrainITDbContext context) : base(context) { }
 
 
-    public async Task<Activity> GetActivityById(int subexerciseId, CancellationToken ct = default)
+    public async Task<Activity> GetActivityById(int activityId, CancellationToken ct = default)
     {
         return await Table
-            .Where(s => s.Id == subexerciseId)
+            .Where(s => s.Id == activityId)
             .FirstAsync(cancellationToken: ct);
     }
 
