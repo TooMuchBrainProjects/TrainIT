@@ -1,0 +1,70 @@
+﻿@page "/exerciseview"
+@page "/exerciseview/{WorkoutId:int?}"
+
+<AuthorizeView>
+    <Authorized>
+        <MudContainer Class="mt-8">
+            <MudStack Spacing="16">
+                @if (Workout == null)
+                {
+                    <h1 class="ms-4">All Exercises</h1>
+                }
+                else
+                {
+                    <h1 class="ms-4">@Workout.Name</h1>
+                }
+                <MudDivider/>
+            </MudStack>
+
+            <DataInit Data="Exercises">
+                <ChildContent Context="exercises">
+                    <MudList Clickable="true">
+                        @foreach (var exercise in exercises)
+                        {
+                            <MudListItem>
+                                <MudCheckBox Color="Color.Primary" Value="@exercise.Name" @bind-Checked="@exercise.IsSelected"></MudCheckBox>
+                            </MudListItem>
+                        }
+                    </MudList>
+                </ChildContent>
+            </DataInit>
+        </MudContainer>
+
+        <div Style="position: fixed; bottom: 9vh; right: 2vh;">
+            <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Check" OnClick="AddActivities"/>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+
+    [Parameter]
+    public int? WorkoutId { get; set; }
+
+    Workout? Workout { get; set; }
+
+    List<Exercise> Exercises { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (WorkoutId.HasValue)
+        {
+            Workout = await WorkoutRepository.GetWorkoutById(WorkoutId.Value);
+            Exercises = await ExerciseRepository.GetExercisesByWorkout(WorkoutId.Value);
+        }
+        else
+        {
+            Exercises = await ExerciseRepository.GetExercisesByUser(UserService.CurrentUser!.Id);
+        }
+    }
+
+    public void AddActivities()
+    {
+        // Exercises = Exercises.Where(e => e.IsSelected == true).ToList();
+    }
+
+}

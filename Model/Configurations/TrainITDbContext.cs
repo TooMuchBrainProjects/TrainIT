@@ -5,6 +5,12 @@ namespace Model.Configurations;
 
 public class TrainITDbContext : DbContext
 {
+    public DbSet<Exercise> Exercises { get; set; }
+    public DbSet<Activity> Activities { get; set; }
+    public DbSet<Workout> Workouts { get; set; }
+    public DbSet<WorkoutExercise> WorkoutExercises { get; set; }
+    public DbSet<User> Users { get; set; }
+    
     public TrainITDbContext(DbContextOptions<TrainITDbContext> options) : base(options)
     {
         
@@ -15,25 +21,26 @@ public class TrainITDbContext : DbContext
         modelBuilder.Entity<User>()
             .HasIndex(d => d.Email)
             .IsUnique(true);
+        
         modelBuilder.Entity<Exercise>()
             .HasOne(d => d.User)
             .WithMany()
             .HasForeignKey(d => d.UserId);
-        modelBuilder.Entity<PresetExercise>()
-            .HasKey(d => new { d.ExerciseId, d.PresetId });
-        modelBuilder.Entity<PresetExercise>()
+        
+        modelBuilder.Entity<WorkoutExercise>()
+            .HasKey(d => new { d.ExerciseId, d.WorkoutId });
+        
+        modelBuilder.Entity<WorkoutExercise>()
             .HasOne(d => d.Exercise)
             .WithMany()
             .HasForeignKey(d => d.ExerciseId);
-        modelBuilder.Entity<PresetExercise>()
-            .HasOne(d => d.Preset)
+        
+        modelBuilder.Entity<WorkoutExercise>()
+            .HasOne(d => d.Workout)
             .WithMany()
-            .HasForeignKey(d => d.PresetId);
-        modelBuilder.Entity<ExerciseDate>()
-            .HasOne(d => d.Date)
-            .WithMany()
-            .HasForeignKey(d => d.DateValue);
-        modelBuilder.Entity<ExerciseDate>()
+            .HasForeignKey(d => d.WorkoutId);
+        
+        modelBuilder.Entity<Activity>()
             .HasOne(d => d.Exercise)
             .WithMany()
             .HasForeignKey(d => d.ExerciseId);

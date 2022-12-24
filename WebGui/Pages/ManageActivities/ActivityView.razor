@@ -1,0 +1,125 @@
+﻿@page "/activityview"
+
+<AuthorizeView>
+    <Authorized>
+        <MudContainer Class="mt-8">
+            <MudStack Spacing="16">
+                <h1 class="ms-4">Exercises</h1>
+
+                <MudCardActions>
+                    <MudIconButton OnClick="PrevDate" Icon="@Icons.Material.Filled.ArrowBackIos" aria-label="previous day"></MudIconButton>
+                    <MudDatePicker Label="Choose date" @ref="_picker" Date="_date" DateChanged="HandleDateChangeAsync" AutoClose="true" MaxDate="@_maxDate" class="mx-4">
+                        <PickerActions Context="_">
+                            <MudButton Class="mr-auto align-self-start" OnClick="Today">Today</MudButton>
+                        </PickerActions>
+                    </MudDatePicker>
+                    <MudIconButton OnClick="NextDate" Icon="@Icons.Material.Filled.ArrowForwardIos" Disabled="@_nextButtonDisabled" aria-label="next day"></MudIconButton>
+                </MudCardActions>
+                <MudDivider/>
+            </MudStack>
+
+            <DataInit Data="Activities">
+                <ChildContent Context="activities">
+                    <MudList Clickable="true">
+                        @foreach (var activity in activities)
+                        {
+                            <MudListItem OnClick="EditActivity">
+                                <MudGrid>
+                                    <MudItem xs="9">
+                                        @activity.Exercise.Name
+                                    </MudItem>
+                                    <MudItem xs="2" Style="text-align: end;">
+                                        @Math.Round(activity.Weight, 2)
+                                    </MudItem>
+                                    <MudItem xs="1">
+                                        <MudIcon Icon="@Icons.Filled.ArrowForwardIos"/>
+                                    </MudItem>
+                                </MudGrid>
+                            </MudListItem>
+                        }
+                    </MudList>
+                </ChildContent>
+            </DataInit>
+        </MudContainer>
+
+        <div Style="position: fixed; bottom: 9vh; right: 2vh; display: grid; gap: 1rem;">
+            <a href="/workoutview">
+                <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.FilterList"/>
+            </a>
+            <a href="/exerciseview">
+                <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.PlusOne"/>
+            </a>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <MudContainer Class="mt-8">
+            <MudStack Spacing="4">
+                <h1 class="ms-4 mb-12">You are not logged in!</h1>
+                <MudPaper class="pa-4" Elevation="3">
+                    <div>Please click <a href="/login" style="color: yellow;">here</a> in order to get redirected to the Log In site!</div>
+                </MudPaper>
+            </MudStack>
+        </MudContainer>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+    MudDatePicker? _picker;
+    DateTime _date = DateTime.Today;
+    readonly DateTime _maxDate = DateTime.Today;
+    bool _nextButtonDisabled = false;
+
+    List<Activity> Activities { get; set; } = null!;
+
+    private async Task Today()
+    {
+        await _picker!.GoToDate(DateTime.Today);
+        _picker.Close();
+    }
+
+    async Task HandleDateChangeAsync(DateTime? dateTime)
+    {
+        try
+        {
+            _date = dateTime!.Value;
+            
+            _nextButtonDisabled = _date == _maxDate;
+            
+            Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(_date.Year, _date.Month, _date.Day));
+            StateHasChanged();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+    }
+
+    async Task PrevDate()
+    {
+        await HandleDateChangeAsync(_date.AddDays(-1));
+    }
+
+    async Task NextDate()
+    {
+        await HandleDateChangeAsync(_date.AddDays(1));
+    }
+
+    async Task EditActivity()
+    {
+        
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (UserService.CurrentUser != null)
+        {
+            Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(_date.Year, _date.Month, _date.Day));
+        }
+
+        if (_date == _maxDate)
+        {
+            _nextButtonDisabled = true;
+        }
+    }
+}
