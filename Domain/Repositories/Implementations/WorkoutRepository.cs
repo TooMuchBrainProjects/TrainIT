@@ -1,5 +1,6 @@
 ﻿using Domain.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Model.Configurations;
 using Model.Entities;
 
@@ -27,7 +28,7 @@ public class WorkoutRepository : ARepository<Workout>, IWorkoutRepository
                 .Join(Context.Set<Exercise>(), @t => @t.workoutExercise.ExerciseId, exercise => exercise.Id,
                     (@t, exercise) => new { @t, exercise = exercise })
                 .Where(@t => @t.exercise.UserId == userId)
-                .Select(@t => @t.@t.workout))
+                .Select(@t => @t.@t.workout)).Distinct()
             .ToListAsync(cancellationToken: ct);
     }
 

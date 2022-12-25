@@ -11,7 +11,7 @@ using Model.Configurations;
 namespace Model.Migrations
 {
     [DbContext(typeof(TrainITDbContext))]
-    [Migration("20221223182958_initialcommit")]
+    [Migration("20221225071715_initialcommit")]
     partial class initialcommit
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -44,8 +44,8 @@ namespace Model.Migrations
                         .HasColumnType("int")
                         .HasColumnName("SET");
 
-                    b.Property<decimal>("Weight")
-                        .HasColumnType("decimal(65,30)")
+                    b.Property<float>("Weight")
+                        .HasColumnType("float")
                         .HasColumnName("WEIGHT");
 
                     b.HasKey("Id");
@@ -128,6 +128,11 @@ namespace Model.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("WORKOUT_ID");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("DESCRIPTION");
 
                     b.Property<string>("Name")
                         .IsRequired()

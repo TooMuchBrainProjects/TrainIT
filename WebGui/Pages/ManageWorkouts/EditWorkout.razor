@@ -40,9 +40,10 @@
 
     Workout Workout { get; set; } = null!;
 
-    private void SaveWorkoutChanges()
+    async Task SaveWorkoutChanges()
     {
-        throw new NotImplementedException();
+        await WorkoutRepository.UpdateAsync(Workout);
+        NavigationManager.NavigateTo($"/workoutview/{SelectedDate:yyyy-MM-dd}");
     }
 
     protected override async Task OnInitializedAsync()

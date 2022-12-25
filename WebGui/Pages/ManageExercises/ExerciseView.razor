@@ -68,6 +68,10 @@
         {
             Workout = await WorkoutRepository.GetWorkoutById(WorkoutId.Value);
             Exercises = await ExerciseRepository.GetExercisesByWorkout(WorkoutId.Value);
+            foreach (var exercise in Exercises)
+            {
+                exercise.IsSelected = true;
+            }
         }
         else
         {

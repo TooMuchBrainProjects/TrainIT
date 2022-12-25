@@ -39,6 +39,8 @@ namespace Model.Migrations
                     WORKOUT_ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     NAME = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    DESCRIPTION = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -81,7 +83,7 @@ namespace Model.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     EXERCISE_ID = table.Column<int>(type: "int", nullable: false),
                     DATE = table.Column<DateOnly>(type: "date", nullable: false),
-                    WEIGHT = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    WEIGHT = table.Column<float>(type: "float", nullable: false),
                     REPETITION = table.Column<int>(type: "int", nullable: false),
                     SET = table.Column<int>(type: "int", nullable: false)
                 },

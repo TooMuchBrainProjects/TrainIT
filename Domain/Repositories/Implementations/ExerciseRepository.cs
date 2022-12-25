@@ -52,11 +52,9 @@ public class ExerciseRepository : ARepository<Exercise>, IExerciseRepository
         return await Context.Set<Exercise>()
             .Join(Context.Set<WorkoutExercise>(), exercise => exercise.Id,
                 workoutExercise => workoutExercise.ExerciseId,
-                (exercise, workoutExercise) => new { exercise, workoutExercise = workoutExercise })
-            .Join(Context.Set<Workout>(), @t => @t.workoutExercise.ExerciseId, workout => workout.Id,
-                (@t, workout) => new { @t, workout = workout })
-            .Where(@t => @t.workout.Id == workoutId)
-            .Select(@t => @t.@t.exercise)
+                (exercise, workoutExercise) => new { exercise, workoutExercise })
+            .Where(@t => @t.workoutExercise.WorkoutId == workoutId)
+            .Select(@t => @t.exercise)
             .ToListAsync(cancellationToken: ct);
     }
 
