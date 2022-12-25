@@ -57,4 +57,21 @@ public class ActivityRepository : ARepository<Activity>, IActivityRepository
                 select activity
             ).ToListAsync(cancellationToken: ct);
     }
+
+    public async Task<List<DateOnly>> GetLastTrainingDays(int userId, CancellationToken ct = default)
+    {
+        return await
+            Context.Activities
+                .Join(Context.Exercises,
+                    a => a.ExerciseId,
+                    e => e.Id,
+                    (a, e) => new { Activity = a, Exercise = e })
+                .Where(ae => ae.Exercise.UserId == userId)
+                .GroupBy(ae => ae.Activity.DateValue)
+                .OrderByDescending(ae => ae.Key)
+                .Take(4)
+                .Select(ae => ae.Key)
+                .ToListAsync(cancellationToken: ct);
+
+    }
 }

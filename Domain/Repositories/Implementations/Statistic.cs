@@ -92,7 +92,7 @@ public class Statistic : IStatistic
 
     public List<string> GenerateTrainingDays(IActivityRepository activityRepository, int userId)
     {
-        activityRepository.GetActivitiesByUser(userId);
-        throw new NotImplementedException();
+        var lastTrainingDays = activityRepository.GetLastTrainingDays(userId);
+        return lastTrainingDays.Result.Select(l => l.ToString()).ToList();
     }
 }

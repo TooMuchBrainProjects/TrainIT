@@ -39,4 +39,11 @@ public interface IActivityRepository : IRepository<Activity>
     /// <param name="exerciseIds">List of exercises</param>
     /// <returns>List of last activities</returns>
     Task<List<Activity>> GetLastActivitiesByExercises(IEnumerable<int> exerciseIds, CancellationToken ct = default);
+
+    /// <summary>
+    /// Returns a list of dates which are the last days where the user was at the gym.
+    /// </summary>
+    /// <param name="userId">Id of the user you want the last training days from</param>
+    /// <returns>List of DateTime</returns>
+    Task<List<DateOnly>> GetLastTrainingDays(int userId, CancellationToken ct = default);
 }

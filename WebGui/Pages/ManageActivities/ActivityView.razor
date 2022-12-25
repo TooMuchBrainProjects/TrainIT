@@ -80,6 +80,7 @@
 
     async Task HandleDateChangeAsync(DateTime? dateTime)
     {
+        Logger.LogInformation("HandleDateChange");
         try
         {
             _date = dateTime!.Value;
@@ -127,14 +128,14 @@
             Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(_date.Year, _date.Month, _date.Day));
         }
 
+        if (SelectedDate.HasValue)
+        {
+            await HandleDateChangeAsync(SelectedDate);
+        }
+
         if (_date == _maxDate)
         {
             _nextButtonDisabled = true;
-        }
-
-        if (SelectedDate.HasValue)
-        {
-            _date = SelectedDate.Value;
         }
     }
 

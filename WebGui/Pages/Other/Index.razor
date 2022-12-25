@@ -6,7 +6,7 @@
             <MudStack Spacing="16">
                 <h1 class="ms-4">Statistic</h1>
 
-                <DataInit Data="Series">
+                @*<DataInit Data="Series">
                     <ChildContent Context="series">
                         <DataInit Data="_xAxisLabels">
                             <ChildContent Context="xAxisLabels">
@@ -14,20 +14,17 @@
                             </ChildContent>
                         </DataInit>
                     </ChildContent>
-                </DataInit>
-                
+                </DataInit>*@
+
                 <DataInit Data="_lastTrainingDays">
                     <ChildContent Context="lastTrainingDays">
                         <MudTimeline TimelineOrientation="TimelineOrientation.Horizontal" TimelinePosition="TimelinePosition.Top">
-                            <MudTimelineItem>
-                                <MudText Align="Align.Center">@lastTrainingDays[0]</MudText>
-                            </MudTimelineItem>
-                            <MudTimelineItem Color="Color.Primary">
-                                <MudText Align="Align.Center">@lastTrainingDays[1]</MudText>
-                            </MudTimelineItem>
-                            <MudTimelineItem>
-                                <MudText Align="Align.Center">@lastTrainingDays[2]</MudText>
-                            </MudTimelineItem>
+                            @foreach (var trainingDay in lastTrainingDays)
+                            {
+                                <MudTimelineItem>
+                                    <MudText Align="Align.Center">@trainingDay</MudText>
+                                </MudTimelineItem>
+                            }
                         </MudTimeline>
                     </ChildContent>
                 </DataInit>
@@ -58,14 +55,14 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Series = Statistic.GenerateChartSeries();
+    /*Series = Statistic.GenerateChartSeries();
 
         _chartOptions.InterpolationOption = InterpolationOption.NaturalSpline;
         _chartOptions.DisableLegend = true;
 
-        _xAxisLabels = Statistic.GetDatesToString();
+        _xAxisLabels = Statistic.GetDatesToString();*/
 
         _lastTrainingDays = Statistic.GenerateTrainingDays(ActivityRepository, UserService.CurrentUser!.Id);
+        Logger.LogInformation(_lastTrainingDays.ToString());
     }
-
 }

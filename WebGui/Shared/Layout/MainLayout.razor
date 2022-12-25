@@ -24,6 +24,8 @@
     bool _isDarkMode;
     private MudThemeProvider? _mudThemeProvider;
 
+    int counter = 0;
+
     public async void ToggleDarkMode(bool? changedDarkMode)
     {
         if (changedDarkMode.HasValue)
@@ -40,6 +42,9 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        Logger.LogInformation(counter + ": " + UserService.CurrentUser!.Name);
+        counter++;
+        
         if (!firstRender)
             return;
 
