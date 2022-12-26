@@ -1,6 +1,8 @@
 ﻿@page "/exerciseview/{SelectedDate:datetime}"
 @page "/exerciseview/{SelectedDate:datetime}/{WorkoutId:int?}"
 
+<PageTitle>Exercise View</PageTitle>
+
 <AuthorizeView>
     <Authorized>
         <MudContainer Class="mt-8">
@@ -96,6 +98,11 @@
         }).ToList();
 
         await ActivityRepository.CreateAsync(newActivities);
+
+        foreach (var exercise in Exercises)
+        {
+            exercise.IsSelected = false;
+        }
         
         NavigationManager.NavigateTo($"/activityview/{SelectedDate:yyyy-MM-dd}");
     }

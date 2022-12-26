@@ -11,9 +11,10 @@
 
 <MudLayout>
     <MudMainContent Style="padding: 0;">
-        <CascadingValue Value="this">
-            @Body
-        </CascadingValue>
+        @*<CascadingValue Value="this">
+            
+        </CascadingValue>*@
+        @Body
     </MudMainContent>
     <NavMenu/>
     <div style="height: 10vh"></div>
@@ -42,9 +43,6 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        Logger.LogInformation(counter + ": " + UserService.CurrentUser!.Name);
-        counter++;
-        
         if (!firstRender)
             return;
 

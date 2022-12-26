@@ -17,6 +17,8 @@ public class User
     public string Name { get; set; }
     
     [Required, StringLength(100)]
+    [EmailAddress]
+    [DataType(DataType.EmailAddress)]
     [Column("EMAIL")]
     public string Email { get; set; }
     

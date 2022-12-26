@@ -55,7 +55,6 @@ builder.Services.AddMudServices(config => {
 });
 
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>(); // we register our implementation of the AuthenticationStateProvider
-
 builder.Services.AddScoped<UserService>(); // The UserService we use to login/register/logout
 
 var app = builder.Build();
