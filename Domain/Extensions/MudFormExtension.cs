@@ -1,6 +1,4 @@
-﻿using MudBlazor;
-
-namespace Domain.Extensions;
+﻿namespace Domain.Extensions;
 
 public static class MudFormExtension {
     public static async Task<bool> AreFormsValidAsync(this MudForm[] forms) {

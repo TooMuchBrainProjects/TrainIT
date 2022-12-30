@@ -1,0 +1,104 @@
+﻿@page "/profile"
+
+<PageTitle>Profile</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <MudContainer Class="mt-8">
+            <MudStack Spacing="4">
+                <h1 class="ms-4 mb-12">Profile</h1>
+
+                <MudPaper class="pa-4" Elevation="3">
+                    <div Style="@($"color:{Colors.Amber.Darken2};")">Username:</div>
+                    @if (UserService.CurrentUser != null)
+                    {
+                        <p style="font-size: 1.6rem;">
+                            @UserService.CurrentUser?.Username
+                        </p>
+                    }
+                    else
+                    {
+                        <p style="font-size: 1.6rem;">
+                            Loading...
+                        </p>
+                    }
+                </MudPaper>
+
+                <MudPaper class="pa-4" Elevation="3">
+                    <div Style="@($"color:{Colors.Amber.Darken2};")">E-Mail Address:</div>
+
+                    @if (UserService.CurrentUser != null)
+                    {
+                        <p style="font-size: 1.6rem;">
+                            @UserService.CurrentUser?.Email
+                        </p>
+                    }
+                    else
+                    {
+                        <p style="font-size: 1.6rem;">
+                            Loading...
+                        </p>
+                    }
+                </MudPaper>
+
+                <MudPaper class="px-4 py-1" Elevation="3">
+                    <div style="display: flex; justify-content: space-between; align-items: center">
+                        <div Style="@($"color:{Colors.Amber.Darken2};")">DarkMode:</div>
+                        <MudCheckBox T="bool?" CheckedChanged="ToggleTheme" Checked="IsDarkMode" TriState="true" Color="Color.Secondary">
+                            @(IsDarkMode == null ? "Auto" : (IsDarkMode == true) ? "Dark" : "Light")
+                        </MudCheckBox>
+                    </div>
+                </MudPaper>
+
+                <div style="display: flex; justify-content: space-between; align-items: center">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="LogoutAsync">Log Out</MudButton>
+                </div>
+
+            </MudStack>
+        </MudContainer>
+    </Authorized>
+    <NotAuthorized>
+        <MudContainer Class="mt-8">
+            <MudStack Spacing="4">
+                <h1 class="ms-4 mb-12">You are not logged in!</h1>
+                <MudPaper class="pa-4" Elevation="3">
+                    <div>Please click <a href="/login" style="color: yellow;">here</a> in order to get redirected to the Log In site!</div>
+                </MudPaper>
+            </MudStack>
+        </MudContainer>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+
+    [CascadingParameter]
+    public MainLayout? MainLayout { get; set; }
+
+    public bool? IsDarkMode { get; set; }
+
+    public void ToggleTheme(bool? Changedtheme)
+    {
+        IsDarkMode = Changedtheme;
+        MainLayout!.ToggleDarkMode(IsDarkMode);
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        var darkModeResult = await ProtectedLocalStorage.GetAsync<bool?>("DarkMode");
+
+        IsDarkMode = null;
+        if (darkModeResult.Success && darkModeResult.Value.HasValue)
+        {
+            IsDarkMode = darkModeResult.Value.Value;
+        }
+        StateHasChanged();
+    }
+
+    public async Task LogoutAsync()
+    {
+        await UserService.LogoutAsync();
+        NavigationManager.NavigateTo("/login");
+    }
+
+}

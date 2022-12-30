@@ -1,11 +1,6 @@
-﻿using System.Linq.Expressions;
-using Domain.Repositories.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using Model.Configurations;
+﻿namespace Domain.Repositories.Implementations;
 
-namespace Domain.Repositories.Implementations;
-
-public class ARepository<TEntity> : IRepository<TEntity> where TEntity : class {
+public abstract class ARepository<TEntity> : IRepository<TEntity> where TEntity : class {
     protected readonly TrainITDbContext Context;
     protected readonly DbSet<TEntity> Table;
 
@@ -64,5 +59,4 @@ public class ARepository<TEntity> : IRepository<TEntity> where TEntity : class {
         Table.RemoveRange(Table.Where(filter));
         await Context.SaveChangesAsync(ct);
     }
-    
 }

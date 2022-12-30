@@ -23,7 +23,7 @@ where true;
 
 -- Insert data
 
-insert into users (USER_ID, NAME, EMAIL, PASSWORD_HASHED)
+insert into users (USER_ID, USERNAME, EMAIL, PASSWORD_HASH)
 VALUES (1,'Yanik', 'yanik.latzka@gmx.at', '$2a$08$e.TQRVdZdcWBndM/Iooagut2279IO8OYyIyJeGTT38I1xJD1iIJQW'),
        (2,'trueberryless', 'felix@schneider-it.at', '$2a$08$e.TQRVdZdcWBndM/Iooagut2279IO8OYyIyJeGTT38I1xJD1iIJQW'),
        (3,'Jürgen', 'j.hauptmann@htlkrems.at', '$2a$08$e.TQRVdZdcWBndM/Iooagut2279IO8OYyIyJeGTT38I1xJD1iIJQW'),

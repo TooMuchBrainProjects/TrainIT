@@ -1,6 +1,5 @@
 ﻿using Domain.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Model.Configurations;
 using Model.Entities;
 using MudBlazor;
 
