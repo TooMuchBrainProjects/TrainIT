@@ -8,6 +8,8 @@
             <MudStack Spacing="16">
                 <h1 class="ms-4">Statistic</h1>
 
+                @if (false)
+                {
                 @*<DataInit Data="Series">
                     <ChildContent Context="series">
                         <DataInit Data="_xAxisLabels">
@@ -18,18 +20,19 @@
                     </ChildContent>
                 </DataInit>*@
 
-                <DataInit Data="_lastTrainingDays">
-                    <ChildContent Context="lastTrainingDays">
-                        <MudTimeline TimelineOrientation="TimelineOrientation.Horizontal" TimelinePosition="TimelinePosition.Top">
-                            @foreach (var trainingDay in lastTrainingDays)
-                            {
-                                <MudTimelineItem>
-                                    <MudText Align="Align.Center">@trainingDay</MudText>
-                                </MudTimelineItem>
-                            }
-                        </MudTimeline>
-                    </ChildContent>
-                </DataInit>
+                    <DataInit Data="_lastTrainingDays">
+                        <ChildContent Context="lastTrainingDays">
+                            <MudTimeline TimelineOrientation="TimelineOrientation.Horizontal" TimelinePosition="TimelinePosition.Top">
+                                @foreach (var trainingDay in lastTrainingDays)
+                                {
+                                    <MudTimelineItem>
+                                        <MudText Align="Align.Center">@trainingDay</MudText>
+                                    </MudTimelineItem>
+                                }
+                            </MudTimeline>
+                        </ChildContent>
+                    </DataInit>
+                }
             </MudStack>
         </MudContainer>
     </Authorized>
@@ -64,7 +67,10 @@
 
         _xAxisLabels = Statistic.GetDatesToString();*/
 
-        _lastTrainingDays = Statistic.GenerateTrainingDays(ActivityRepository, UserService.CurrentUser!.Id);
-        Logger.LogInformation(_lastTrainingDays.ToString());
+        if (false)
+        {
+            _lastTrainingDays = Statistic.GenerateTrainingDays(ActivityRepository, UserService.CurrentUser!.Id);
+        }
     }
+
 }
