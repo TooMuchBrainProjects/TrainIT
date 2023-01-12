@@ -10,26 +10,30 @@
                 <h1 class="ms-4 mb-12">Edit Exercise</h1>
 
                 <MudForm>
-                    <MudStack Spacing="4">
-                        <MudPaper class="pa-4" Elevation="3">
-                            <MudTextField @bind-Value="Exercise.Name" Label="Name" Variant="Variant.Outlined" 
-                                          Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.TextFormat" AdornmentColor="Color.Secondary"
-                                          Counter="100" MaxLength="100"
-                                          Immediate="true"/>
-                        </MudPaper>
-                        <MudPaper class="pa-4" Elevation="3">
-                            <MudTextField @bind-Value="Exercise.Machine" Label="Machine" Variant="Variant.Outlined" 
-                                          Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.FitnessCenter" AdornmentColor="Color.Secondary"
-                                          Counter="100" MaxLength="100"
-                                          Immediate="true"/>
-                        </MudPaper>
-                        <MudPaper class="pa-4" Elevation="3">
-                            <MudTextField @bind-Value="Exercise.Description" Label="Description" Variant="Variant.Outlined" 
-                                          Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.Description" AdornmentColor="Color.Secondary"
-                                          Immediate="true"
-                                          Lines="5"/>
-                        </MudPaper>
-                    </MudStack>
+                    <DataInit Data="Exercise">
+                        <ChildContent Context="exercise">
+                            <MudStack Spacing="4">
+                                <MudPaper class="pa-4" Elevation="3">
+                                    <MudTextField @bind-Value="exercise.Name" Label="Name" Variant="Variant.Outlined"
+                                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.TextFormat" AdornmentColor="Color.Secondary"
+                                                  Counter="100" MaxLength="100"
+                                                  Immediate="true"/>
+                                </MudPaper>
+                                <MudPaper class="pa-4" Elevation="3">
+                                    <MudTextField @bind-Value="exercise.Machine" Label="Machine" Variant="Variant.Outlined"
+                                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.FitnessCenter" AdornmentColor="Color.Secondary"
+                                                  Counter="100" MaxLength="100"
+                                                  Immediate="true"/>
+                                </MudPaper>
+                                <MudPaper class="pa-4" Elevation="3">
+                                    <MudTextField @bind-Value="exercise.Description" Label="Description" Variant="Variant.Outlined"
+                                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.Description" AdornmentColor="Color.Secondary"
+                                                  Immediate="true"
+                                                  Lines="5"/>
+                                </MudPaper>
+                            </MudStack>
+                        </ChildContent>
+                    </DataInit>
                 </MudForm>
 
             </MudStack>
@@ -42,9 +46,10 @@
 
 
 @code {
+
     [Parameter]
     public DateTime SelectedDate { get; set; }
-    
+
     Exercise Exercise { get; set; } = null!;
 
     [Parameter]

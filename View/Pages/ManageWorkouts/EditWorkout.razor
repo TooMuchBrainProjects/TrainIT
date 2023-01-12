@@ -9,20 +9,25 @@
                 <h1 class="ms-4 mb-12">Edit Workout</h1>
 
                 <MudForm>
-                    <MudStack Spacing="4">
-                        <MudPaper class="pa-4" Elevation="3">
-                            <MudTextField @bind-Value="Workout.Name" Label="Name" Variant="Variant.Outlined"
-                                          Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.TextFormat" AdornmentColor="Color.Secondary"
-                                          Counter="100" MaxLength="100"
-                                          Immediate="true"/>
-                        </MudPaper>
-                        <MudPaper class="pa-4" Elevation="3">
-                            <MudTextField @bind-Value="Workout.Description" Label="Machine" Variant="Variant.Outlined"
-                                          Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.Description" AdornmentColor="Color.Secondary"
-                                          Immediate="true"
-                                          Lines="5"/>
-                        </MudPaper>
-                    </MudStack>
+
+                    <DataInit Data="Workout">
+                        <ChildContent Context="workout">
+                            <MudStack Spacing="4">
+                                <MudPaper class="pa-4" Elevation="3">
+                                    <MudTextField @bind-Value="workout.Name" Label="Name" Variant="Variant.Outlined"
+                                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.TextFormat" AdornmentColor="Color.Secondary"
+                                                  Counter="100" MaxLength="100"
+                                                  Immediate="true"/>
+                                </MudPaper>
+                                <MudPaper class="pa-4" Elevation="3">
+                                    <MudTextField @bind-Value="workout.Description" Label="Machine" Variant="Variant.Outlined"
+                                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.Description" AdornmentColor="Color.Secondary"
+                                                  Immediate="true"
+                                                  Lines="5"/>
+                                </MudPaper>
+                            </MudStack>
+                        </ChildContent>
+                    </DataInit>
                 </MudForm>
             </MudStack>
         </MudContainer>
