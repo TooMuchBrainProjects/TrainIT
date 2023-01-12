@@ -11,37 +11,46 @@
                 <MudForm>
                     <MudStack Spacing="4">
                         <MudPaper class="pa-4" Elevation="3">
-                            <MudStack Spacing="3">
 
-                                <MudTextField @bind-Value="Exercise.Name" Label="Name" Variant="Variant.Outlined"
-                                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.TextFormat" AdornmentColor="Color.Secondary"
-                                              Counter="100" MaxLength="100"
-                                              Immediate="true"/>
-                                <MudTextField @bind-Value="Exercise.Machine" Label="Machine" Variant="Variant.Outlined"
-                                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.FitnessCenter" AdornmentColor="Color.Secondary"
-                                              Counter="100" MaxLength="100"
-                                              Immediate="true"/>
-                                <MudTextField @bind-Value="Exercise.Description" Label="Description" Variant="Variant.Outlined"
-                                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.Description" AdornmentColor="Color.Secondary"
-                                              Immediate="true"
-                                              Lines="3"/>
-                            </MudStack>
+                            <DataInit Data="Exercise">
+                                <ChildContent Context="exercise">
+                                    <MudStack Spacing="3">
+                                        <MudTextField @bind-Value="exercise.Name" Label="Name" Variant="Variant.Outlined"
+                                                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.TextFormat" AdornmentColor="Color.Secondary"
+                                                      Counter="100" MaxLength="100"
+                                                      Immediate="true"/>
+                                        <MudTextField @bind-Value="exercise.Machine" Label="Machine" Variant="Variant.Outlined"
+                                                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.FitnessCenter" AdornmentColor="Color.Secondary"
+                                                      Counter="100" MaxLength="100"
+                                                      Immediate="true"/>
+                                        <MudTextField @bind-Value="exercise.Description" Label="Description" Variant="Variant.Outlined"
+                                                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.Description" AdornmentColor="Color.Secondary"
+                                                      Immediate="true"
+                                                      Lines="3"/>
+                                    </MudStack>
+                                </ChildContent>
+                            </DataInit>
                         </MudPaper>
                         <MudPaper class="pa-4" Elevation="3">
-                            <MudStack Spacing="3">
-                                <MudTextField @bind-Value="Activity.Weight" Label="Weight" Variant="Variant.Outlined"
-                                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.MonitorWeight" AdornmentColor="Color.Secondary"
-                                              InputMode="InputMode.numeric" InputType="InputType.Text"
-                                              Immediate="true"/>
-                                <MudTextField @bind-Value="Activity.Set" Label="Set" Variant="Variant.Outlined"
-                                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.MonitorWeight" AdornmentColor="Color.Secondary"
-                                              InputMode="InputMode.numeric" InputType="InputType.Text"
-                                              Immediate="true"/>
-                                <MudTextField @bind-Value="Activity.Repetition" Label="Repetition" Variant="Variant.Outlined"
-                                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.MonitorWeight" AdornmentColor="Color.Secondary"
-                                              InputMode="InputMode.numeric" InputType="InputType.Text"
-                                              Immediate="true"/>
-                            </MudStack>
+
+                            <DataInit Data="Activity">
+                                <ChildContent Context="activity">
+                                    <MudStack Spacing="3">
+                                        <MudTextField @bind-Value="activity.Weight" Label="Weight" Variant="Variant.Outlined"
+                                                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.MonitorWeight" AdornmentColor="Color.Secondary"
+                                                      InputMode="InputMode.numeric" InputType="InputType.Text"
+                                                      Immediate="true"/>
+                                        <MudTextField @bind-Value="activity.Set" Label="Set" Variant="Variant.Outlined"
+                                                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.MonitorWeight" AdornmentColor="Color.Secondary"
+                                                      InputMode="InputMode.numeric" InputType="InputType.Text"
+                                                      Immediate="true"/>
+                                        <MudTextField @bind-Value="activity.Repetition" Label="Repetition" Variant="Variant.Outlined"
+                                                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.MonitorWeight" AdornmentColor="Color.Secondary"
+                                                      InputMode="InputMode.numeric" InputType="InputType.Text"
+                                                      Immediate="true"/>
+                                    </MudStack>
+                                </ChildContent>
+                            </DataInit>
                         </MudPaper>
                     </MudStack>
                 </MudForm>
@@ -59,9 +68,10 @@
 
 
 @code {
+
     [Parameter]
     public DateTime SelectedDate { get; set; }
-    
+
     Activity Activity { get; set; } = null!;
 
     Exercise Exercise { get; set; } = null!;
