@@ -27,12 +27,12 @@
                         @foreach (var exercise in exercises)
                         {
                             <MudListItem>
-                                <MudGrid>
-                                    <MudItem xs="10">
-                                        <MudCheckBox Color="Color.Primary" Label="@exercise.Name" @bind-Checked="@exercise.IsSelected"></MudCheckBox>
+                                <MudGrid Style="min-height: 4rem;">
+                                    <MudItem xs="10" Style="display: flex; align-items: center;">
+                                        <MudCheckBox Color="Color.Primary" Label="@exercise.Name" @bind-Checked="@exercise.IsSelected" Style="min-width: 50%"></MudCheckBox>
                                     </MudItem>
                                     <MudItem xs="2">
-                                        <MudIconButton Icon="@Icons.Material.Filled.ArrowForwardIos" Color="Color.Surface" aria-label="edit-exercise" OnClick="() => EditExercise(exercise.Id)"></MudIconButton>
+                                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Surface" aria-label="edit-exercise" OnClick="() => EditExercise(exercise.Id)"></MudIconButton>
                                     </MudItem>
                                 </MudGrid>
 

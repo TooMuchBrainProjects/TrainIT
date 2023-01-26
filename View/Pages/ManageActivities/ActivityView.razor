@@ -27,14 +27,14 @@
                         @foreach (var activity in activities)
                         {
                             <MudListItem OnClick="() => EditActivity(activity.Id)">
-                                <MudGrid>
-                                    <MudItem xs="9">
+                                <MudGrid Style="min-height: 4rem;">
+                                    <MudItem xs="8" Style="display: flex; align-items: center;">
                                         @activity.Exercise.Name
                                     </MudItem>
-                                    <MudItem xs="2" Style="text-align: end;">
-                                        @Math.Round(activity.Weight, 2)
+                                    <MudItem xs="3" Style="text-align: end; display: flex; align-items: center;">
+                                        @Math.Round(activity.Weight, 2) kg
                                     </MudItem>
-                                    <MudItem xs="1">
+                                    <MudItem xs="1" Style="display: flex; align-items: center;">
                                         <MudIcon Icon="@Icons.Filled.ArrowForwardIos"/>
                                     </MudItem>
                                 </MudGrid>

@@ -9,10 +9,9 @@
 
 <MudLayout>
     <MudMainContent Style="padding: 0;">
-        @*<CascadingValue Value="this">
-            
-        </CascadingValue>*@
-        @Body
+        <CascadingValue Value="@this">
+            @Body
+        </CascadingValue>
     </MudMainContent>
     <NavMenu/>
     <div style="height: 10vh"></div>
@@ -45,7 +44,7 @@
         var darkModeResult = await ProtectedLocalStorage.GetAsync<bool?>("DarkMode");
 
         _isDarkMode = await _mudThemeProvider!.GetSystemPreference();
-        if (darkModeResult.Success && darkModeResult.Value.HasValue)
+        if (darkModeResult is { Success: true, Value: { } })
         {
             _isDarkMode = darkModeResult.Value.Value;
         }

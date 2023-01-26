@@ -14,12 +14,12 @@
                             @foreach (var workout in workouts)
                             {
                                 <MudListItem OnClick="() => NavigateToExerciseView(workout.Id)">
-                                    <MudGrid>
-                                        <MudItem xs="10">
-                                            @workout.Name
+                                    <MudGrid Style="min-height: 4rem;">
+                                        <MudItem xs="10" Style="display: flex; align-items: center;">
+                                            <MudCheckBox Color="Color.Primary" Label="@workout.Name" @bind-Checked="@workout.IsSelected"></MudCheckBox>
                                         </MudItem>
                                         <MudItem xs="2">
-                                            <MudIconButton Icon="@Icons.Material.Filled.ArrowForwardIos" Color="Color.Surface" aria-label="edit-exercise" OnClick="() => EditWorkout(workout.Id)"></MudIconButton>
+                                            <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Surface" aria-label="edit-exercise" OnClick="() => EditWorkout(workout.Id)"></MudIconButton>
                                         </MudItem>
                                     </MudGrid>
                                 </MudListItem>

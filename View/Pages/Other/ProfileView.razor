@@ -43,7 +43,7 @@
 
                 <MudPaper class="px-4 py-1" Elevation="3">
                     <div style="display: flex; justify-content: space-between; align-items: center">
-                        <div Style="@($"color:{Colors.Amber.Darken2};")">DarkMode:</div>
+                        <div Style="@($"color:{Colors.Amber.Darken2};")">Theme Mode:</div>
                         <MudCheckBox T="bool?" CheckedChanged="ToggleTheme" Checked="IsDarkMode" TriState="true" Color="Color.Secondary">
                             @(IsDarkMode == null ? "Auto" : (IsDarkMode == true) ? "Dark" : "Light")
                         </MudCheckBox>
