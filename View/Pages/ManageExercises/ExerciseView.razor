@@ -61,7 +61,7 @@
             }
             else
             {
-            <MudFab OnClick="ChangeEditMode" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Edit"/>
+                <MudFab OnClick="ChangeEditMode" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Edit"/>
             }
         </div>
     </Authorized>
@@ -135,7 +135,7 @@
 
     async Task AddExercise()
     {
-        
+        NavigationManager.NavigateTo($"/editexercise/{SelectedDate:yyyy-MM-dd}");
     }
 
 }

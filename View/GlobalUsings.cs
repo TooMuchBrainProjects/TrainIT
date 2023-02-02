@@ -17,6 +17,7 @@ global using Microsoft.AspNetCore.Components.Authorization;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.AspNetCore.Mvc.RazorPages;
 global using Microsoft.Extensions.DependencyInjection.Extensions;
+global using Model.Entities;
 global using Model.Entities.Auth;
 global using Model.Entities.Auth.Models;
 global using View.Services;

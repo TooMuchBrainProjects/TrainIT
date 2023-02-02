@@ -1,4 +1,5 @@
-﻿@page "/editexercise/{SelectedDate:datetime}/{ExerciseId:int}"
+﻿@page "/editexercise/{SelectedDate:datetime}"
+@page "/editexercise/{SelectedDate:datetime}/{ExerciseId:int}"
 
 <PageTitle>Edit Exercise</PageTitle>
 
@@ -50,20 +51,41 @@
     [Parameter]
     public DateTime SelectedDate { get; set; }
 
-    Exercise Exercise { get; set; } = null!;
+    Exercise? Exercise { get; set; }
 
     [Parameter]
-    public int ExerciseId { get; set; }
+    public int? ExerciseId { get; set; }
 
     async Task SaveExerciseChanges()
     {
-        await ExerciseRepository.UpdateAsync(Exercise);
-        NavigationManager.NavigateTo($"/exerciseview/{SelectedDate:yyyy-MM-dd}");
+        if (ExerciseId == null)
+        {
+            
+            await ExerciseRepository.CreateAsync(Exercise);
+            NavigationManager.NavigateTo($"/exerciseview/{SelectedDate:yyyy-MM-dd}");
+        }
+        else
+        {
+            await ExerciseRepository.UpdateAsync(Exercise);
+            NavigationManager.NavigateTo($"/exerciseview/{SelectedDate:yyyy-MM-dd}");
+        }
+
     }
 
     protected override async Task OnInitializedAsync()
     {
-        Exercise = await ExerciseRepository.GetExerciseById(ExerciseId);
+        if (ExerciseId == null)
+        {
+            Exercise = new Exercise()
+            {
+                UserId = UserService.CurrentUser.Id
+            };
+        }
+        else
+        {
+            Exercise = await ExerciseRepository.GetExerciseById(ExerciseId.Value);
+        }
+
     }
 
 }
