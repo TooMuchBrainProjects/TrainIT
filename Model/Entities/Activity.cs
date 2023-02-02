@@ -30,4 +30,7 @@ public class Activity
     [Required]
     [Column("SET")]
     public int Set { get; set; }
+    
+    [NotMapped]
+    public bool IsSelected { get; set; }
 }

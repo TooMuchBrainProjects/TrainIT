@@ -57,8 +57,13 @@
 
             </MudStack>
         </MudContainer>
+        
         <div Style="position: fixed; bottom: 9vh; right: 2vh; display: grid; gap: 1rem;">
             <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Check" OnClick="SaveActivityChanges"/>
+        </div>
+
+        <div Style="position: fixed; top: 2vh; right: 2vh; display: grid; gap: 1rem;">
+                <MudFab OnClick="AskDeleteActivity" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete"/>
         </div>
     </Authorized>
     <Authorizing>
@@ -68,6 +73,8 @@
 
 
 @code {
+    [Inject]
+    private IDialogService DialogService { get; set; }
 
     [Parameter]
     public DateTime SelectedDate { get; set; }
@@ -84,6 +91,30 @@
         await ActivityRepository.UpdateAsync(Activity);
         await ExerciseRepository.UpdateAsync(Exercise);
         NavigationManager.NavigateTo($"/activityview/{SelectedDate:yyyy-MM-dd}");
+    }
+    
+    
+    private async void AskDeleteActivity()
+    {
+        bool? result = await DialogService.ShowMessageBox(
+            "Warning",
+            "Deleting can not be undone!",
+            yesText: "Delete!", cancelText: "Cancel");
+
+        if (result is true)
+        {
+            DeleteActivity();
+        }
+
+        StateHasChanged();
+    }
+
+    private async void DeleteActivity()
+    {
+        await ActivityRepository.DeleteAsync(Activity);
+        NavigationManager.NavigateTo($"/activityview/{SelectedDate:yyyy-MM-dd}");
+        
+        StateHasChanged();
     }
 
     protected override async Task OnInitializedAsync()

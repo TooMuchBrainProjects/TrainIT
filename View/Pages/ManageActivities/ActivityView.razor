@@ -28,38 +28,67 @@
                         {
                             <MudListItem>
                                 <MudGrid Style="min-height: 4rem;">
-                                    <MudItem xs="7" Style="display: flex; align-items: center;">
-                                        @activity.Exercise.Name
-                                    </MudItem>
+                                    @if (!editMode)
+                                    {
+                                        <MudItem xs="7" Style="display: flex; align-items: center;">
+                                            @activity.Exercise.Name
+                                        </MudItem>
+                                    }
+                                    else
+                                    {
+                                        <MudItem xs="7" Style="display: flex; align-items: center; left: 0;">
+                                            <MudCheckBox Color="Color.Primary" Label="@activity.Exercise.Name" @bind-Checked="@activity.IsSelected" Style="min-width: 50%"></MudCheckBox>
+                                        </MudItem>
+                                    }
                                     <MudItem xs="3" Style="text-align: end; display: flex; align-items: center;">
                                         @Math.Round(activity.Weight, 2) kg
                                     </MudItem>
-                                    <MudItem xs="2" Style="display: flex; align-items: center;">
-                                        <MudIconButton Icon="@Icons.Filled.ArrowForwardIos" OnClick="() => EditActivity(activity.Id)"/>
-                                    </MudItem>
+                                    @if (!editMode)
+                                    {
+                                        <MudItem xs="2" Style="display: flex; align-items: center;">
+                                            <MudIconButton Icon="@Icons.Filled.Edit" OnClick="() => EditActivity(activity.Id)"/>
+                                        </MudItem>
+                                    }
+                                    else
+                                    {
+                                        <MudItem xs="2" Style="display: flex; align-items: center;">
+                                            <MudIconButton Icon="@Icons.Filled.Delete" OnClick="() => DeleteActivity(activity.Id)"/>
+                                        </MudItem>
+                                    }
                                 </MudGrid>
                             </MudListItem>
                         }
                     </MudList>
+
+
+                    <div Style="position: fixed; bottom: 13vh; right: 2vh; display: grid; gap: 1rem;">
+                        @if (editMode)
+                        {
+                            <MudFab OnClick="AskDeleteActivities" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete"/>
+                        }
+                        else
+                        {
+                            <MudFab OnClick="NavigateToWorkoutView" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.FilterList"/>
+                            <MudFab OnClick="NavigateToExerciseView" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.PlusOne"/>
+                        }
+                    </div>
+
+
+                    <div Style="position: fixed; top: 2vh; right: 2vh; display: grid; gap: 1rem;">
+                        @if (editMode)
+                        {
+                            <MudFab OnClick="ChangeEditMode" Color="Color.Info" StartIcon="@Icons.Material.Filled.EditOff"/>
+                        }
+                        else if (activities.Any())
+                        {
+                            <MudFab OnClick="ChangeEditMode" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Edit"/>
+                        }
+                    </div>
                 </ChildContent>
             </DataInit>
         </MudContainer>
 
-        <div Style="position: fixed; bottom: 13vh; right: 2vh; display: grid; gap: 1rem;">
-            <MudFab OnClick="NavigateToWorkoutView" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.FilterList"/>
-            <MudFab OnClick="NavigateToExerciseView" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.PlusOne"/>
-        </div>
 
-        <div Style="position: fixed; top: 2vh; right: 2vh; display: grid; gap: 1rem;">
-            @if (editMode)
-            {
-                <MudFab OnClick="ChangeEditMode" Color="Color.Error" StartIcon="@Icons.Material.Filled.Close"/>
-            }
-            else
-            {
-                <MudFab OnClick="ChangeEditMode" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Edit"/>
-            }
-        </div>
     </Authorized>
     <NotAuthorized>
         <MudContainer Class="mt-8">
@@ -75,6 +104,9 @@
 
 
 @code {
+
+    [Inject]
+    private IDialogService DialogService { get; set; }
 
     [Parameter]
     public DateTime? SelectedDate { get; set; }
@@ -141,6 +173,65 @@
     private void NavigateToExerciseView()
     {
         NavigationManager.NavigateTo($"/exerciseview/{_date:yyyy-MM-dd}");
+    }
+
+    private async void AskDeleteActivities()
+    {
+        bool? result = await DialogService.ShowMessageBox(
+            "Warning",
+            "Deleting can not be undone!",
+            yesText: "Delete!", cancelText: "Cancel");
+
+        if (result is true)
+        {
+            DeleteActivities();
+        }
+
+        StateHasChanged();
+    }
+
+    private async void DeleteActivities()
+    {
+        await ActivityRepository.DeleteAsync(Activities.Where(a => a.IsSelected));
+
+        if (UserService.CurrentUser != null)
+        {
+            Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(_date.Year, _date.Month, _date.Day));
+        }
+
+        editMode = false;
+
+        StateHasChanged();
+    }
+
+    private async void AskDeleteActivitiy(int activityId)
+    {
+        bool? result = await DialogService.ShowMessageBox(
+            "Warning",
+            "Deleting can not be undone!",
+            yesText: "Delete!", cancelText: "Cancel");
+
+        if (result is true)
+        {
+            DeleteActivity(activityId);
+        }
+
+        StateHasChanged();
+    }
+
+    private async void DeleteActivity(int activityId)
+    {
+        await ActivityRepository.DeleteAsync(Activities.Where(a => a.Id == activityId));
+
+        if (UserService.CurrentUser != null)
+        {
+            Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(_date.Year, _date.Month, _date.Day));
+        }
+
+        if(!Activities.Any())  
+            editMode = false;
+
+        StateHasChanged();
     }
 
     protected override async Task OnInitializedAsync()

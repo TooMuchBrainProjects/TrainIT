@@ -42,13 +42,20 @@
                 </MudPaper>
 
                 <MudPaper class="px-4 py-1" Elevation="3">
-                    <div style="display: flex; justify-content: space-between; align-items: center">
+                    <div style="display: flex; justify-content: space-between; align-items: center; min-height: 4rem">
                         <div Style="@($"color:{Colors.Amber.Darken2};")">Theme Mode:</div>
                         <MudCheckBox T="bool?" CheckedChanged="ToggleTheme" Checked="IsDarkMode" TriState="true" Color="Color.Secondary">
                             @(IsDarkMode == null ? "Auto" : (IsDarkMode == true) ? "Dark" : "Light")
                         </MudCheckBox>
                     </div>
                 </MudPaper>
+                
+                @*<MudPaper class="px-4 py-1" Elevation="3">
+                    <div style="display: flex; justify-content: space-between; align-items: center; min-height: 4rem">
+                        <div Style="@($"color:{Colors.Amber.Darken2};")">Ask when delete:</div>
+                        <MudSwitch @bind-Checked="@AskWhenDelete" Color="Color.Primary" />
+                    </div>
+                </MudPaper>*@
 
                 <div style="display: flex; justify-content: space-between; align-items: center">
                     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="LogoutAsync">Log Out</MudButton>
@@ -77,11 +84,19 @@
 
     public bool? IsDarkMode { get; set; }
 
-    public void ToggleTheme(bool? Changedtheme)
+    public void ToggleTheme(bool? changedtheme)
     {
-        IsDarkMode = Changedtheme;
+        IsDarkMode = changedtheme;
         MainLayout!.ToggleDarkMode(IsDarkMode);
     }
+    
+    /*public bool? AskWhenDelete { get; set; }
+
+    public void ToggleAskWhenDelete(bool? changedAskWhenDelete)
+    {
+        AskWhenDelete = changedAskWhenDelete;
+        MainLayout!.ToggleAskWhenDelete(AskWhenDelete);
+    }*/
 
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
