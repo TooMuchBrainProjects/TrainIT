@@ -44,7 +44,25 @@
         </MudContainer>
 
         <div Style="position: fixed; bottom: 13vh; right: 2vh;">
-            <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Check" OnClick="AddActivities"/>
+            @if (editMode)
+            {
+                <MudFab Color="Color.Info" StartIcon="@Icons.Material.Filled.Add" OnClick="AddExercise"/>
+            }
+            else
+            {
+                <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Check" OnClick="AddActivities"/>
+            }
+        </div>
+        
+        <div Style="position: fixed; top: 2vh; right: 2vh; display: grid; gap: 1rem;">
+            @if (editMode)
+            {
+                <MudFab OnClick="ChangeEditMode" Color="Color.Error" StartIcon="@Icons.Material.Filled.Close"/>
+            }
+            else
+            {
+            <MudFab OnClick="ChangeEditMode" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Edit"/>
+            }
         </div>
     </Authorized>
     <NotAuthorized>
@@ -63,6 +81,14 @@
     Workout? Workout { get; set; }
 
     List<Exercise> Exercises { get; set; } = null!;
+    
+    bool editMode = false;
+
+    private void ChangeEditMode()
+    {
+        editMode = !editMode;
+        StateHasChanged();
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -105,6 +131,11 @@
         }
         
         NavigationManager.NavigateTo($"/activityview/{SelectedDate:yyyy-MM-dd}");
+    }
+
+    async Task AddExercise()
+    {
+        
     }
 
 }
