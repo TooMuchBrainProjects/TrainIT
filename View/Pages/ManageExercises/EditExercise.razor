@@ -48,6 +48,9 @@
 
 @code {
 
+    [Inject]
+    private IDialogService DialogService { get; set; }
+    
     [Parameter]
     public DateTime SelectedDate { get; set; }
 
@@ -60,9 +63,20 @@
     {
         if (ExerciseId == null)
         {
-            
-            await ExerciseRepository.CreateAsync(Exercise);
-            NavigationManager.NavigateTo($"/exerciseview/{SelectedDate:yyyy-MM-dd}");
+            if (Exercise.Name == null)
+            {
+                await DialogService.ShowMessageBox(
+                    "Warning",
+                    "There must be a Name!"
+                    );
+            }
+            else
+            {
+                await ExerciseRepository.CreateAsync(Exercise);
+                NavigationManager.NavigateTo($"/exerciseview/{SelectedDate:yyyy-MM-dd}");
+            }
+          
+
         }
         else
         {
@@ -74,16 +88,20 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (ExerciseId == null)
+        if (await UserService.IsAuthenticated())
         {
-            Exercise = new Exercise()
+
+            if (ExerciseId == null)
             {
-                UserId = UserService.CurrentUser.Id
-            };
-        }
-        else
-        {
-            Exercise = await ExerciseRepository.GetExerciseById(ExerciseId.Value);
+                Exercise = new Exercise()
+                {
+                    UserId = UserService.CurrentUser.Id
+                };
+            }
+            else
+            {
+                Exercise = await ExerciseRepository.GetExerciseById(ExerciseId.Value);
+            }
         }
 
     }

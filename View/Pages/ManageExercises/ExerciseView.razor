@@ -57,7 +57,7 @@
         <div Style="position: fixed; top: 2vh; right: 2vh; display: grid; gap: 1rem;">
             @if (editMode)
             {
-                <MudFab OnClick="ChangeEditMode" Color="Color.Error" StartIcon="@Icons.Material.Filled.Close"/>
+                <MudFab OnClick="ChangeEditMode" Color="Color.Error" StartIcon="@Icons.Material.Filled.EditOff"/>
             }
             else
             {
@@ -92,18 +92,21 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (WorkoutId.HasValue)
+        if (await UserService.IsAuthenticated())
         {
-            Workout = await WorkoutRepository.GetWorkoutById(WorkoutId.Value);
-            Exercises = await ExerciseRepository.GetExercisesByWorkout(WorkoutId.Value);
-            foreach (var exercise in Exercises)
+            if (WorkoutId.HasValue)
             {
-                exercise.IsSelected = true;
+                Workout = await WorkoutRepository.GetWorkoutById(WorkoutId.Value);
+                Exercises = await ExerciseRepository.GetExercisesByWorkout(WorkoutId.Value);
+                foreach (var exercise in Exercises)
+                {
+                    exercise.IsSelected = true;
+                }
             }
-        }
-        else
-        {
-            Exercises = await ExerciseRepository.GetExercisesByUser(UserService.CurrentUser!.Id);
+            else
+            {
+                Exercises = await ExerciseRepository.GetExercisesByUser(UserService.CurrentUser!.Id);
+            }
         }
     }
 
@@ -117,11 +120,24 @@
         Exercises = Exercises.Where(e => e.IsSelected == true).ToList();
 
         var lastActivities = await ActivityRepository.GetLastActivitiesByExercises(Exercises.Select(exercise => exercise.Id).ToList());
-        
-        var newActivities = Exercises.Select((t, i) => new Activity()
+        var newActivities = new List<Activity>();
+        if (lastActivities.Any())
         {
-            ExerciseId = t.Id, Exercise = t, DateValue = DateOnly.FromDateTime(SelectedDate), Repetition = lastActivities[i].Repetition, Set = lastActivities[i].Set, Weight = lastActivities[i].Weight
-        }).ToList();
+            newActivities = Exercises.Select((t, i) => new Activity()
+            {
+                ExerciseId = t.Id, Exercise = t, DateValue = DateOnly.FromDateTime(SelectedDate), Repetition = lastActivities[i].Repetition, Set = lastActivities[i].Set, Weight = lastActivities[i].Weight
+            }).ToList();
+
+        }
+        else
+        {
+            newActivities = Exercises.Select((t, i) => new Activity()
+            {
+                ExerciseId = t.Id, Exercise = t, DateValue = DateOnly.FromDateTime(SelectedDate), Repetition = default, Set = default, Weight = default
+            }).ToList();
+
+        }
+        
 
         await ActivityRepository.CreateAsync(newActivities);
 

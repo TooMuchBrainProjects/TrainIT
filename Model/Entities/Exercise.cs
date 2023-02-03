@@ -16,11 +16,11 @@ public class Exercise
     
     [StringLength(100)]
     [Column("MACHINE")]
-    public string Machine { get; set; }
+    public string? Machine { get; set; }
     
     [DataType(DataType.Text)]
     [Column("DESCRIPTION")]
-    public string Description { get; set; }
+    public string? Description { get; set; }
 
     [Required]
     [Column("USER_ID")]
