@@ -34,17 +34,22 @@
 
     private void LocationChanged(object sender, LocationChangedEventArgs e)
     {
-        if (e.Location[^1..] == "/")
+        SetActive(e.Location);
+    }
+
+    private void SetActive(string location)
+    {
+        if (location[^1..] == "/")
         {
             ActiveLink1();
         }
 
-        else if (e.Location.Contains("activityview"))
+        else if (location.Contains("activityview"))
         {
             ActiveLink2();
         }
 
-        else if (e.Location.Contains("profile"))
+        else if (location.Contains("profile"))
         {
             ActiveLink3();
         }
@@ -55,6 +60,7 @@
         }
         
         StateHasChanged();
+        
     }
 
     private void ActiveLink1()
@@ -88,7 +94,7 @@
     protected override async Task OnInitializedAsync()
     {
         NavigationManager.LocationChanged += LocationChanged;
-        ActiveLink1();
+        SetActive(NavigationManager.Uri);
     }
 
 }
