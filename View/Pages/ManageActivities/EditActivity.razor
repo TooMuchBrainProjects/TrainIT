@@ -54,11 +54,10 @@
                         </MudPaper>
                     </MudStack>
                 </MudForm>
-
             </MudStack>
         </MudContainer>
         
-        <div Style="position: fixed; bottom: 9vh; right: 2vh; display: grid; gap: 1rem;">
+        <div Style="position: fixed; bottom: 13vh; right: 2vh; display: grid; gap: 1rem;">
             <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Check" OnClick="SaveActivityChanges"/>
         </div>
 
@@ -119,8 +118,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Activity = await ActivityRepository.GetActivityById(ActivityId);
-        Exercise = await ExerciseRepository.GetExerciseByActivity(ActivityId);
+        if (await UserService.IsAuthenticated())
+        {
+            Activity = await ActivityRepository.GetActivityById(ActivityId);
+            Exercise = await ExerciseRepository.GetExerciseByActivity(ActivityId);
+        }
     }
-
 }

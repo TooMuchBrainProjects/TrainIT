@@ -26,18 +26,28 @@
                                                   Lines="5"/>
                                 </MudPaper>
                             </MudStack>
+
                         </ChildContent>
                     </DataInit>
                 </MudForm>
             </MudStack>
         </MudContainer>
+
         <div Style="position: fixed; bottom: 13vh; right: 2vh; display: grid; gap: 1rem;">
             <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Check" OnClick="SaveWorkoutChanges"/>
+        </div>
+
+
+        <div Style="position: fixed; top: 2vh; right: 2vh; display: grid; gap: 1rem;">
+            <MudFab OnClick="AskDeleteWorkout" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete"/>
         </div>
     </Authorized>
 </AuthorizeView>
 
 @code {
+
+    [Inject]
+    private IDialogService DialogService { get; set; }
 
     [Parameter]
     public DateTime SelectedDate { get; set; }
@@ -53,9 +63,33 @@
         NavigationManager.NavigateTo($"/workoutview/{SelectedDate:yyyy-MM-dd}");
     }
 
+    private async void AskDeleteWorkout()
+    {
+        bool? result = await DialogService.ShowMessageBox(
+            "Warning",
+            "Deleting can not be undone!",
+            yesText: "Delete!", cancelText: "Cancel");
+
+        if (result is true)
+        {
+            DeleteWorkout();
+        }
+
+        StateHasChanged();
+    }
+
+    private async void DeleteWorkout()
+    {
+        await WorkoutRepository.DeleteAsync(Workout);
+        NavigationManager.NavigateTo($"/workoutview/{SelectedDate:yyyy-MM-dd}");
+        StateHasChanged();
+    }
+
     protected override async Task OnInitializedAsync()
     {
-        Workout = await WorkoutRepository.GetWorkoutById(WorkoutId);
+        if (await UserService.IsAuthenticated()) {
+            Workout = await WorkoutRepository.GetWorkoutById(WorkoutId);
+        }
     }
 
 }

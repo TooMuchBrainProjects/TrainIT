@@ -28,33 +28,29 @@
                         {
                             <MudListItem>
                                 <MudGrid Style="min-height: 4rem;">
-                                    @if (!editMode)
-                                    {
-                                        <MudItem xs="7" Style="display: flex; align-items: center;">
+                                    <MudItem xs="7" Style="display: flex; align-items: center;">
+                                        @if (!editMode)
+                                        {
                                             @activity.Exercise.Name
-                                        </MudItem>
-                                    }
-                                    else
-                                    {
-                                        <MudItem xs="7" Style="display: flex; align-items: center; left: 0;">
+                                        }
+                                        else
+                                        {
                                             <MudCheckBox Color="Color.Primary" Label="@activity.Exercise.Name" @bind-Checked="@activity.IsSelected" Style="min-width: 50%"></MudCheckBox>
-                                        </MudItem>
-                                    }
+                                        }
+                                    </MudItem>
                                     <MudItem xs="3" Style="text-align: end; display: flex; align-items: center;">
                                         @Math.Round(activity.Weight, 2) kg
                                     </MudItem>
-                                    @if (!editMode)
-                                    {
-                                        <MudItem xs="2" Style="display: flex; align-items: center;">
+                                    <MudItem xs="2" Style="display: flex; align-items: center;">
+                                        @if (!editMode)
+                                        {
                                             <MudIconButton Icon="@Icons.Filled.Edit" OnClick="() => EditActivity(activity.Id)"/>
-                                        </MudItem>
-                                    }
-                                    else
-                                    {
-                                        <MudItem xs="2" Style="display: flex; align-items: center;">
+                                        }
+                                        else
+                                        {
                                             <MudIconButton Icon="@Icons.Filled.Delete" OnClick="() => DeleteActivity(activity.Id)"/>
-                                        </MudItem>
-                                    }
+                                        }
+                                    </MudItem>
                                 </MudGrid>
                             </MudListItem>
                         }
@@ -204,7 +200,7 @@
         StateHasChanged();
     }
 
-    private async void AskDeleteActivitiy(int activityId)
+    private async void AskDeleteActivity(int activityId)
     {
         bool? result = await DialogService.ShowMessageBox(
             "Warning",
@@ -228,7 +224,7 @@
             Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(_date.Year, _date.Month, _date.Day));
         }
 
-        if(!Activities.Any())  
+        if (!Activities.Any())
             editMode = false;
 
         StateHasChanged();
@@ -236,8 +232,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (UserService.CurrentUser != null)
-        {
+        if (await UserService.IsAuthenticated()) {
             Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(_date.Year, _date.Month, _date.Day));
         }
 
