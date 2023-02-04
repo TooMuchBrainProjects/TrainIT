@@ -107,11 +107,12 @@
     .navigation {
         position: fixed;
         height: 4rem;
-        bottom: .5rem;
-        left: .5rem;
-        right: .5rem;
+        bottom: 0rem;
+        left: 0rem;
+        right: 0rem;
         
-        border-radius: .8rem;
+        border-top-left-radius: .8rem;
+        border-top-right-radius: .8rem;
         background: #fff;
         
         display: flex;
@@ -154,9 +155,9 @@
         color: var(--clr);
     }
     
-    .navigation ul li.active a .icon {
+   /* .navigation ul li.active a .icon {
         transform: translateY(-1.9rem) scale(1.1);
-    }
+    }*/
     
     .navigation ul li a .text {
         position: absolute;
@@ -169,24 +170,24 @@
         transform: translateY(1rem);
     }
     
-    .navigation ul li.active a .text {
+    /*.navigation ul li.active a .text {
         opacity: 1;
         transform: translateY(.7rem);
-    }
+    }*/
     
     .indicator {
         position: absolute;
-        top: -50%;
-        width: 4rem;
-        height: 4rem;
+        top: 0.32rem;
+        width: 3rem;
+        height: 3rem;
         background: #29fd53;
         border-radius: 50%;
-        border: .4rem solid var(--clr); 
+        /*border: .4rem solid var(--clr); */
         transition: 0.5s;
         opacity: 1;
     }
     
-    .indicator::before {
+    /*.indicator::before {
         content: "";
         position: absolute;
         top: 50%;
@@ -208,7 +209,7 @@
         background: transparent;
         border-top-left-radius: 20px;
         box-shadow: -1px -10px 0 0 var(--clr);
-    }
+    }*/
     
     :has(ul>li:nth-child(1).active) .indicator {
         transform: translateX(-30vw);
