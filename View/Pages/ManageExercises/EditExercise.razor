@@ -8,7 +8,14 @@
     <Authorized>
         <MudContainer Class="mt-8">
             <MudStack Spacing="4">
-                <h1 class="ms-4 mb-12">Edit Exercise</h1>
+                @if (ExerciseId == null)
+                {
+                    <h1 class="ms-4 mb-12">Create Exercise</h1>
+                }
+                else
+                {
+                    <h1 class="ms-4 mb-12">Edit Exercise</h1>
+                }
 
                 <MudForm>
                     <DataInit Data="Exercise">
@@ -39,8 +46,13 @@
 
             </MudStack>
         </MudContainer>
+
         <div Style="position: fixed; bottom: 13vh; right: 2vh; display: grid; gap: 1rem;">
             <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Check" OnClick="SaveExerciseChanges"/>
+        </div>
+
+        <div Style="position: fixed; top: 2vh; right: 2vh; display: grid; gap: 1rem;">
+            <MudFab OnClick="AskDeleteExercise" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete"/>
         </div>
     </Authorized>
 </AuthorizeView>
@@ -50,7 +62,7 @@
 
     [Inject]
     private IDialogService DialogService { get; set; }
-    
+
     [Parameter]
     public DateTime SelectedDate { get; set; }
 
@@ -75,22 +87,44 @@
                 await ExerciseRepository.CreateAsync(Exercise);
                 NavigationManager.NavigateTo($"/exerciseview/{SelectedDate:yyyy-MM-dd}");
             }
-          
-
         }
         else
         {
             await ExerciseRepository.UpdateAsync(Exercise);
             NavigationManager.NavigateTo($"/exerciseview/{SelectedDate:yyyy-MM-dd}");
         }
+    }
 
+    private async void AskDeleteExercise()
+    {
+        bool? result = await DialogService.ShowMessageBox(
+            "Warning",
+            "Deleting can not be undone!",
+            yesText: "Delete!", cancelText: "Cancel");
+
+        if (result is true)
+        {
+            DeleteExercise();
+        }
+
+        StateHasChanged();
+    }
+
+    private async void DeleteExercise()
+    {
+        if (ExerciseId != null)
+        {
+            await ExerciseRepository.DeleteAsync(Exercise);
+        }
+        NavigationManager.NavigateTo($"/exerciseview/{SelectedDate:yyyy-MM-dd}");
+
+        StateHasChanged();
     }
 
     protected override async Task OnInitializedAsync()
     {
         if (await UserService.IsAuthenticated())
         {
-
             if (ExerciseId == null)
             {
                 Exercise = new Exercise()
@@ -103,7 +137,6 @@
                 Exercise = await ExerciseRepository.GetExerciseById(ExerciseId.Value);
             }
         }
-
     }
 
 }

@@ -190,13 +190,14 @@
     {
         await ActivityRepository.DeleteAsync(Activities.Where(a => a.IsSelected));
 
-        if (UserService.CurrentUser != null)
+        if (await UserService.IsAuthenticated())
         {
             Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(_date.Year, _date.Month, _date.Day));
         }
 
         editMode = false;
 
+        Activities.ForEach(e => e.IsSelected = false);
         StateHasChanged();
     }
 
@@ -219,7 +220,7 @@
     {
         await ActivityRepository.DeleteAsync(Activities.Where(a => a.Id == activityId));
 
-        if (UserService.CurrentUser != null)
+        if (await UserService.IsAuthenticated())
         {
             Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(_date.Year, _date.Month, _date.Day));
         }

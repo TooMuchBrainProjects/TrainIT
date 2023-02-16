@@ -29,10 +29,24 @@
                             <MudListItem>
                                 <MudGrid Style="min-height: 4rem;">
                                     <MudItem xs="10" Style="display: flex; align-items: center;">
-                                        <MudCheckBox Color="Color.Primary" Label="@exercise.Name" @bind-Checked="@exercise.IsSelected" Style="min-width: 50%"></MudCheckBox>
+                                        @if (!editMode)
+                                        {
+                                            <MudCheckBox Color="Color.Primary" Label="@exercise.Name" @bind-Checked="@exercise.IsSelected" Style="min-width: 50%"></MudCheckBox>
+                                        }
+                                        else
+                                        {
+                                            @exercise.Name
+                                        }
                                     </MudItem>
                                     <MudItem xs="2">
-                                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Surface" aria-label="edit-exercise" OnClick="() => EditExercise(exercise.Id)"></MudIconButton>
+                                        @if (!editMode)
+                                        {
+                                            <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => EditExercise(exercise.Id)"/>
+                                        }
+                                        else
+                                        {
+                                            <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="() => AskDeleteExercise(exercise.Id)"/>
+                                        }
                                     </MudItem>
                                 </MudGrid>
 
@@ -53,7 +67,7 @@
                 <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Check" OnClick="AddActivities"/>
             }
         </div>
-        
+
         <div Style="position: fixed; top: 2vh; right: 2vh; display: grid; gap: 1rem;">
             @if (editMode)
             {
@@ -72,6 +86,10 @@
 
 
 @code {
+
+    [Inject]
+    private IDialogService DialogService { get; set; }
+
     [Parameter]
     public DateTime SelectedDate { get; set; }
 
@@ -81,7 +99,7 @@
     Workout? Workout { get; set; }
 
     List<Exercise> Exercises { get; set; } = null!;
-    
+
     bool editMode = false;
 
     private void ChangeEditMode()
@@ -89,6 +107,122 @@
         editMode = !editMode;
         StateHasChanged();
     }
+
+
+    void EditExercise(int exerciseId)
+    {
+        NavigationManager.NavigateTo($"/editexercise/{SelectedDate:yyyy-MM-dd}/{exerciseId}");
+    }
+
+    async Task AddActivities()
+    {
+        Exercises = Exercises.Where(e => e.IsSelected == true).ToList();
+
+        var lastActivities = await ActivityRepository.GetLastActivitiesByExercises(Exercises.Select(exercise => exercise.Id).ToList());
+        var newActivities = new List<Activity>();
+        if (lastActivities.Any())
+        {
+            newActivities = Exercises.Select((t, i) => new Activity()
+            {
+                ExerciseId = t.Id, Exercise = t, DateValue = DateOnly.FromDateTime(SelectedDate), Repetition = lastActivities[i].Repetition, Set = lastActivities[i].Set, Weight = lastActivities[i].Weight
+            }).ToList();
+        }
+        else
+        {
+            newActivities = Exercises.Select((t, i) => new Activity()
+            {
+                ExerciseId = t.Id, Exercise = t, DateValue = DateOnly.FromDateTime(SelectedDate), Repetition = default, Set = default, Weight = default
+            }).ToList();
+        }
+
+
+        await ActivityRepository.CreateAsync(newActivities);
+
+        foreach (var exercise in Exercises)
+        {
+            exercise.IsSelected = false;
+        }
+
+        Exercises.ForEach(e => e.IsSelected = false);
+        NavigationManager.NavigateTo($"/activityview/{SelectedDate:yyyy-MM-dd}");
+    }
+
+    async Task AddExercise()
+    {
+        NavigationManager.NavigateTo($"/editexercise/{SelectedDate:yyyy-MM-dd}");
+    }
+
+    private async void AskDeleteExercises()
+    {
+        bool? result = await DialogService.ShowMessageBox(
+            "Warning",
+            "Deleting can not be undone!",
+            yesText: "Delete!", cancelText: "Cancel");
+
+        if (result is true)
+        {
+            DeleteExercises();
+        }
+
+        StateHasChanged();
+    }
+
+    private async void DeleteExercises()
+    {
+        await ExerciseRepository.DeleteAsync(Exercises.Where(a => a.IsSelected));
+
+        if (await UserService.IsAuthenticated())
+        {
+            Exercises = await ExerciseRepository.GetExercisesByUser(UserService.CurrentUser!.Id);
+        }
+
+        editMode = false;
+
+        StateHasChanged();
+    }
+
+    private async void AskDeleteExercise(int exerciseId)
+    {
+        bool? result = await DialogService.ShowMessageBox(
+            "Warning",
+            "You're going to delete all exercises trained in the past! Deleting can not be undone!",
+            yesText: "Delete!", cancelText: "Cancel");
+
+        if (result is true)
+        {
+            DeleteExercise(exerciseId);
+        }
+
+        StateHasChanged();
+    }
+
+    private async void DeleteExercise(int exerciseId)
+    {
+        await ExerciseRepository.DeleteAsync(Exercises.Where(a => a.Id == exerciseId));
+
+        if (await UserService.IsAuthenticated())
+        {
+            if (WorkoutId.HasValue)
+            {
+                Workout = await WorkoutRepository.GetWorkoutById(WorkoutId.Value);
+                Exercises = await ExerciseRepository.GetExercisesByWorkout(WorkoutId.Value);
+                foreach (var exercise in Exercises)
+                {
+                    exercise.IsSelected = true;
+                }
+            }
+            else
+            {
+                Exercises = await ExerciseRepository.GetExercisesByUser(UserService.CurrentUser!.Id);
+            }
+        }
+
+        if (!Exercises.Any())
+            editMode = false;
+
+        StateHasChanged();
+    }
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -109,49 +243,4 @@
             }
         }
     }
-
-    void EditExercise(int exerciseId)
-    {
-        NavigationManager.NavigateTo($"/editexercise/{SelectedDate:yyyy-MM-dd}/{exerciseId}");
-    }
-
-    async Task AddActivities()
-    {
-        Exercises = Exercises.Where(e => e.IsSelected == true).ToList();
-
-        var lastActivities = await ActivityRepository.GetLastActivitiesByExercises(Exercises.Select(exercise => exercise.Id).ToList());
-        var newActivities = new List<Activity>();
-        if (lastActivities.Any())
-        {
-            newActivities = Exercises.Select((t, i) => new Activity()
-            {
-                ExerciseId = t.Id, Exercise = t, DateValue = DateOnly.FromDateTime(SelectedDate), Repetition = lastActivities[i].Repetition, Set = lastActivities[i].Set, Weight = lastActivities[i].Weight
-            }).ToList();
-
-        }
-        else
-        {
-            newActivities = Exercises.Select((t, i) => new Activity()
-            {
-                ExerciseId = t.Id, Exercise = t, DateValue = DateOnly.FromDateTime(SelectedDate), Repetition = default, Set = default, Weight = default
-            }).ToList();
-
-        }
-        
-
-        await ActivityRepository.CreateAsync(newActivities);
-
-        foreach (var exercise in Exercises)
-        {
-            exercise.IsSelected = false;
-        }
-        
-        NavigationManager.NavigateTo($"/activityview/{SelectedDate:yyyy-MM-dd}");
-    }
-
-    async Task AddExercise()
-    {
-        NavigationManager.NavigateTo($"/editexercise/{SelectedDate:yyyy-MM-dd}");
-    }
-
 }

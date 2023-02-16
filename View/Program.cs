@@ -46,7 +46,8 @@ builder.Services.AddLogging(); // the default Logger
 
 builder.Services.AddHttpContextAccessor(); // this services enables us to access to HttpContext of our App
 
-builder.Services.AddMudServices(config => {
+builder.Services.AddMudServices(config =>
+{
     config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomRight;
     config.SnackbarConfiguration.PreventDuplicates = false;
     config.SnackbarConfiguration.NewestOnTop = false;
@@ -57,7 +58,9 @@ builder.Services.AddMudServices(config => {
     config.SnackbarConfiguration.SnackbarVariant = Variant.Outlined;
 });
 
-builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>(); // we register our implementation of the AuthenticationStateProvider
+builder.Services
+    .AddScoped<AuthenticationStateProvider,
+        CustomAuthStateProvider>(); // we register our implementation of the AuthenticationStateProvider
 builder.Services.AddScoped<UserService>(); // The UserService we use to login/register/logout
 
 var app = builder.Build();
@@ -69,6 +72,18 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+/*using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var context = services.GetRequiredService<TrainITDbContext>();
+
+    if (context.Database.GetPendingMigrations().Any())
+    {
+        context.Database.Migrate();
+    }
+}*/
 
 app.UseHttpsRedirection();
 
