@@ -34,6 +34,7 @@ builder.Services.AddMudServices();
 // Repositories
 builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
 builder.Services.AddScoped<IWorkoutRepository, WorkoutRepository>();
+builder.Services.AddScoped<IWorkoutExerciseRepository, WorkoutExerciseRepository>();
 builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
 builder.Services.AddScoped<IStatistic, Statistic>();
 builder.Services.AddScoped<IThemeHandler, ThemeHandler>();

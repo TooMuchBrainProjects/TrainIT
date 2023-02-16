@@ -47,6 +47,7 @@
                             }
                             else
                             {
+                                <MudFab Color="Color.Info" StartIcon="@Icons.Material.Filled.Add" OnClick="AddWorkout"/>
                             }
                         </div>
 
@@ -152,6 +153,11 @@
             editMode = false;
 
         StateHasChanged();
+    }
+    
+    async Task AddWorkout()
+    {
+        NavigationManager.NavigateTo($"/editworkout/{SelectedDate:yyyy-MM-dd}");
     }
 
     protected override async Task OnInitializedAsync()
