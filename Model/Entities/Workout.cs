@@ -16,7 +16,7 @@ public class Workout
     
     [DataType(DataType.Text)]
     [Column("DESCRIPTION")]
-    public string Description { get; set; }
+    public string? Description { get; set; }
     
     [NotMapped]
     public bool IsSelected { get; set; }

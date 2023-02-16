@@ -1,4 +1,5 @@
-﻿@page "/editworkout/{SelectedDate:datetime}/{WorkoutId:int}"
+﻿@page "/editworkout/{SelectedDate:datetime}"
+@page "/editworkout/{SelectedDate:datetime}/{WorkoutId:int}"
 
 <PageTitle>Edit Workout</PageTitle>
 
@@ -6,10 +7,16 @@
     <Authorized>
         <MudContainer Class="mt-8">
             <MudStack Spacing="4">
-                <h1 class="ms-4 mb-12">Edit Workout</h1>
+                @if (WorkoutId == null)
+                {
+                    <h1 class="ms-4 mb-12">Create Workout</h1>
+                }
+                else
+                {
+                    <h1 class="ms-4 mb-12">Edit Workout</h1>
+                }
 
                 <MudForm>
-
                     <DataInit Data="Workout">
                         <ChildContent Context="workout">
                             <MudStack Spacing="4">
@@ -20,13 +27,33 @@
                                                   Immediate="true"/>
                                 </MudPaper>
                                 <MudPaper class="pa-4" Elevation="3">
-                                    <MudTextField @bind-Value="workout.Description" Label="Machine" Variant="Variant.Outlined"
+                                    <MudTextField @bind-Value="workout.Description" Label="Description" Variant="Variant.Outlined"
                                                   Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.Description" AdornmentColor="Color.Secondary"
                                                   Immediate="true"
                                                   Lines="5"/>
                                 </MudPaper>
                             </MudStack>
-
+                        </ChildContent>
+                    </DataInit>
+                    <h2 class="ms-0 mb-5 mt-10">Add Exercises</h2>
+                    <DataInit Data="Exercises">
+                        <ChildContent Context="exercises">
+                            <MudStack Spacing="4">
+                                <MudPaper class="pa-4" Elevation="3">
+                                    <MudList Clickable="true">
+                                        @foreach (var exercise in exercises)
+                                        {
+                                            <MudListItem>
+                                                <MudGrid Style="min-height: 4rem;">
+                                                    <MudItem xs="10" Style="display: flex; align-items: center;">
+                                                        <MudCheckBox Color="Color.Primary" Label="@exercise.Name" @bind-Checked="@exercise.IsSelected" Style="min-width: 50%"></MudCheckBox>
+                                                    </MudItem>
+                                                </MudGrid>
+                                            </MudListItem>
+                                        }
+                                    </MudList>
+                                </MudPaper>
+                            </MudStack>
                         </ChildContent>
                     </DataInit>
                 </MudForm>
@@ -53,14 +80,46 @@
     public DateTime SelectedDate { get; set; }
 
     [Parameter]
-    public int WorkoutId { get; set; }
+    public int? WorkoutId { get; set; }
 
-    Workout Workout { get; set; } = null!;
+    Workout? Workout { get; set; }
+
+    List<Exercise> Exercises { get; set; } = null!;
 
     async Task SaveWorkoutChanges()
     {
-        await WorkoutRepository.UpdateAsync(Workout);
-        NavigationManager.NavigateTo($"/workoutview/{SelectedDate:yyyy-MM-dd}");
+        if (WorkoutId == null)
+        {
+           
+            if (Workout.Name == null)
+            {
+                await DialogService.ShowMessageBox(
+                    "Warning",
+                    "Please name it!"
+                    );
+            }
+            else if (!Exercises.Exists(w => w.IsSelected))
+            {
+                await DialogService.ShowMessageBox(
+                    "Warning",
+                    "Please select at least one exercise!"
+                    );
+            }
+            else
+            {
+                Exercises = Exercises.Where(e => e.IsSelected == true).ToList();
+                await WorkoutRepository.CreateAsync(Workout);
+                var workoutExercises = Exercises.Select(exercise => new WorkoutExercise() { Exercise = exercise, Workout = Workout }).ToList();
+                await WorkoutExerciseRepository.CreateAsync(workoutExercises);
+
+                NavigationManager.NavigateTo($"/workoutview/{SelectedDate:yyyy-MM-dd}");
+            }
+        }
+        else
+        {
+            await WorkoutRepository.UpdateAsync(Workout);
+            NavigationManager.NavigateTo($"/workoutview/{SelectedDate:yyyy-MM-dd}");
+        }
     }
 
     private async void AskDeleteWorkout()
@@ -87,8 +146,17 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (await UserService.IsAuthenticated()) {
-            Workout = await WorkoutRepository.GetWorkoutById(WorkoutId);
+        if (await UserService.IsAuthenticated())
+        {
+            if (WorkoutId == null)
+            {
+                Workout = new Workout();
+            }
+            else
+            {
+                Workout = await WorkoutRepository.GetWorkoutById(WorkoutId.Value);
+            }
+            Exercises = await ExerciseRepository.GetExercisesByUser(UserService.CurrentUser!.Id);
         }
     }
 
