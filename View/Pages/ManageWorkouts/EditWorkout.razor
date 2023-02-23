@@ -86,11 +86,12 @@
 
     List<Exercise> Exercises { get; set; } = null!;
 
+    List<Exercise> SelectedExercises { get; set; } = null!;
+
     async Task SaveWorkoutChanges()
     {
         if (WorkoutId == null)
         {
-           
             if (Workout.Name == null)
             {
                 await DialogService.ShowMessageBox(
@@ -117,7 +118,45 @@
         }
         else
         {
+    // Workout updaten
             await WorkoutRepository.UpdateAsync(Workout);
+
+            Exercises = Exercises.Where(e => e.IsSelected == true).ToList();
+    // SelectedExercises = oldState
+    // Exercises = newState
+
+            var oldStateIds = SelectedExercises.Select(s => s.Id).ToList();
+            var newStateIds = Exercises.Select(e => e.Id).ToList();
+
+            var additionalExerciseIds = newStateIds.Except(oldStateIds).ToList();
+
+            var outdatedExerciseIds = oldStateIds.Except(newStateIds).ToList();
+
+    // add new
+
+            if (additionalExerciseIds.Any())
+            {
+                var exercises = await ExerciseRepository.GetExercisesByUser(UserService.CurrentUser!.Id);
+
+                exercises = exercises.Where(e => additionalExerciseIds.Contains(e.Id)).ToList();
+
+                List<WorkoutExercise> workoutExercises = new List<WorkoutExercise>();
+
+                foreach (var exercise in exercises)
+                {
+                    workoutExercises.Add(new WorkoutExercise() { Exercise = exercise, Workout = Workout});
+                }
+
+                await WorkoutExerciseRepository.CreateAsync(workoutExercises);
+            }
+
+    // remove outdated
+            if (outdatedExerciseIds.Any())
+            {
+                await WorkoutExerciseRepository.DeleteAsync(await WorkoutExerciseRepository.ReadAsync(we => outdatedExerciseIds.Contains(we.ExerciseId)));
+            }
+
+
             NavigationManager.NavigateTo($"/workoutview/{SelectedDate:yyyy-MM-dd}");
         }
     }
@@ -157,6 +196,15 @@
                 Workout = await WorkoutRepository.GetWorkoutById(WorkoutId.Value);
             }
             Exercises = await ExerciseRepository.GetExercisesByUser(UserService.CurrentUser!.Id);
+            Exercises.ForEach(e => e.IsSelected = false);
+
+            var selectedExercisesId = (await WorkoutExerciseRepository.ReadAsync(we => we.Workout == Workout)).Select(we => we.ExerciseId);
+            SelectedExercises = await ExerciseRepository.ReadAsync(e => selectedExercisesId.Contains(e.Id));
+
+            foreach (var exercise in Exercises.Where(e => selectedExercisesId.Contains(e.Id)))
+            {
+                exercise.IsSelected = true;
+            }
         }
     }
 
