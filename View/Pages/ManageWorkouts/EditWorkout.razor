@@ -98,7 +98,7 @@
                     "Please name it!"
                     );
             }
-            else if (!Exercises.Exists(w => w.IsSelected))
+            else if (!Exercises.Exists(e => e.IsSelected))
             {
                 await DialogService.ShowMessageBox(
                     "Warning",

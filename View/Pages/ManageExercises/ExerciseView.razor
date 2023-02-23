@@ -116,7 +116,7 @@
 
     async Task AddActivities()
     {
-        Exercises = Exercises.Where(e => e.IsSelected == true).ToList();
+        Exercises = Exercises.Where(e => e.IsSelected).ToList();
 
         var lastActivities = await ActivityRepository.GetLastActivitiesByExercises(Exercises.Select(exercise => exercise.Id).ToList());
         var newActivities = new List<Activity>();
@@ -137,11 +137,6 @@
 
 
         await ActivityRepository.CreateAsync(newActivities);
-
-        foreach (var exercise in Exercises)
-        {
-            exercise.IsSelected = false;
-        }
 
         Exercises.ForEach(e => e.IsSelected = false);
         NavigationManager.NavigateTo($"/activityview/{SelectedDate:yyyy-MM-dd}");
@@ -177,6 +172,8 @@
         }
 
         editMode = false;
+        
+        Exercises.ForEach(e => e.IsSelected = false);
 
         StateHasChanged();
     }
@@ -198,7 +195,7 @@
 
     private async void DeleteExercise(int exerciseId)
     {
-        await ExerciseRepository.DeleteAsync(Exercises.Where(a => a.Id == exerciseId));
+        await ExerciseRepository.DeleteAsync(Exercises.Where(e => e.Id == exerciseId));
 
         if (await UserService.IsAuthenticated())
         {

@@ -9,7 +9,7 @@ services:
       test: "exit 0"
   
   trainit:
-    image: trainit
+    image: trueberryless/trainit
     ports:
       - "80:80"
     networks:
