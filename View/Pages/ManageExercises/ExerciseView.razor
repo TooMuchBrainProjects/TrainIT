@@ -1,5 +1,5 @@
-﻿@page "/exerciseview/{SelectedDate:datetime}"
-@page "/exerciseview/{SelectedDate:datetime}/{WorkoutId:int?}"
+﻿@page "/exerciseview"
+@page "/exerciseview/{WorkoutId:int?}"
 
 <PageTitle>Exercise View</PageTitle>
 
@@ -18,6 +18,7 @@
                         @Workout.Name
                     </h1>
                 }
+
                 <MudDivider/>
             </MudStack>
 
@@ -91,9 +92,6 @@
     private IDialogService DialogService { get; set; }
 
     [Parameter]
-    public DateTime SelectedDate { get; set; }
-
-    [Parameter]
     public int? WorkoutId { get; set; }
 
     Workout? Workout { get; set; }
@@ -111,7 +109,7 @@
 
     void EditExercise(int exerciseId)
     {
-        NavigationManager.NavigateTo($"/editexercise/{SelectedDate:yyyy-MM-dd}/{exerciseId}");
+        NavigationManager.NavigateTo($"/editexercise/{exerciseId}");
     }
 
     async Task AddActivities()
@@ -124,14 +122,14 @@
         {
             newActivities = Exercises.Select((t, i) => new Activity()
             {
-                ExerciseId = t.Id, Exercise = t, DateValue = DateOnly.FromDateTime(SelectedDate), Repetition = lastActivities[i].Repetition, Set = lastActivities[i].Set, Weight = lastActivities[i].Weight
+                ExerciseId = t.Id, Exercise = t, DateValue = DateOnly.FromDateTime(DateManager.SelectedDate), Repetition = lastActivities[i].Repetition, Set = lastActivities[i].Set, Weight = lastActivities[i].Weight
             }).ToList();
         }
         else
         {
             newActivities = Exercises.Select((t, i) => new Activity()
             {
-                ExerciseId = t.Id, Exercise = t, DateValue = DateOnly.FromDateTime(SelectedDate), Repetition = default, Set = default, Weight = default
+                ExerciseId = t.Id, Exercise = t, DateValue = DateOnly.FromDateTime(DateManager.SelectedDate), Repetition = default, Set = default, Weight = default
             }).ToList();
         }
 
@@ -139,12 +137,12 @@
         await ActivityRepository.CreateAsync(newActivities);
 
         Exercises.ForEach(e => e.IsSelected = false);
-        NavigationManager.NavigateTo($"/activityview/{SelectedDate:yyyy-MM-dd}");
+        NavigationManager.NavigateTo($"/activityview");
     }
 
     async Task AddExercise()
     {
-        NavigationManager.NavigateTo($"/editexercise/{SelectedDate:yyyy-MM-dd}");
+        NavigationManager.NavigateTo($"/editexercise");
     }
 
     private async void AskDeleteExercises()
@@ -172,7 +170,7 @@
         }
 
         editMode = false;
-        
+
         Exercises.ForEach(e => e.IsSelected = false);
 
         StateHasChanged();
@@ -240,4 +238,5 @@
             }
         }
     }
+
 }

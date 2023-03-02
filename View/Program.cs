@@ -43,6 +43,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IRoleClaimRepository, RoleClaimRepository>();
 
+builder.Services.AddSingleton<DateManager>();
+
 builder.Services.AddLogging(); // the default Logger
 
 builder.Services.AddHttpContextAccessor(); // this services enables us to access to HttpContext of our App

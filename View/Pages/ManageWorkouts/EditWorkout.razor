@@ -1,5 +1,5 @@
-﻿@page "/editworkout/{SelectedDate:datetime}"
-@page "/editworkout/{SelectedDate:datetime}/{WorkoutId:int}"
+﻿@page "/editworkout"
+@page "/editworkout/{WorkoutId:int}"
 
 <PageTitle>Edit Workout</PageTitle>
 
@@ -77,9 +77,6 @@
     private IDialogService DialogService { get; set; }
 
     [Parameter]
-    public DateTime SelectedDate { get; set; }
-
-    [Parameter]
     public int? WorkoutId { get; set; }
 
     Workout? Workout { get; set; }
@@ -113,7 +110,7 @@
                 var workoutExercises = Exercises.Select(exercise => new WorkoutExercise() { Exercise = exercise, Workout = Workout }).ToList();
                 await WorkoutExerciseRepository.CreateAsync(workoutExercises);
 
-                NavigationManager.NavigateTo($"/workoutview/{SelectedDate:yyyy-MM-dd}");
+                NavigationManager.NavigateTo($"/workoutview");
             }
         }
         else
@@ -157,7 +154,7 @@
             }
 
 
-            NavigationManager.NavigateTo($"/workoutview/{SelectedDate:yyyy-MM-dd}");
+            NavigationManager.NavigateTo($"/workoutview");
         }
     }
 
@@ -179,7 +176,7 @@
     private async void DeleteWorkout()
     {
         await WorkoutRepository.DeleteAsync(Workout);
-        NavigationManager.NavigateTo($"/workoutview/{SelectedDate:yyyy-MM-dd}");
+        NavigationManager.NavigateTo($"/workoutview");
         StateHasChanged();
     }
 

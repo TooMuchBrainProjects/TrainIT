@@ -1,4 +1,4 @@
-﻿@page "/workoutview/{SelectedDate:datetime}"
+﻿@page "/workoutview"
 
 <PageTitle>Workout View</PageTitle>
 
@@ -73,9 +73,6 @@
     [Inject]
     private IDialogService DialogService { get; set; }
 
-    [Parameter]
-    public DateTime SelectedDate { get; set; }
-
     List<Workout> Workouts { get; set; } = null!;
 
     bool editMode = false;
@@ -88,12 +85,12 @@
 
     void EditWorkout(int workoutId)
     {
-        NavigationManager.NavigateTo($"/editworkout/{SelectedDate:yyyy-MM-dd}/{workoutId}");
+        NavigationManager.NavigateTo($"/editworkout/{workoutId}");
     }
 
     void NavigateToExerciseView(int workoutId)
     {
-        NavigationManager.NavigateTo($"/exerciseview/{SelectedDate:yyyy-MM-dd}/{workoutId}");
+        NavigationManager.NavigateTo($"/exerciseview/{workoutId}");
     }
 
     private async void AskDeleteWorkouts()
@@ -157,7 +154,7 @@
     
     async Task AddWorkout()
     {
-        NavigationManager.NavigateTo($"/editworkout/{SelectedDate:yyyy-MM-dd}");
+        NavigationManager.NavigateTo($"/editworkout");
     }
 
     protected override async Task OnInitializedAsync()

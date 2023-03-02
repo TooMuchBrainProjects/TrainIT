@@ -1,27 +1,27 @@
 ﻿<div class="navigation">
     <ul>
         <li class="@active[0]">
-            <a href="/">
-                <span class="icon">
-                    <MudIcon Icon="@Icons.Material.Filled.BarChart" Color="Color.Inherit"/>
-                </span>
-                <span class="text">Stats</span>
-            </a>
-        </li>
-        <li class="@active[1]">
             <a href="/activityview">
                 <span class="icon">
-                    <MudIcon Icon="@Icons.Material.Filled.FitnessCenter" Color="Color.Inherit"/>
+                    <MudIcon Icon="@Icons.Material.Filled.CalendarToday" Color="Color.Inherit"/>
                 </span>
                 <span class="text">Activities</span>
             </a>
         </li>
-        <li class="@active[2]">
-            <a href="/profile">
+        <li class="@active[1]">
+            <a href="/exerciseview">
                 <span class="icon">
-                    <MudIcon Icon="@Icons.Material.Filled.Person" Color="Color.Inherit"/>
+                    <MudIcon Icon="@Icons.Material.Filled.FitnessCenter" Color="Color.Inherit"/>
                 </span>
-                <span class="text">Profile</span>
+                <span class="text">Exercises</span>
+            </a>
+        </li>
+        <li class="@active[2]">
+            <a href="/workoutview">
+                <span class="icon">
+                    <MudIcon Icon="@Icons.Material.Filled.List" Color="Color.Inherit"/>
+                </span>
+                <span class="text">Workouts</span>
             </a>
         </li>
     </ul>
@@ -39,17 +39,17 @@
 
     private void SetActive(string location)
     {
-        if (location[^1..] == "/")
+        if (location.Contains("activityview"))
         {
             ActiveLink1();
         }
 
-        else if (location.Contains("activityview"))
+        else if (location.Contains("exerciseview"))
         {
             ActiveLink2();
         }
 
-        else if (location.Contains("profile"))
+        else if (location.Contains("workoutview"))
         {
             ActiveLink3();
         }

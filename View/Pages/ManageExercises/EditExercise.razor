@@ -1,5 +1,5 @@
-﻿@page "/editexercise/{SelectedDate:datetime}"
-@page "/editexercise/{SelectedDate:datetime}/{ExerciseId:int}"
+﻿@page "/editexercise/"
+@page "/editexercise/{ExerciseId:int}"
 
 <PageTitle>Edit Exercise</PageTitle>
 
@@ -16,7 +16,6 @@
                 {
                     <h1 class="ms-4 mb-12">Edit Exercise</h1>
                 }
-
                 <MudForm>
                     <DataInit Data="Exercise">
                         <ChildContent Context="exercise">
@@ -63,9 +62,6 @@
     [Inject]
     private IDialogService DialogService { get; set; }
 
-    [Parameter]
-    public DateTime SelectedDate { get; set; }
-
     Exercise? Exercise { get; set; }
 
     [Parameter]
@@ -85,13 +81,13 @@
             else
             {
                 await ExerciseRepository.CreateAsync(Exercise);
-                NavigationManager.NavigateTo($"/exerciseview/{SelectedDate:yyyy-MM-dd}");
+                NavigationManager.NavigateTo($"/exerciseview");
             }
         }
         else
         {
             await ExerciseRepository.UpdateAsync(Exercise);
-            NavigationManager.NavigateTo($"/exerciseview/{SelectedDate:yyyy-MM-dd}");
+            NavigationManager.NavigateTo($"/exerciseview");
         }
     }
 
@@ -116,7 +112,7 @@
         {
             await ExerciseRepository.DeleteAsync(Exercise);
         }
-        NavigationManager.NavigateTo($"/exerciseview/{SelectedDate:yyyy-MM-dd}");
+        NavigationManager.NavigateTo($"/exerciseview");
 
         StateHasChanged();
     }

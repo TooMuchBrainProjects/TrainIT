@@ -1,5 +1,4 @@
 ﻿@page "/activityview"
-@page "/activityview/{SelectedDate:datetime?}"
 
 <PageTitle>Activity View</PageTitle>
 
@@ -10,13 +9,13 @@
                 <h1 class="ms-4">Activities</h1>
 
                 <MudCardActions>
-                    <MudIconButton OnClick="PrevDate" Icon="@Icons.Material.Filled.ArrowBackIos" aria-label="previous day"></MudIconButton>
-                    <MudDatePicker Label="Choose date" @ref="_picker" Date="_date" DateChanged="HandleDateChangeAsync" AutoClose="true" MaxDate="@_maxDate" class="mx-4">
+                    <MudIconButton OnClick="DateManager.PrevDate" Icon="@Icons.Material.Filled.ArrowBackIos" aria-label="previous day"></MudIconButton>
+                    <MudDatePicker Label="Choose date" @ref="DateManager.DatePicker" Date="DateManager.SelectedDate" AutoClose="true" MaxDate="DateManager.Today" class="mx-4">
                         <PickerActions Context="_">
-                            <MudButton Class="mr-auto align-self-start" OnClick="Today">Today</MudButton>
+                            <MudButton Class="mr-auto align-self-start" OnClick="DateManager.DatePickerToday">Today</MudButton>
                         </PickerActions>
                     </MudDatePicker>
-                    <MudIconButton OnClick="NextDate" Icon="@Icons.Material.Filled.ArrowForwardIos" Disabled="@_nextButtonDisabled" aria-label="next day"></MudIconButton>
+                    <MudIconButton OnClick="DateManager.NextDate" Icon="@Icons.Material.Filled.ArrowForwardIos" Disabled="DateManager.MaxDateReached" aria-label="next day"></MudIconButton>
                 </MudCardActions>
                 <MudDivider/>
             </MudStack>
@@ -104,14 +103,6 @@
     [Inject]
     private IDialogService DialogService { get; set; }
 
-    [Parameter]
-    public DateTime? SelectedDate { get; set; }
-
-    MudDatePicker? _picker;
-    DateTime _date = DateTime.Today;
-    readonly DateTime _maxDate = DateTime.Today;
-    bool _nextButtonDisabled = false;
-
     List<Activity> Activities { get; set; } = null!;
 
     bool editMode = false;
@@ -121,54 +112,35 @@
         editMode = !editMode;
         StateHasChanged();
     }
+    
 
-    private async Task Today()
+    private async Task ReloadActivities(object? sender, EventArgs e)
     {
-        await _picker!.GoToDate(DateTime.Today);
-        _picker.Close();
-    }
-
-    async Task HandleDateChangeAsync(DateTime? dateTime)
-    {
-        Logger.LogInformation("HandleDateChange");
         try
         {
-            _date = dateTime!.Value;
-
-            _nextButtonDisabled = _date == _maxDate;
-
-            Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(_date.Year, _date.Month, _date.Day));
+            Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(DateManager.SelectedDate.Year, DateManager.SelectedDate.Month, DateManager.SelectedDate.Day));
             StateHasChanged();
         }
-        catch (Exception e)
+        catch (Exception exception)
         {
-            Console.WriteLine(e);
+            Console.WriteLine(exception);
         }
     }
 
-    async Task PrevDate()
-    {
-        await HandleDateChangeAsync(_date.AddDays(-1));
-    }
-
-    async Task NextDate()
-    {
-        await HandleDateChangeAsync(_date.AddDays(1));
-    }
 
     async Task EditActivity(int activityId)
     {
-        NavigationManager.NavigateTo($"/editactivity/{_date:yyyy-MM-dd}/{activityId}");
+        NavigationManager.NavigateTo($"/editactivity/{activityId}");
     }
 
     private void NavigateToWorkoutView()
     {
-        NavigationManager.NavigateTo($"/workoutview/{_date:yyyy-MM-dd}");
+        NavigationManager.NavigateTo($"/workoutview");
     }
 
     private void NavigateToExerciseView()
     {
-        NavigationManager.NavigateTo($"/exerciseview/{_date:yyyy-MM-dd}");
+        NavigationManager.NavigateTo($"/exerciseview");
     }
 
     private async void AskDeleteActivities()
@@ -192,7 +164,7 @@
 
         if (await UserService.IsAuthenticated())
         {
-            Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(_date.Year, _date.Month, _date.Day));
+            Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(DateManager.SelectedDate.Year, DateManager.SelectedDate.Month, DateManager.SelectedDate.Day));
         }
 
         editMode = false;
@@ -222,7 +194,7 @@
 
         if (await UserService.IsAuthenticated())
         {
-            Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(_date.Year, _date.Month, _date.Day));
+            Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(DateManager.SelectedDate.Year, DateManager.SelectedDate.Month, DateManager.SelectedDate.Day));
         }
 
         if (!Activities.Any())
@@ -233,19 +205,12 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (await UserService.IsAuthenticated()) {
-            Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(_date.Year, _date.Month, _date.Day));
+        if (await UserService.IsAuthenticated())
+        {
+            Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(DateManager.SelectedDate.Year, DateManager.SelectedDate.Month, DateManager.SelectedDate.Day));
         }
 
-        if (SelectedDate.HasValue)
-        {
-            await HandleDateChangeAsync(SelectedDate);
-        }
-
-        if (_date == _maxDate)
-        {
-            _nextButtonDisabled = true;
-        }
+        DateManager.SelectedDateChanged += new EventHandler(async (s, e) => await ReloadActivities(s, e));
     }
 
 }

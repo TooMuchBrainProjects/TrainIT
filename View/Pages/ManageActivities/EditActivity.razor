@@ -1,4 +1,4 @@
-﻿@page "/editactivity/{SelectedDate:datetime}/{ActivityId:int}"
+﻿@page "/editactivity/{ActivityId:int}"
 
 <PageTitle>Edit Activity</PageTitle>
 
@@ -75,9 +75,6 @@
     [Inject]
     private IDialogService DialogService { get; set; }
 
-    [Parameter]
-    public DateTime SelectedDate { get; set; }
-
     Activity Activity { get; set; } = null!;
 
     Exercise Exercise { get; set; } = null!;
@@ -89,7 +86,7 @@
     {
         await ActivityRepository.UpdateAsync(Activity);
         await ExerciseRepository.UpdateAsync(Exercise);
-        NavigationManager.NavigateTo($"/activityview/{SelectedDate:yyyy-MM-dd}");
+        NavigationManager.NavigateTo($"/activityview");
     }
     
     
@@ -111,7 +108,7 @@
     private async void DeleteActivity()
     {
         await ActivityRepository.DeleteAsync(Activity);
-        NavigationManager.NavigateTo($"/activityview/{SelectedDate:yyyy-MM-dd}");
+        NavigationManager.NavigateTo($"/activityview");
         
         StateHasChanged();
     }
