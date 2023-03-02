@@ -1,76 +1,33 @@
 ﻿@page "/"
 
-<PageTitle>Stats</PageTitle>
-
-<AuthorizeView>
-    <Authorized>
-        <MudContainer Class="mt-8">
-            <MudStack Spacing="16">
-                <h1 class="ms-4">Statistic</h1>
-
-                @if (false)
-                {
-                @*<DataInit Data="Series">
-                    <ChildContent Context="series">
-                        <DataInit Data="_xAxisLabels">
-                            <ChildContent Context="xAxisLabels">
-                                <MudChart ChartType="ChartType.Bar" ChartSeries="@series" @bind-SelectedIndex="@_selectedIndex" XAxisLabels="@xAxisLabels.ToArray()" Width="100%" ChartOptions="@_chartOptions"></MudChart>
-                            </ChildContent>
-                        </DataInit>
-                    </ChildContent>
-                </DataInit>*@
-
-                    <DataInit Data="_lastTrainingDays">
-                        <ChildContent Context="lastTrainingDays">
-                            <MudTimeline TimelineOrientation="TimelineOrientation.Horizontal" TimelinePosition="TimelinePosition.Top">
-                                @foreach (var trainingDay in lastTrainingDays)
-                                {
-                                    <MudTimelineItem>
-                                        <MudText Align="Align.Center">@trainingDay</MudText>
-                                    </MudTimelineItem>
-                                }
-                            </MudTimeline>
-                        </ChildContent>
-                    </DataInit>
-                }
-            </MudStack>
-        </MudContainer>
-    </Authorized>
-    <NotAuthorized>
-        <MudContainer Class="mt-8">
-            <MudStack Spacing="4">
-                <h1 class="ms-4 mb-12">You are not logged in!</h1>
-                <MudPaper class="pa-4" Elevation="3">
-                    <div>Please click <a href="/login" style="color: yellow;">here</a> in order to get redirected to the Log In site!</div>
-                </MudPaper>
-            </MudStack>
-        </MudContainer>
-    </NotAuthorized>
-</AuthorizeView>
-
+<div style="position: absolute; display: flex; justify-content: center; align-items: center; flex-direction: column; height: 100vh; width: 100%; font-size: 3rem; gap: 2rem; background: @(Colors.BlueGrey.Darken4); z-index: 10000;">
+    <div style="position: relative; width: 80%; height: 5px; background: @(Colors.Grey.Darken2); border-radius: 1000px; overflow: hidden">
+        <div style="position: relative; width: @WidthPercent; height: 100%; background: @(Colors.Grey.Lighten3); border-radius: 1000px;"></div>
+    </div>
+</div>
 
 @code {
-    private int _selectedIndex = -1; //default value cannot be 0 -> first selectedindex is 0.
+    string WidthPercent => Width.ToString() + "%";
+    int Width = 0;
 
-    List<ChartSeries> Series { get; set; } = null!;
-    private readonly ChartOptions _chartOptions = new();
-    List<string> _xAxisLabels = null!;
-
-    List<string> _lastTrainingDays = null!;
-
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-    /*Series = Statistic.GenerateChartSeries();
+    }
 
-        _chartOptions.InterpolationOption = InterpolationOption.NaturalSpline;
-        _chartOptions.DisableLegend = true;
+    protected override void OnParametersSet()
+    {
+    }
 
-        _xAxisLabels = Statistic.GetDatesToString();*/
-
-        if (false)
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!firstRender) return;
+        do
         {
-            _lastTrainingDays = Statistic.GenerateTrainingDays(ActivityRepository, UserService.CurrentUser!.Id);
-        }
+            Width++;
+            Thread.Sleep(new Random().Next(1, 30));
+            StateHasChanged();
+        } while (Width < 100);
+        NavigationManager.NavigateTo("/activityview");
     }
 
 }
