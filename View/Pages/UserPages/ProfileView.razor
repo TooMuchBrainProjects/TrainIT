@@ -41,15 +41,15 @@
                     }
                 </MudPaper>
 
-                <MudGrid Spacing="2" Justify="Justify.FlexStart">
-                    <MudItem>
+                <MudGrid Spacing="2" Justify="Justify.SpaceAround">
+                    <MudItem Style="min-width: 8rem;">
                         <MudPaper class="pa-4" Elevation="3">
-                            <div>Workout Count</div>
+                            <div Style="">Training Days</div>
 
                             @if (UserService.CurrentUser != null)
                             {
                                 <p style="width: 100%; text-align: center; margin-top: 1rem; font-size: clamp(1rem, 40px, 3rem); @($"color:{Colors.Amber.Darken2};")">
-                                    43
+                                    @_trainingDays
                                 </p>
                             }
                             else
@@ -60,11 +60,59 @@
                             }
                         </MudPaper>
                     </MudItem>
-                    <MudItem>
-                        <MudPaper Height="140px" Width="140px"/>
+                    <MudItem Style="min-width: 8rem;">
+                        <MudPaper class="pa-4" Elevation="3">
+                            <div Style="">Workouts</div>
+
+                            @if (UserService.CurrentUser != null)
+                            {
+                                <p style="width: 100%; text-align: center; margin-top: 1rem; font-size: clamp(1rem, 40px, 3rem); @($"color:{Colors.Amber.Darken2};")">
+                                    @_workoutCount
+                                </p>
+                            }
+                            else
+                            {
+                                <p>
+                                    Loading...
+                                </p>
+                            }
+                        </MudPaper>
                     </MudItem>
-                    <MudItem>
-                        <MudPaper Height="140px" Width="140px"/>
+                    <MudItem Style="min-width: 8rem;">
+                        <MudPaper class="pa-4" Elevation="3">
+                            <div Style="">Exercises</div>
+
+                            @if (UserService.CurrentUser != null)
+                            {
+                                <p style="width: 100%; text-align: center; margin-top: 1rem; font-size: clamp(1rem, 40px, 3rem); @($"color:{Colors.Amber.Darken2};")">
+                                    @_exerciseCount
+                                </p>
+                            }
+                            else
+                            {
+                                <p>
+                                    Loading...
+                                </p>
+                            }
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem Style="min-width: 8rem;">
+                        <MudPaper class="pa-4" Elevation="3">
+                            <div Style="">Activities</div>
+
+                            @if (UserService.CurrentUser != null)
+                            {
+                                <p style="width: 100%; text-align: center; margin-top: 1rem; font-size: clamp(1rem, 40px, 3rem); @($"color:{Colors.Amber.Darken2};")">
+                                    @_activityCount
+                                </p>
+                            }
+                            else
+                            {
+                                <p>
+                                    Loading...
+                                </p>
+                            }
+                        </MudPaper>
                     </MudItem>
                 </MudGrid>
 
@@ -86,11 +134,19 @@
 
 
 @code {
-    int workoutCount = 0;
+    int _workoutCount;
+    int _exerciseCount;
+    int _activityCount;
+    int _trainingDays;
 
     protected override async Task OnInitializedAsync()
     {
-        
+        if (!await UserService.IsAuthenticated()) return;
+        _workoutCount = (await WorkoutRepository.GetWorkoutsByUser(UserService.CurrentUser!.Id)).Count;
+        _exerciseCount = (await ExerciseRepository.ReadAsync(e => e.UserId == UserService.CurrentUser!.Id)).Count;
+        _activityCount = (await ActivityRepository.ReadAsync(a => a.Exercise.UserId == UserService.CurrentUser!.Id)).Count;
+        _trainingDays = (await ActivityRepository.ReadAsync(a => a.Exercise.UserId == UserService.CurrentUser!.Id))
+            .GroupBy(a => a.DateValue).Count();
     }
 
 }

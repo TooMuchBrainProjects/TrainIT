@@ -20,15 +20,7 @@ public class WorkoutRepository : ARepository<Workout>, IWorkoutRepository
 
     public async Task<List<Workout>> GetWorkoutsByUser(int userId, CancellationToken ct = default)
     {
-        return await
-            (Context.Set<Workout>()
-                .Join(Context.Set<WorkoutExercise>(), workout => workout.Id, workoutExercise => workoutExercise.WorkoutId,
-                    (workout, workoutExercise) => new { workout = workout, workoutExercise = workoutExercise })
-                .Join(Context.Set<Exercise>(), @t => @t.workoutExercise.ExerciseId, exercise => exercise.Id,
-                    (@t, exercise) => new { @t, exercise = exercise })
-                .Where(@t => @t.exercise.UserId == userId)
-                .Select(@t => @t.@t.workout)).Distinct()
-            .ToListAsync(cancellationToken: ct);
+        return await Table.Where(w => w.UserId == userId).ToListAsync(cancellationToken: ct);
     }
 
     public async Task<List<Workout>> GetWorkoutsByExercise(int exerciseId, CancellationToken ct = default)
