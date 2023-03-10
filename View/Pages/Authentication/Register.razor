@@ -2,7 +2,7 @@
 
 <PageTitle>Register</PageTitle>
 
-<MudContainer Class="mt-8">
+<MudContainer Class="mt-8 my-login-container">
     <MudStack Spacing="4">
         <h1 class="ms-4 mb-12">Sign Up</h1>
         
@@ -31,7 +31,7 @@
                 <MudTextField
                     T="string"
                     InputMode="InputMode.text" InputType="_passwordInputType" Immediate="true"
-                    Label="LoginPassword" HelperText="Choose a strong password | Min 6 chars"
+                    Label="Password" HelperText="Choose a strong password | Min 8 chars"
                     Adornment="Adornment.End"
                     AdornmentIcon="@_passwordInputIcon" OnAdornmentClick="ShowPwd"
                     @bind-Value="RegUser.LoginPassword"
@@ -55,6 +55,31 @@
     </MudStack>
 </MudContainer>
 
+<style>
+    body {
+        background: url('https://images.unsplash.com/photo-1527769929977-c341ee9f2033?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80');
+        background-size: cover;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+        overflow: hidden;
+    }
+    
+    .my-login-container {
+        position: absolute;
+        top: 20rem;   
+    }
+    
+    .my-login-container::after {
+        content: '';
+        position: absolute;
+        inset: -20rem;
+        top: -10rem;
+        background: -moz-linear-gradient(180deg, rgba(44,62,80,0) 0%, rgba(44,62,80,0.5) 33%, rgba(44,62,80,0.5) 66%, rgba(44,62,80,0) 100%);
+        background: -webkit-linear-gradient(180deg, rgba(44,62,80,0) 0%, rgba(44,62,80,0.5) 33%, rgba(44,62,80,0.5) 66%, rgba(44,62,80,0) 100%);
+        background: linear-gradient(180deg, rgba(44,62,80,0) 0%, rgba(44,62,80,0.5) 33%, rgba(44,62,80,0.5) 66%, rgba(44,62,80,0) 100%);
+        z-index: -1;
+    }
+</style>
 
 @code {
     bool _isRegistering;

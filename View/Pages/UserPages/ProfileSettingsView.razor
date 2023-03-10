@@ -1,0 +1,271 @@
+﻿@page "/profilesettings"
+
+<PageTitle>Settings</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <MudContainer Class="mt-8">
+            <MudStack Spacing="4">
+                <h1 class="ms-4 mb-12">Settings</h1>
+
+                <MudExpansionPanels DisableBorders="true">
+                    <MudExpansionPanel HideIcon="true">
+                        <TitleContent>
+                            <div class="d-flex">
+                                <MudText Class="mt-1">Change <span Style="@($"color:{Colors.Amber.Darken2};")">Username</span></MudText>
+                                <MudIcon Icon="@Icons.Material.Filled.ShortText" Color="Color.Default" Class="d-flex ml-auto"/>
+                            </div>
+                        </TitleContent>
+                        <ChildContent>
+                            <div @onkeydown="@TryUpdateUsername">
+                                <MudStack Spacing="4">
+                                    <MudFocusTrap DefaultFocus="DefaultFocus.FirstChild">
+                                        <MudStack Spacing="4">
+                                            <MudTextField @bind-Value="User.Username" Label="new username" Variant="Variant.Outlined" Immediate="true"></MudTextField>
+                                        </MudStack>
+                                    </MudFocusTrap>
+                                    <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Save" Color="Color.Primary" FullWidth="true" OnClick="UpdateUsername">Change</MudButton>
+                                    <MudAlert Severity="Severity.Info">You can change the username 5 times within 90 days.</MudAlert>
+                                </MudStack>
+                            </div>
+                        </ChildContent>
+                    </MudExpansionPanel>
+
+                    <MudExpansionPanel HideIcon="true">
+                        <TitleContent>
+                            <div class="d-flex">
+                                <MudText Class="mt-1">Change <span Style="@($"color:{Colors.Amber.Darken2};")">E-Mail</span></MudText>
+                                <MudIcon Icon="@Icons.Material.Filled.Email" Color="Color.Default" Class="d-flex ml-auto"/>
+                            </div>
+                        </TitleContent>
+                        <ChildContent>
+                            <div @onkeydown="@TryUpdateEmail">
+                                <MudStack Spacing="4">
+                                    <MudFocusTrap DefaultFocus="DefaultFocus.FirstChild">
+                                        <MudStack Spacing="4">
+                                            <MudTextField @bind-Value="oldPassword" Label="current password" Variant="Variant.Outlined" Immediate="true" InputType="_passwordInputType[0]" Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon[0]" OnAdornmentClick="() => ShowPwd(0)"></MudTextField>
+                                            <MudTextField @bind-Value="User.Email" Label="new email" Variant="Variant.Outlined" Immediate="true"></MudTextField>
+                                        </MudStack>
+                                    </MudFocusTrap>
+                                    <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Save" Color="Color.Primary" FullWidth="true" OnClick="UpdateEmail">Change</MudButton>
+                                    <MudAlert Severity="Severity.Info">You can change the username 3 times within 60 days.</MudAlert>
+                                </MudStack>
+                            </div>
+                        </ChildContent>
+                    </MudExpansionPanel>
+
+                    <MudExpansionPanel HideIcon="true">
+                        <TitleContent>
+                            <div class="d-flex">
+                                <MudText Class="mt-1">Change <span Style="@($"color:{Colors.Amber.Darken2};")">Password</span></MudText>
+                                <MudIcon Icon="@Icons.Material.Filled.Password" Color="Color.Default" Class="d-flex ml-auto"/>
+                            </div>
+                        </TitleContent>
+                        <ChildContent>
+                            <div @onkeydown="@TryUpdatePassword">
+                                <MudStack Spacing="4">
+                                    <MudFocusTrap DefaultFocus="DefaultFocus.FirstChild">
+                                        <MudStack Spacing="4">
+                                            <MudTextField @bind-Value="oldPassword" Label="old password" Variant="Variant.Outlined" Immediate="true" InputType="_passwordInputType[1]" Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon[1]" OnAdornmentClick="() => ShowPwd(1)"></MudTextField>
+                                            <MudTextField @bind-Value="User.LoginPassword" Label="new password" Variant="Variant.Outlined" Immediate="true" InputType="_passwordInputType[2]" Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon[2]" OnAdornmentClick="() => ShowPwd(2)"></MudTextField>
+                                            <MudTextField @bind-Value="confirmPassword" Label="confirm password" Variant="Variant.Outlined" Immediate="true" InputType="_passwordInputType[3]" Adornment="Adornment.End" AdornmentIcon="@_passwordInputIcon[3]" OnAdornmentClick="() => ShowPwd(3)"></MudTextField>
+                                        </MudStack>
+                                    </MudFocusTrap><MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Save" Color="Color.Primary" FullWidth="true" OnClick="UpdatePassword">Change</MudButton>
+                                    <MudAlert Severity="Severity.Info">You can change the username 6 times within 30 days.</MudAlert>
+                                    <MudLink Href="/restore-password">Forgot current password? -> Restore it!</MudLink>
+                                </MudStack>
+                            </div>
+                        </ChildContent>
+                    </MudExpansionPanel>
+                </MudExpansionPanels>
+
+                <MudPaper class="px-4 py-1" Elevation="3">
+                    <div style="display: flex; justify-content: space-between; align-items: center; min-height: 4rem">
+                        <div Style="@($"color:{Colors.Amber.Darken2};")">Theme Mode:</div>
+                        <MudCheckBox T="bool?" CheckedChanged="ToggleTheme" Checked="IsDarkMode" TriState="true" Color="Color.Secondary">
+                            @(IsDarkMode == null ? "Auto" : (IsDarkMode == true) ? "Dark" : "Light")
+                        </MudCheckBox>
+                    </div>
+                </MudPaper>
+
+                @*<MudPaper class="px-4 py-1" Elevation="3">
+                    <div style="display: flex; justify-content: space-between; align-items: center; min-height: 4rem">
+                        <div Style="@($"color:{Colors.Amber.Darken2};")">Ask when delete:</div>
+                        <MudSwitch @bind-Checked="@AskWhenDelete" Color="Color.Primary" />
+                    </div>
+                </MudPaper>*@
+
+                <div></div>
+            </MudStack>
+        </MudContainer>
+    </Authorized>
+    <NotAuthorized>
+        <MudContainer Class="mt-8">
+            <MudStack Spacing="4">
+                <h1 class="ms-4 mb-12">You are not logged in!</h1>
+                <MudPaper class="pa-4" Elevation="3">
+                    <div>Please click <a href="/login" style="color: yellow;">here</a> in order to get redirected to the Log In site!</div>
+                </MudPaper>
+            </MudStack>
+        </MudContainer>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+
+    [CascadingParameter]
+    public MainLayout? MainLayout { get; set; }
+
+    public User User { get; set; } = new User();
+
+    public string? oldPassword;
+    public string? confirmPassword;
+
+    public async Task UpdateUsername()
+    {
+        if (!await UserService.IsAuthenticated()) return;
+        if (User.Username == "") return;
+
+        User.Email = UserService.CurrentUser!.Email;
+        User.PasswordHash = UserService.CurrentUser!.PasswordHash;
+        await UserRepository.UpdateInfoAsync(User);
+        UserService.CurrentUser!.Username = User.Username;
+        Snackbar.Add("Username successfully updated", Severity.Success);
+        NavigationManager.NavigateTo("/profile");
+    }
+
+    public async Task UpdateEmail()
+    {
+        if (!await UserService.IsAuthenticated()) return;
+        if (User.Email == "") return;
+        if (oldPassword == null) return;
+        if (!User.VerifyPassword(oldPassword, UserService.CurrentUser!.PasswordHash))
+        {
+            Snackbar.Add("Wrong password", Severity.Error);
+            return;
+        }
+        User.Username = UserService.CurrentUser!.Username;
+        User.PasswordHash = UserService.CurrentUser!.PasswordHash;
+        try
+        {
+            await UserRepository.UpdateInfoAsync(User);
+            UserService.CurrentUser!.Email = User.Email;
+            Snackbar.Add("Email successfully updated", Severity.Success);
+            NavigationManager.NavigateTo("/profile");
+        }
+        catch (DuplicateEmailException)
+        {
+            Snackbar.Add("Email already exists", Severity.Error);
+        }
+        catch (Exception e)
+        {
+            Snackbar.Add("Something went wrong", Severity.Error);
+        }
+    }
+
+    public async Task UpdatePassword()
+    {
+        if (!await UserService.IsAuthenticated()) return;
+        if (User.LoginPassword == "") return;
+        if (oldPassword == null) return;
+        if (!User.VerifyPassword(oldPassword, UserService.CurrentUser!.PasswordHash))
+        {
+            Snackbar.Add("Wrong password", Severity.Error);
+            return;
+        }
+        User.Username = UserService.CurrentUser!.Username;
+        User.Email = UserService.CurrentUser!.Email;
+        User.PasswordHash = User.HashPassword(User.LoginPassword);
+        await UserRepository.UpdateInfoAsync(User);
+        Snackbar.Add("Password successfully updated", Severity.Success);
+        NavigationManager.NavigateTo("/profile");
+    }
+
+    async void TryUpdateUsername(KeyboardEventArgs e)
+    {
+        if (e.Code is "Enter" or "NumpadEnter")
+            await UpdateUsername();
+    }
+
+    async void TryUpdateEmail(KeyboardEventArgs e)
+    {
+        if (e.Code is "Enter" or "NumpadEnter")
+            await UpdateEmail();
+    }
+
+    async void TryUpdatePassword(KeyboardEventArgs e)
+    {
+        if (e.Code is "Enter" or "NumpadEnter")
+            await UpdatePassword();
+    }
+
+    public bool? IsDarkMode { get; set; }
+
+    public void ToggleTheme(bool? changedtheme)
+    {
+        IsDarkMode = changedtheme;
+        MainLayout!.ToggleDarkMode(IsDarkMode);
+    }
+
+    /*public bool? AskWhenDelete { get; set; }
+
+    public void ToggleAskWhenDelete(bool? changedAskWhenDelete)
+    {
+        AskWhenDelete = changedAskWhenDelete;
+        MainLayout!.ToggleAskWhenDelete(AskWhenDelete);
+    }*/
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!await UserService.IsAuthenticated()) return;
+        User.Id = UserService.CurrentUser!.Id;
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        var darkModeResult = await ProtectedLocalStorage.GetAsync<bool?>("DarkMode");
+
+        IsDarkMode = null;
+        if (darkModeResult.Success && darkModeResult.Value.HasValue)
+        {
+            IsDarkMode = darkModeResult.Value.Value;
+        }
+        StateHasChanged();
+    }
+
+    bool[] _isShow = new bool[4];
+
+    string[] _passwordInputIcon = new string[]
+    {
+        Icons.Material.Filled.VisibilityOff,
+        Icons.Material.Filled.VisibilityOff,
+        Icons.Material.Filled.VisibilityOff,
+        Icons.Material.Filled.VisibilityOff
+    };
+
+    InputType[] _passwordInputType = new InputType[]
+    {
+        InputType.Password,
+        InputType.Password,
+        InputType.Password,
+        InputType.Password
+    };
+
+    void ShowPwd(int index)
+    {
+        if (_isShow[index])
+        {
+            _isShow[index] = false;
+            _passwordInputIcon[index] = Icons.Material.Filled.VisibilityOff;
+            _passwordInputType[index] = InputType.Password;
+        }
+        else
+        {
+            _isShow[index] = true;
+            _passwordInputIcon[index] = Icons.Material.Filled.Visibility;
+            _passwordInputType[index] = InputType.Text;
+        }
+    }
+
+}

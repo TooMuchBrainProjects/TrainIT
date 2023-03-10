@@ -50,4 +50,14 @@ public class User {
     public static bool VerifyPassword(string plainPassword, string hashedPassword) {
         return BC.Verify(plainPassword, hashedPassword);
     }
+
+    public User Clone()
+    {
+        return new User()
+        {
+            Id = this.Id,
+            Username = this.Username,
+            Email = this.Email
+        };
+    }
 }

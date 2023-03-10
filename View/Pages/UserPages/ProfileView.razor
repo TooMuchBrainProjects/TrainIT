@@ -12,7 +12,7 @@
                     <div Style="@($"color:{Colors.Amber.Darken2};")">Username:</div>
                     @if (UserService.CurrentUser != null)
                     {
-                        <p style="font-size: 1.6rem;">
+                        <p style="font-size: clamp(1rem, 20px, 2rem);">
                             @UserService.CurrentUser?.Username
                         </p>
                     }
@@ -29,7 +29,7 @@
 
                     @if (UserService.CurrentUser != null)
                     {
-                        <p style="font-size: 1.6rem;">
+                        <p style="font-size: clamp(1rem, 20px, 2rem);">
                             @UserService.CurrentUser?.Email
                         </p>
                     }
@@ -40,27 +40,8 @@
                         </p>
                     }
                 </MudPaper>
-
-                <MudPaper class="px-4 py-1" Elevation="3">
-                    <div style="display: flex; justify-content: space-between; align-items: center; min-height: 4rem">
-                        <div Style="@($"color:{Colors.Amber.Darken2};")">Theme Mode:</div>
-                        <MudCheckBox T="bool?" CheckedChanged="ToggleTheme" Checked="IsDarkMode" TriState="true" Color="Color.Secondary">
-                            @(IsDarkMode == null ? "Auto" : (IsDarkMode == true) ? "Dark" : "Light")
-                        </MudCheckBox>
-                    </div>
-                </MudPaper>
                 
-                @*<MudPaper class="px-4 py-1" Elevation="3">
-                    <div style="display: flex; justify-content: space-between; align-items: center; min-height: 4rem">
-                        <div Style="@($"color:{Colors.Amber.Darken2};")">Ask when delete:</div>
-                        <MudSwitch @bind-Checked="@AskWhenDelete" Color="Color.Primary" />
-                    </div>
-                </MudPaper>*@
-
-                <div style="display: flex; justify-content: space-between; align-items: center">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="LogoutAsync">Log Out</MudButton>
-                </div>
-
+                <div></div>
             </MudStack>
         </MudContainer>
     </Authorized>
@@ -108,12 +89,6 @@
             IsDarkMode = darkModeResult.Value.Value;
         }
         StateHasChanged();
-    }
-
-    public async Task LogoutAsync()
-    {
-        await UserService.LogoutAsync();
-        NavigationManager.NavigateTo("/login");
     }
 
 }
