@@ -18,7 +18,7 @@
                     }
                     else
                     {
-                        <p style="font-size: 1.6rem;">
+                        <p>
                             Loading...
                         </p>
                     }
@@ -35,12 +35,39 @@
                     }
                     else
                     {
-                        <p style="font-size: 1.6rem;">
+                        <p>
                             Loading...
                         </p>
                     }
                 </MudPaper>
-                
+
+                <MudGrid Spacing="2" Justify="Justify.FlexStart">
+                    <MudItem>
+                        <MudPaper class="pa-4" Elevation="3">
+                            <div>Workout Count</div>
+
+                            @if (UserService.CurrentUser != null)
+                            {
+                                <p style="width: 100%; text-align: center; margin-top: 1rem; font-size: clamp(1rem, 40px, 3rem); @($"color:{Colors.Amber.Darken2};")">
+                                    43
+                                </p>
+                            }
+                            else
+                            {
+                                <p>
+                                    Loading...
+                                </p>
+                            }
+                        </MudPaper>
+                    </MudItem>
+                    <MudItem>
+                        <MudPaper Height="140px" Width="140px"/>
+                    </MudItem>
+                    <MudItem>
+                        <MudPaper Height="140px" Width="140px"/>
+                    </MudItem>
+                </MudGrid>
+
                 <div></div>
             </MudStack>
         </MudContainer>
@@ -59,36 +86,11 @@
 
 
 @code {
+    int workoutCount = 0;
 
-    [CascadingParameter]
-    public MainLayout? MainLayout { get; set; }
-
-    public bool? IsDarkMode { get; set; }
-
-    public void ToggleTheme(bool? changedtheme)
+    protected override async Task OnInitializedAsync()
     {
-        IsDarkMode = changedtheme;
-        MainLayout!.ToggleDarkMode(IsDarkMode);
-    }
-    
-    /*public bool? AskWhenDelete { get; set; }
-
-    public void ToggleAskWhenDelete(bool? changedAskWhenDelete)
-    {
-        AskWhenDelete = changedAskWhenDelete;
-        MainLayout!.ToggleAskWhenDelete(AskWhenDelete);
-    }*/
-
-    protected async override Task OnAfterRenderAsync(bool firstRender)
-    {
-        var darkModeResult = await ProtectedLocalStorage.GetAsync<bool?>("DarkMode");
-
-        IsDarkMode = null;
-        if (darkModeResult.Success && darkModeResult.Value.HasValue)
-        {
-            IsDarkMode = darkModeResult.Value.Value;
-        }
-        StateHasChanged();
+        
     }
 
 }

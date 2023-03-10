@@ -30,23 +30,23 @@ VALUES (1,'Yanik', 'yanik.latzka@gmx.at', '$2a$08$e.TQRVdZdcWBndM/Iooagut2279IO8
        (4,'Test', 'test@email.com', '$2a$08$e.TQRVdZdcWBndM/Iooagut2279IO8OYyIyJeGTT38I1xJD1iIJQW'),
        (5,'Paul', 'p.panhofer@htlkrems.at', '$2a$08$e.TQRVdZdcWBndM/Iooagut2279IO8OYyIyJeGTT38I1xJD1iIJQW');
 
-insert into workouts (WORKOUT_ID, NAME, DESCRIPTION)
-VALUES (1, 'Monday', 'A full-body workout featuring exercises 1, 2, 20, 21, 47, and 48.'),                                  -- user: 1 / exercises: 1, 2, 20, 21, 47, 48
-       (2, 'Legs', 'A leg-focused workout featuring exercises 3, 22, 23, and 40.'),                                         -- user: 2 / exercises: 3, 22, 23, 40
-       (3, 'Push', 'A upper body pushing workout featuring exercises 4, 5, 24, and 50.'),                                   -- user: 5 / exercises: 4, 5, 24, 50
-       (4, 'Pull', 'A upper body pulling workout featuring exercises 6, 25, 26, 51, and 52.'),                              -- user: 5 / exercises: 6, 25, 26, 51, 52
-       (5, 'Thuesday', 'A full-body workout featuring exercises 7, 8, 20, 27, 48, and 53.'),                                -- user: 1 / exercises: 7, 8, 20, 27, 48, 53
-       (6, 'Workout 1', 'A workout featuring exercises 9, 28, 29, 30, 43, and 54.'),                                        -- user: 4 / exercises: 9, 28, 29, 30, 43, 54
-       (7, 'Arms', 'An arm-focused workout featuring exercises 10, 11, 22, 31, 40, and 55.'),                               -- user: 2 / exercises: 10, 11, 22, 31, 40, 55
-       (8, 'Carry', 'A workout featuring exercises 12, 32, and 33, with an emphasis on carrying or holding weight.'),       -- user: 5 / exercises: 12, 32, 33
-       (9, 'Wednesday', 'A full-body workout featuring exercises 13, 21, 34, and 56.'),                                     -- user: 1 / exercises: 13, 21, 34, 56
-       (10, 'Workout 2', 'A workout featuring exercises 9, 17, 35, 36, 54, and 57.'),                                       -- user: 4 / exercises: 9, 17, 35, 36, 54, 57
-       (11, 'Workout 3', 'A workout featuring exercises 14, 28, 36, and 37.'),                                              -- user: 4 / exercises: 14, 28, 36, 37
-       (12, 'Hold', 'A workout featuring exercises 15, 38, 39, and 58, with an emphasis on holding or carrying weight.'),   -- user: 5 / exercises: 15, 38, 39, 58
-       (13, 'Body', 'A full-body workout featuring exercises 3, 16, 40, 41, and 55.'),                                      -- user: 2 / exercises: 3, 16, 40, 41, 55
-       (14, 'Workout 4', 'A workout featuring exercises 14, 17, 18, 42, and 57.'),                                          -- user: 4 / exercises: 14, 17, 18, 42, 57
-       (15, 'Workout 5', 'A workout featuring exercises 19, 36, 42, 43, 44, and 54.'),                                      -- user: 4 / exercises: 19, 36, 42, 43, 44, 54
-       (16, 'Friday', 'A full-body workout featuring exercises 20, 34, 45, 46, and 59.');                                   -- user: 1 / exercises: 20, 34, 45, 46, 59
+insert into workouts (WORKOUT_ID, USER_ID, NAME, DESCRIPTION)
+VALUES (1, 1, 'Monday', 'A full-body workout featuring exercises 1, 2, 20, 21, 47, and 48.'),                                  -- user: 1 / exercises: 1, 2, 20, 21, 47, 48
+       (2, 2, 'Legs', 'A leg-focused workout featuring exercises 3, 22, 23, and 40.'),                                         -- user: 2 / exercises: 3, 22, 23, 40
+       (3, 5, 'Push', 'A upper body pushing workout featuring exercises 4, 5, 24, and 50.'),                                   -- user: 5 / exercises: 4, 5, 24, 50
+       (4, 5, 'Pull', 'A upper body pulling workout featuring exercises 6, 25, 26, 51, and 52.'),                              -- user: 5 / exercises: 6, 25, 26, 51, 52
+       (5, 1, 'Thuesday', 'A full-body workout featuring exercises 7, 8, 20, 27, 48, and 53.'),                                -- user: 1 / exercises: 7, 8, 20, 27, 48, 53
+       (6, 4, 'Workout 1', 'A workout featuring exercises 9, 28, 29, 30, 43, and 54.'),                                        -- user: 4 / exercises: 9, 28, 29, 30, 43, 54
+       (7, 2, 'Arms', 'An arm-focused workout featuring exercises 10, 11, 22, 31, 40, and 55.'),                               -- user: 2 / exercises: 10, 11, 22, 31, 40, 55
+       (8, 5, 'Carry', 'A workout featuring exercises 12, 32, and 33, with an emphasis on carrying or holding weight.'),       -- user: 5 / exercises: 12, 32, 33
+       (9, 1, 'Wednesday', 'A full-body workout featuring exercises 13, 21, 34, and 56.'),                                     -- user: 1 / exercises: 13, 21, 34, 56
+       (10, 4, 'Workout 2', 'A workout featuring exercises 9, 17, 35, 36, 54, and 57.'),                                       -- user: 4 / exercises: 9, 17, 35, 36, 54, 57
+       (11, 4, 'Workout 3', 'A workout featuring exercises 14, 28, 36, and 37.'),                                              -- user: 4 / exercises: 14, 28, 36, 37
+       (12, 5, 'Hold', 'A workout featuring exercises 15, 38, 39, and 58, with an emphasis on holding or carrying weight.'),   -- user: 5 / exercises: 15, 38, 39, 58
+       (13, 2, 'Body', 'A full-body workout featuring exercises 3, 16, 40, 41, and 55.'),                                      -- user: 2 / exercises: 3, 16, 40, 41, 55
+       (14, 4, 'Workout 4', 'A workout featuring exercises 14, 17, 18, 42, and 57.'),                                          -- user: 4 / exercises: 14, 17, 18, 42, 57
+       (15, 4, 'Workout 5', 'A workout featuring exercises 19, 36, 42, 43, 44, and 54.'),                                      -- user: 4 / exercises: 19, 36, 42, 43, 44, 54
+       (16, 1, 'Friday', 'A full-body workout featuring exercises 20, 34, 45, 46, and 59.');                                   -- user: 1 / exercises: 20, 34, 45, 46, 59
 
 
 insert into exercises (EXERCISE_ID, NAME, MACHINE, DESCRIPTION, USER_ID)

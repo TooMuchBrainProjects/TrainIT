@@ -10,6 +10,12 @@ public class Workout
     [Column("WORKOUT_ID")]
     public int Id { get; set; }
     
+    [Required]
+    [Column("USER_ID")]
+    public int UserId { get; set; }
+    
+    public User User { get; set; }
+    
     [Required, StringLength(100)]
     [Column("NAME")] 
     public string Name { get; set; }

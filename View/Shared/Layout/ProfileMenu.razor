@@ -6,26 +6,18 @@
         <ChildContent>
             <AuthorizeView>
                 <Authorized>
-                    <MudMenuItem>
-                        <NavLink href="/profile">Profile</NavLink>
-                    </MudMenuItem>
-                    <MudMenuItem>
-                        <NavLink href="/profilesettings">Settings</NavLink>
-                    </MudMenuItem>
-                    <MudMenuItem IconSize="Size.Small" IconColor="Color.Tertiary" Icon="@Icons.Material.Filled.Logout">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="LogoutAsync">Log Out</MudButton>
+                    <MudMenuItem href="/profile">Profile</MudMenuItem>
+                    <MudMenuItem href="/profilesettings">Settings</MudMenuItem>
+                    <MudMenuItem OnClick="LogoutAsync" IconSize="Size.Small" IconColor="Color.Tertiary" Icon="@Icons.Material.Filled.Logout">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary">Log Out</MudButton>
                     </MudMenuItem>
                 </Authorized>
                 <NotAuthorized>
-                    <MudMenuItem IconSize="Size.Small" IconColor="Color.Tertiary" Icon="@Icons.Material.Filled.Login">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary">
-                            <NavLink href="/login">Log In</NavLink>
-                        </MudButton>
+                    <MudMenuItem href="/login" IconSize="Size.Small" IconColor="Color.Tertiary" Icon="@Icons.Material.Filled.Login">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary">Log In</MudButton>
                     </MudMenuItem>
-                    <MudMenuItem IconSize="Size.Small" IconColor="Color.Tertiary" Icon="@Icons.Material.Filled.EmojiPeople">
-                        <MudButton Variant="Variant.Filled" Color="Color.Secondary">
-                            <NavLink href="/register">Sign Up</NavLink>
-                        </MudButton>
+                    <MudMenuItem href="/register" IconSize="Size.Small" IconColor="Color.Tertiary" Icon="@Icons.Material.Filled.EmojiPeople">
+                        <MudButton Variant="Variant.Filled" Color="Color.Secondary">Sign Up</MudButton>
                     </MudMenuItem>
                 </NotAuthorized>
             </AuthorizeView>

@@ -45,6 +45,11 @@ public class TrainITDbContext : DbContext
             .HasOne(d => d.Exercise)
             .WithMany()
             .HasForeignKey(d => d.ExerciseId);
+
+        modelBuilder.Entity<Workout>()
+            .HasOne(w => w.User)
+            .WithMany()
+            .HasForeignKey(d => d.UserId);
             
         // UNIQUE
 
@@ -60,11 +65,6 @@ public class TrainITDbContext : DbContext
 
         modelBuilder.Entity<RoleClaim>()
             .HasKey(rc => new { rc.UserId, rc.RoleId });
-        
-        // RELATIONSHIPS
-        // 1:1
-        // 1:N
-        // N:M
 
         modelBuilder.Entity<RoleClaim>()
             .HasOne(rc => rc.Role)

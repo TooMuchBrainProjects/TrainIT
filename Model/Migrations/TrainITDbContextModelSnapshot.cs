@@ -184,7 +184,13 @@ namespace Model.Migrations
                         .HasColumnType("varchar(100)")
                         .HasColumnName("NAME");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("USER_ID");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("WORKOUTS");
                 });
@@ -237,6 +243,17 @@ namespace Model.Migrations
                 });
 
             modelBuilder.Entity("Model.Entities.Exercise", b =>
+                {
+                    b.HasOne("Model.Entities.Auth.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Model.Entities.Workout", b =>
                 {
                     b.HasOne("Model.Entities.Auth.User", "User")
                         .WithMany()
