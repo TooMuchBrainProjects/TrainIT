@@ -53,6 +53,7 @@ builder.Services.AddScoped<CircuitHandler, CircuitTracker>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IRoleClaimRepository, RoleClaimRepository>();
+builder.Services.AddScoped<ILogEntryRepository, LogEntryRepository>();
 
 builder.Services.AddSingleton<DateManager>();
 

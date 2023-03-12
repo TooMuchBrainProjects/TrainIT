@@ -1,4 +1,5 @@
 ﻿using Model.Entities;
+using Model.Entities.Log;
 
 namespace Model.Configuration;
 
@@ -11,6 +12,7 @@ public class TrainITDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<RoleClaim> RoleClaims { get; set; }
+    public DbSet<LogEntry> LogEntries { get; set; }
     
     public TrainITDbContext(DbContextOptions<TrainITDbContext> options) : base(options)
     {
@@ -19,17 +21,16 @@ public class TrainITDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<User>()
-            .HasIndex(d => d.Email)
-            .IsUnique(true);
+        // ENUMS
+        modelBuilder.Entity<LogEntry>()
+            .Property(r => r.FieldType)
+            .HasConversion<string>();
         
+        // FOREIGN KEYS
         modelBuilder.Entity<Exercise>()
             .HasOne(d => d.User)
             .WithMany()
             .HasForeignKey(d => d.UserId);
-        
-        modelBuilder.Entity<WorkoutExercise>()
-            .HasKey(d => new { d.ExerciseId, d.WorkoutId });
         
         modelBuilder.Entity<WorkoutExercise>()
             .HasOne(d => d.Exercise)
@@ -50,22 +51,7 @@ public class TrainITDbContext : DbContext
             .HasOne(w => w.User)
             .WithMany()
             .HasForeignKey(d => d.UserId);
-            
-        // UNIQUE
-
-        modelBuilder.Entity<User>()
-            .HasIndex(u => u.Email)
-            .IsUnique();
-
-        modelBuilder.Entity<Role>()
-            .HasIndex(r => r.Identifier)
-            .IsUnique();
-
-        // HAS KEY
-
-        modelBuilder.Entity<RoleClaim>()
-            .HasKey(rc => new { rc.UserId, rc.RoleId });
-
+        
         modelBuilder.Entity<RoleClaim>()
             .HasOne(rc => rc.Role)
             .WithMany(r => r.RoleClaims)
@@ -75,6 +61,27 @@ public class TrainITDbContext : DbContext
             .HasOne(rc => rc.User)
             .WithMany(u => u.RoleClaims)
             .HasForeignKey(rc => rc.UserId);
+        
+        modelBuilder.Entity<LogEntry>()
+            .HasOne(le => le.User)
+            .WithMany()
+            .HasForeignKey(le => le.UserId);
+        
+        // UNIQUE
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.Email)
+            .IsUnique();
+
+        modelBuilder.Entity<Role>()
+            .HasIndex(r => r.Identifier)
+            .IsUnique();
+        
+        // HAS KEY
+        modelBuilder.Entity<RoleClaim>()
+            .HasKey(rc => new { rc.UserId, rc.RoleId });
+        
+        modelBuilder.Entity<WorkoutExercise>()
+            .HasKey(d => new { d.ExerciseId, d.WorkoutId });
         
         // OTHER
         // SEEDING
