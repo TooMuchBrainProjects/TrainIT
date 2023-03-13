@@ -9,7 +9,7 @@
                     <MudMenuItem href="/profile">Profile</MudMenuItem>
                     <MudMenuItem href="/profilesettings">Settings</MudMenuItem>
                     <MudMenuItem OnClick="LogoutAsync" IconSize="Size.Small" IconColor="Color.Tertiary" Icon="@Icons.Material.Filled.Logout">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary">Log Out</MudButton>
+                        <MudButton OnClick="LogoutAsync" Variant="Variant.Filled" Color="Color.Primary">Log Out</MudButton>
                     </MudMenuItem>
                 </Authorized>
                 <NotAuthorized>

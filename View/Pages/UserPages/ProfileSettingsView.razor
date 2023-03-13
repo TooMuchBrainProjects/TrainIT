@@ -161,9 +161,9 @@
     [CascadingParameter]
     public MainLayout? MainLayout { get; set; }
 
-    bool changeUsernameIsOpen;
-    bool changeEmailIsOpen;
-    bool changePasswordIsOpen;
+    bool changeUsernameIsOpen = false;
+    bool changeEmailIsOpen = false;
+    bool changePasswordIsOpen = false;
 
     public User User { get; set; } = new User();
 
@@ -206,14 +206,17 @@
         User.Email = UserService.CurrentUser!.Email;
         User.PasswordHash = UserService.CurrentUser!.PasswordHash;
         await UserRepository.UpdateInfoAsync(User);
-        UserService.CurrentUser!.Username = User.Username;
-
         await LogEntryRepository.CreateAsync(new LogEntry()
         {
             UserId = UserService.CurrentUser!.Id,
             DateValue = DateOnly.FromDateTime(DateTime.Today),
-            FieldType = ELogEntryType.USERNAME
+            FieldType = ELogEntryType.USERNAME,
+            OldValue = UserService.CurrentUser!.Username,
+            NewValue = User.Username
         });
+        UserService.CurrentUser!.Username = User.Username;
+        
+        
         Snackbar.Add("Username successfully updated", Severity.Success);
         NavigationManager.NavigateTo("/profile");
     }
@@ -255,14 +258,15 @@
         try
         {
             await UserRepository.UpdateInfoAsync(User);
-            UserService.CurrentUser!.Email = User.Email;
-            
             await LogEntryRepository.CreateAsync(new LogEntry()
             {
                 UserId = UserService.CurrentUser!.Id,
                 DateValue = DateOnly.FromDateTime(DateTime.Today),
-                FieldType = ELogEntryType.EMAIL
+                FieldType = ELogEntryType.EMAIL,
+                OldValue = UserService.CurrentUser!.Email,
+                NewValue = User.Email
             });
+            UserService.CurrentUser!.Email = User.Email;
             Snackbar.Add("Email successfully updated", Severity.Success);
             NavigationManager.NavigateTo("/profile");
         }
@@ -312,13 +316,16 @@
         User.Email = UserService.CurrentUser!.Email;
         User.PasswordHash = User.HashPassword(User.LoginPassword);
         await UserRepository.UpdateInfoAsync(User);
-        
         await LogEntryRepository.CreateAsync(new LogEntry()
         {
             UserId = UserService.CurrentUser!.Id,
             DateValue = DateOnly.FromDateTime(DateTime.Today),
-            FieldType = ELogEntryType.PASSWORD
+            FieldType = ELogEntryType.PASSWORD,
+            OldValue = UserService.CurrentUser!.PasswordHash,
+            NewValue = User.PasswordHash
         });
+        UserService.CurrentUser!.PasswordHash = User.PasswordHash;
+        
         Snackbar.Add("Password successfully updated", Severity.Success);
         NavigationManager.NavigateTo("/profile");
     }
