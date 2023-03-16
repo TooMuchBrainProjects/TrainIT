@@ -1,0 +1,95 @@
+﻿@page "/newactivity"
+
+<PageTitle>New Activity</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <MudContainer Class="mt-8">
+            <MudStack Spacing="4">
+                <h1 class="ms-4 mb-12">New Activity</h1>
+
+                <MudForm>
+                    <MudStack Spacing="4">
+                        <MudPaper class="pa-4" Elevation="3">
+                            <DataInit Data="Exercises">
+                                <ChildContent Context="exercises">
+                                    <MudSelect T="Exercise" @bind-Value="SelectedExercise" Label="Exercise" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
+                                        @foreach (var exercise in exercises)
+                                        {
+                                            <MudSelectItem Value="@exercise.Name"/>
+                                        }
+                                    </MudSelect>
+                                </ChildContent>
+                            </DataInit>
+                        </MudPaper>
+                        <MudPaper class="pa-4" Elevation="3">
+
+                            <DataInit Data="Activity">
+                                <ChildContent Context="activity">
+                                    <MudStack Spacing="3">
+                                        <MudTextField @bind-Value="activity.Weight" Label="Weight" Variant="Variant.Outlined"
+                                                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.MonitorWeight" AdornmentColor="Color.Secondary"
+                                                      InputMode="InputMode.numeric" InputType="InputType.Text"
+                                                      Immediate="true"/>
+                                        <MudTextField @bind-Value="activity.Set" Label="Set" Variant="Variant.Outlined"
+                                                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.MonitorWeight" AdornmentColor="Color.Secondary"
+                                                      InputMode="InputMode.numeric" InputType="InputType.Text"
+                                                      Immediate="true"/>
+                                        <MudTextField @bind-Value="activity.Repetition" Label="Repetition" Variant="Variant.Outlined"
+                                                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.MonitorWeight" AdornmentColor="Color.Secondary"
+                                                      InputMode="InputMode.numeric" InputType="InputType.Text"
+                                                      Immediate="true"/>
+                                    </MudStack>
+                                </ChildContent>
+                            </DataInit>
+                        </MudPaper>
+                    </MudStack>
+                </MudForm>
+            </MudStack>
+        </MudContainer>
+
+        <div Style="position: fixed; bottom: 13vh; right: 2vh; display: grid; gap: 1rem;">
+            <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Check" OnClick="SaveNewActivity"/>
+        </div>
+    </Authorized>
+    <Authorizing>
+        Sind wir hier?
+    </Authorizing>
+</AuthorizeView>
+
+
+@code {
+
+    [Inject]
+    private IDialogService DialogService { get; set; }
+
+    Activity Activity { get; set; } = null!;
+
+    List<Exercise> Exercises { get; set; } = null!;
+    Exercise? SelectedExercise { get; set; } = null!;
+
+    async Task SaveNewActivity()
+    {
+        if (SelectedExercise == null)
+        {
+            Snackbar.Add($"Please select an exercise!", Severity.Info);
+            return;
+        }
+        
+        Activity.Exercise = SelectedExercise;
+        
+        await ActivityRepository.CreateAsync(Activity);
+        
+        Snackbar.Add("Activity created successfully", Severity.Success);
+        NavigationManager.NavigateTo($"/activityview");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!await UserService.IsAuthenticated()) return;
+        
+        Activity = new Activity();
+        Exercises = await ExerciseRepository.ReadAsync(e => e.UserId == UserService.CurrentUser!.Id);
+    }
+
+}
