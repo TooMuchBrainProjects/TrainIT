@@ -16,24 +16,10 @@
                                 <MudListItem OnClick="() => NavigateToExerciseView(workout.Id)">
                                     <MudGrid Style="min-height: 4rem;">
                                         <MudItem xs="10" Style="display: flex; align-items: center;">
-                                            @if (!editMode)
-                                            {
-                                                @workout.Name
-                                            }
-                                            else
-                                            {
-                                                <MudCheckBox Color="Color.Primary" Label="@workout.Name" @bind-Checked="@workout.IsSelected" Style="min-width: 50%"></MudCheckBox>
-                                            }
+                                            @workout.Name
                                         </MudItem>
                                         <MudItem xs="2" Style="display: flex; align-items: center;">
-                                            @if (!editMode)
-                                            {
-                                                <MudIconButton Icon="@Icons.Filled.Edit" OnClick="() => EditWorkout(workout.Id)"/>
-                                            }
-                                            else
-                                            {
-                                                <MudIconButton Icon="@Icons.Filled.Delete" OnClick="() => DeleteWorkout(workout.Id)"/>
-                                            }
+                                            <MudIconButton Icon="@Icons.Filled.Edit" OnClick="() => EditWorkout(workout.Id)"/>
                                         </MudItem>
                                     </MudGrid>
                                 </MudListItem>
@@ -41,25 +27,7 @@
                         </MudList>
 
                         <div Style="position: fixed; bottom: 13vh; right: 2vh; display: grid; gap: 1rem;">
-                            @if (editMode)
-                            {
-                                <MudFab OnClick="AskDeleteWorkouts" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete"/>
-                            }
-                            else
-                            {
-                                <MudFab Color="Color.Info" StartIcon="@Icons.Material.Filled.Add" OnClick="AddWorkout"/>
-                            }
-                        </div>
-
-                        <div Style="position: fixed; top: 2vh; right: 2vh; display: grid; gap: 1rem;">
-                            @if (editMode)
-                            {
-                                <MudFab OnClick="ChangeEditMode" Color="Color.Info" StartIcon="@Icons.Material.Filled.EditOff"/>
-                            }
-                            else if (workouts.Any())
-                            {
-                                <MudFab OnClick="ChangeEditMode" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Edit"/>
-                            }
+                            <MudFab Color="Color.Info" StartIcon="@Icons.Material.Filled.Add" OnClick="AddWorkout"/>
                         </div>
                     </ChildContent>
                 </DataInit>
@@ -74,14 +42,6 @@
     private IDialogService DialogService { get; set; }
 
     List<Workout> Workouts { get; set; } = null!;
-
-    bool editMode = false;
-
-    private void ChangeEditMode()
-    {
-        editMode = !editMode;
-        StateHasChanged();
-    }
 
     void EditWorkout(int workoutId)
     {
@@ -117,8 +77,6 @@
             Workouts = await WorkoutRepository.GetWorkoutsByUser(UserService.CurrentUser!.Id);
         }
 
-        editMode = false;
-
         StateHasChanged();
     }
 
@@ -146,12 +104,9 @@
             Workouts = await WorkoutRepository.GetWorkoutsByUser(UserService.CurrentUser!.Id);
         }
 
-        if (!Workouts.Any())
-            editMode = false;
-
         StateHasChanged();
     }
-    
+
     async Task AddWorkout()
     {
         NavigationManager.NavigateTo($"/editworkout");
@@ -164,4 +119,5 @@
             Workouts = await WorkoutRepository.GetWorkoutsByUser(UserService.CurrentUser!.Id);
         }
     }
+
 }

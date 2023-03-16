@@ -30,24 +30,10 @@
                             <MudListItem>
                                 <MudGrid Style="min-height: 4rem;">
                                     <MudItem xs="10" Style="display: flex; align-items: center;">
-                                        @if (!editMode)
-                                        {
-                                            <MudCheckBox Color="Color.Primary" Label="@exercise.Name" @bind-Checked="@exercise.IsSelected" Style="min-width: 50%"></MudCheckBox>
-                                        }
-                                        else
-                                        {
-                                            @exercise.Name
-                                        }
+                                        <MudCheckBox Color="Color.Primary" Label="@exercise.Name" @bind-Checked="@exercise.IsSelected" Style="min-width: 50%"></MudCheckBox>
                                     </MudItem>
                                     <MudItem xs="2">
-                                        @if (!editMode)
-                                        {
-                                            <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => EditExercise(exercise.Id)"/>
-                                        }
-                                        else
-                                        {
-                                            <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="() => AskDeleteExercise(exercise.Id)"/>
-                                        }
+                                        <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => EditExercise(exercise.Id)"/>
                                     </MudItem>
                                 </MudGrid>
 
@@ -59,25 +45,7 @@
         </MudContainer>
 
         <div Style="position: fixed; bottom: 13vh; right: 2vh;">
-            @if (editMode)
-            {
-                <MudFab Color="Color.Info" StartIcon="@Icons.Material.Filled.Add" OnClick="AddExercise"/>
-            }
-            else
-            {
-                <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Check" OnClick="AddActivities"/>
-            }
-        </div>
-
-        <div Style="position: fixed; top: 2vh; right: 2vh; display: grid; gap: 1rem;">
-            @if (editMode)
-            {
-                <MudFab OnClick="ChangeEditMode" Color="Color.Error" StartIcon="@Icons.Material.Filled.EditOff"/>
-            }
-            else
-            {
-                <MudFab OnClick="ChangeEditMode" Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Edit"/>
-            }
+            <MudFab Color="Color.Info" StartIcon="@Icons.Material.Filled.Add" OnClick="AddActivities"/>
         </div>
     </Authorized>
     <NotAuthorized>
@@ -97,14 +65,6 @@
     Workout? Workout { get; set; }
 
     List<Exercise> Exercises { get; set; } = null!;
-
-    bool editMode = false;
-
-    private void ChangeEditMode()
-    {
-        editMode = !editMode;
-        StateHasChanged();
-    }
 
 
     void EditExercise(int exerciseId)
@@ -169,8 +129,6 @@
             Exercises = await ExerciseRepository.GetExercisesByUser(UserService.CurrentUser!.Id);
         }
 
-        editMode = false;
-
         Exercises.ForEach(e => e.IsSelected = false);
 
         StateHasChanged();
@@ -211,9 +169,6 @@
                 Exercises = await ExerciseRepository.GetExercisesByUser(UserService.CurrentUser!.Id);
             }
         }
-
-        if (!Exercises.Any())
-            editMode = false;
 
         StateHasChanged();
     }
