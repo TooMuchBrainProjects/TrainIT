@@ -1,5 +1,4 @@
 ﻿@page "/newactivity"
-@using System.Globalization;
 
 <PageTitle>New Activity</PageTitle>
 
@@ -12,38 +11,57 @@
                 <MudForm>
                     <MudStack Spacing="4">
                         <MudPaper class="pa-4" Elevation="3">
-                            <DataInit Data="Exercises">
-                                <ChildContent Context="exercises">
-                                    <MudSelect T="Exercise" @bind-Value="SelectedExercise" Label="Exercise" Variant="Variant.Filled" AnchorOrigin="Origin.BottomCenter">
-                                        @foreach (var exercise in exercises)
-                                        {
-                                            <MudSelectItem Value="@exercise.Name"/>
-                                        }
-                                    </MudSelect>
-                                </ChildContent>
-                            </DataInit>
+                            <MudText>Type of Creation:</MudText>
+                            <MudRadioGroup @bind-SelectedOption="@SelectedTypeOfAddition">
+                                <MudRadio Option="@("One")" Color="Color.Primary">Add 1 Activity!</MudRadio>
+                                <MudRadio Option="@("Multiple")" Color="Color.Secondary">Add multiple Activities!</MudRadio>
+                            </MudRadioGroup>
                         </MudPaper>
-                        <MudPaper class="pa-4" Elevation="3">
 
-                            <DataInit Data="Activity">
-                                <ChildContent Context="activity">
-                                    <MudStack Spacing="3">
-                                        <MudTextField @bind-Value="activity.Weight" Label="Weight" Variant="Variant.Outlined"
-                                                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.MonitorWeight" AdornmentColor="Color.Secondary"
-                                                      InputMode="InputMode.numeric" InputType="InputType.Text"
-                                                      Immediate="true"/>
-                                        <MudTextField @bind-Value="activity.Set" Label="Set" Variant="Variant.Outlined"
-                                                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.MonitorWeight" AdornmentColor="Color.Secondary"
-                                                      InputMode="InputMode.numeric" InputType="InputType.Text"
-                                                      Immediate="true"/>
-                                        <MudTextField @bind-Value="activity.Repetition" Label="Repetition" Variant="Variant.Outlined"
-                                                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.MonitorWeight" AdornmentColor="Color.Secondary"
-                                                      InputMode="InputMode.numeric" InputType="InputType.Text"
-                                                      Immediate="true"/>
-                                    </MudStack>
-                                </ChildContent>
-                            </DataInit>
-                        </MudPaper>
+                        @if (SelectedTypeOfAddition == "One")
+                        {
+                            <MudPaper class="pa-4" Elevation="3">
+                                <DataInit Data="Exercises">
+                                    <ChildContent Context="exercises">
+                                        <MudSelect T="Exercise" @bind-value="SelectedExercise" Label="Exercise" ToStringFunc="@GetExerciseName" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+                                            @foreach (var exercise in exercises)
+                                            {
+                                                <MudSelectItem Value="@exercise"/>
+                                            }
+                                        </MudSelect>
+                                    </ChildContent>
+                                </DataInit>
+                            </MudPaper>
+                            
+                            @if (SelectedExercise != null)
+                            {
+                                <MudPaper class="pa-4" Elevation="3">
+                                    <DataInit Data="Activity">
+                                        <ChildContent Context="activity">
+                                            <MudStack Spacing="3">
+                                                <MudTextField @bind-Value="activity.Weight" Label="Weight" Variant="Variant.Outlined"
+                                                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.MonitorWeight" AdornmentColor="Color.Secondary"
+                                                              InputMode="InputMode.numeric" InputType="InputType.Text"
+                                                              Immediate="true"/>
+                                                <MudTextField @bind-Value="activity.Set" Label="Set" Variant="Variant.Outlined"
+                                                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.MonitorWeight" AdornmentColor="Color.Secondary"
+                                                              InputMode="InputMode.numeric" InputType="InputType.Text"
+                                                              Immediate="true"/>
+                                                <MudTextField @bind-Value="activity.Repetition" Label="Repetition" Variant="Variant.Outlined"
+                                                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.MonitorWeight" AdornmentColor="Color.Secondary"
+                                                              InputMode="InputMode.numeric" InputType="InputType.Text"
+                                                              Immediate="true"/>
+                                            </MudStack>
+                                        </ChildContent>
+                                    </DataInit>
+                                </MudPaper>
+                            }
+                        }
+                        else if (SelectedTypeOfAddition == "Multiple")
+                        {
+                        }
+
+                        <div></div>
                     </MudStack>
                 </MudForm>
             </MudStack>
@@ -60,14 +78,51 @@
 
 
 @code {
-
-    [Inject]
-    private IDialogService DialogService { get; set; }
+    public string SelectedTypeOfAddition = "One";
 
     Activity Activity { get; set; } = null!;
 
     List<Exercise> Exercises { get; set; } = null!;
-    Exercise? SelectedExercise { get; set; } = null!;
+
+    Exercise? _selectedExercise;
+    Exercise? SelectedExercise
+    {
+        get => _selectedExercise;
+        set
+        {
+            if (_selectedExercise == value) return;
+            _selectedExercise = value;
+            SelectedExerciseChanged();
+        }
+    }
+
+    Func<Exercise, string> GetExerciseName = e => e.Name;
+    
+    public async Task SelectedExerciseChanged()
+    {
+        if (SelectedExercise != null)
+        {
+            var lastActivity = (await ActivityRepository.GetLastActivitiesByExercises(new List<int>() { SelectedExercise.Id })).FirstOrDefault();
+        
+            if (lastActivity != null)
+            {
+                Activity = new Activity()
+                {
+                    Exercise = SelectedExercise,
+                    Repetition = lastActivity.Repetition,
+                    Set = lastActivity.Set,
+                    Weight = lastActivity.Weight
+                };
+            }
+            else
+            {
+                Activity = new Activity()
+                {
+                    Exercise = SelectedExercise
+                };
+            }
+        }
+    }
 
     async Task SaveNewActivity()
     {
@@ -76,11 +131,11 @@
             Snackbar.Add($"Please select an exercise!", Severity.Info);
             return;
         }
-        
+
         Activity.Exercise = SelectedExercise;
-        
+
         await ActivityRepository.CreateAsync(Activity);
-        
+
         Snackbar.Add("Activity created successfully", Severity.Success);
         NavigationManager.NavigateTo($"/activityview");
     }
@@ -88,9 +143,7 @@
     protected override async Task OnInitializedAsync()
     {
         if (!await UserService.IsAuthenticated()) return;
-        
-        Activity = new Activity();
+
         Exercises = await ExerciseRepository.ReadAsync(e => e.UserId == UserService.CurrentUser!.Id);
     }
-
 }
