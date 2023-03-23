@@ -26,4 +26,5 @@ public class Workout
     
     [NotMapped]
     public bool IsSelected { get; set; }
+    
 }

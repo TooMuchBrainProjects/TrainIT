@@ -122,6 +122,7 @@
             _isRegistering = true;
             await UserService.RegisterAsync(RegUser);
             await UserService.LoginAsync(new LoginModel(RegUser.Email, RegUser.LoginPassword));
+            NavigationManager.NavigateTo("/");
         }
         catch (DuplicateEmailException)
         {

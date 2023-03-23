@@ -30,4 +30,5 @@ public class Exercise
     [NotMapped]
     public bool IsSelected { get; set; }
     
+    
 }
