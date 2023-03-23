@@ -74,7 +74,7 @@
     {
         if (!await UserService.IsAuthenticated()) return;
 
-        if (Workout.Name == null)
+        if (String.IsNullOrEmpty(Workout.Name))
         {
             await DialogService.ShowMessageBox(
                 "Warning",

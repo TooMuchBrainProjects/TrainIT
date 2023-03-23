@@ -1,5 +1,4 @@
-﻿@page "/editexercise/"
-@page "/editexercise/{ExerciseId:int}"
+﻿@page "/editexercise/{ExerciseId:int}"
 
 <PageTitle>Edit Exercise</PageTitle>
 
@@ -8,14 +7,7 @@
     <Authorized>
         <MudContainer Class="mt-8">
             <MudStack Spacing="4">
-                @if (ExerciseId == null)
-                {
-                    <h1 class="ms-4 mb-12">Create Exercise</h1>
-                }
-                else
-                {
-                    <h1 class="ms-4 mb-12">Edit Exercise</h1>
-                }
+                <h1 class="ms-4 mb-12">Edit Exercise</h1>
                 <MudForm>
                     <DataInit Data="Exercise">
                         <ChildContent Context="exercise">
@@ -49,10 +41,6 @@
         <div Style="position: fixed; bottom: 13vh; right: 2vh; display: grid; gap: 1rem;">
             <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Check" OnClick="SaveExerciseChanges"/>
         </div>
-
-        <div Style="position: fixed; top: 2vh; right: 2vh; display: grid; gap: 1rem;">
-            <MudFab OnClick="AskDeleteExercise" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete"/>
-        </div>
     </Authorized>
 </AuthorizeView>
 
@@ -69,20 +57,12 @@
 
     async Task SaveExerciseChanges()
     {
-        if (ExerciseId == null)
+        if (String.IsNullOrEmpty(Exercise.Name))
         {
-            if (Exercise.Name == null)
-            {
-                await DialogService.ShowMessageBox(
-                    "Warning",
-                    "There must be a Name!"
-                    );
-            }
-            else
-            {
-                await ExerciseRepository.CreateAsync(Exercise);
-                NavigationManager.NavigateTo($"/exerciseview");
-            }
+            await DialogService.ShowMessageBox(
+                "Warning",
+                "There must be a Name!"
+                );
         }
         else
         {
@@ -119,20 +99,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (await UserService.IsAuthenticated())
-        {
-            if (ExerciseId == null)
-            {
-                Exercise = new Exercise()
-                {
-                    UserId = UserService.CurrentUser.Id
-                };
-            }
-            else
-            {
-                Exercise = await ExerciseRepository.GetExerciseById(ExerciseId.Value);
-            }
-        }
+        if (!await UserService.IsAuthenticated()) return;
+        Exercise = await ExerciseRepository.GetExerciseById(ExerciseId.Value);
     }
 
 }

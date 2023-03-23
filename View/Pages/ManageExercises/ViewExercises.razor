@@ -45,7 +45,7 @@
         </MudContainer>
 
         <div Style="position: fixed; bottom: 13vh; right: 2vh;">
-            <MudFab Color="Color.Info" StartIcon="@Icons.Material.Filled.Add" OnClick="AddActivities"/>
+            <MudFab Color="Color.Info" StartIcon="@Icons.Material.Filled.Add" OnClick="AddExercise"/>
         </div>
     </Authorized>
     <NotAuthorized>
@@ -102,7 +102,7 @@
 
     async Task AddExercise()
     {
-        NavigationManager.NavigateTo($"/editexercise");
+        NavigationManager.NavigateTo($"/newexercise");
     }
 
     private async void AskDeleteExercises()

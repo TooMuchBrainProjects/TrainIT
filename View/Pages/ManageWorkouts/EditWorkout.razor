@@ -52,7 +52,6 @@
                 </MudForm>
             </MudStack>
         </MudContainer>
-
         <div Style="position: fixed; bottom: 13vh; right: 2vh; display: grid; gap: 1rem;">
             <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Check" OnClick="SaveWorkoutChanges"/>
         </div>
@@ -75,45 +74,60 @@
 
     async Task SaveWorkoutChanges()
     {
-        // Workout updaten
-        await WorkoutRepository.UpdateAsync(Workout);
-
-        Exercises = Exercises.Where(e => e.IsSelected == true).ToList();
-        // SelectedExercises = oldState
-        // Exercises = newState
-
-        var oldStateIds = SelectedExercises.Select(s => s.Id).ToList();
-        var newStateIds = Exercises.Select(e => e.Id).ToList();
-
-        var additionalExerciseIds = newStateIds.Except(oldStateIds).ToList();
-
-        var outdatedExerciseIds = oldStateIds.Except(newStateIds).ToList();
-
-        // add new
-
-        if (additionalExerciseIds.Any())
+        if (String.IsNullOrEmpty(Workout.Name))
         {
-            var exercises = await ExerciseRepository.GetExercisesByUser(UserService.CurrentUser!.Id);
+            await DialogService.ShowMessageBox(
+                "Warning",
+                "Please name it!"
+                );
+        }
+        else if (!Exercises.Exists(e => e.IsSelected))
+        {
+            await DialogService.ShowMessageBox(
+                "Warning",
+                "Please select at least one exercise!"
+                );
+        }
+        else
+        {
+    // Workout updaten
+            await WorkoutRepository.UpdateAsync(Workout);
 
-            exercises = exercises.Where(e => additionalExerciseIds.Contains(e.Id)).ToList();
+            Exercises = Exercises.Where(e => e.IsSelected == true).ToList();
+    // SelectedExercises = oldState
+    // Exercises = newState
 
-            List<WorkoutExercise> workoutExercises = new List<WorkoutExercise>();
+            var oldStateIds = SelectedExercises.Select(s => s.Id).ToList();
+            var newStateIds = Exercises.Select(e => e.Id).ToList();
 
-            foreach (var exercise in exercises)
+            var additionalExerciseIds = newStateIds.Except(oldStateIds).ToList();
+
+            var outdatedExerciseIds = oldStateIds.Except(newStateIds).ToList();
+
+    // add new
+
+            if (additionalExerciseIds.Any())
             {
-                workoutExercises.Add(new WorkoutExercise() { Exercise = exercise, Workout = Workout });
+                var exercises = await ExerciseRepository.GetExercisesByUser(UserService.CurrentUser!.Id);
+
+                exercises = exercises.Where(e => additionalExerciseIds.Contains(e.Id)).ToList();
+
+                List<WorkoutExercise> workoutExercises = new List<WorkoutExercise>();
+
+                foreach (var exercise in exercises)
+                {
+                    workoutExercises.Add(new WorkoutExercise() { Exercise = exercise, Workout = Workout });
+                }
+
+                await WorkoutExerciseRepository.CreateAsync(workoutExercises);
             }
-
-            await WorkoutExerciseRepository.CreateAsync(workoutExercises);
+    // remove outdated
+            if (outdatedExerciseIds.Any())
+            {
+                await WorkoutExerciseRepository.DeleteAsync(await WorkoutExerciseRepository.ReadAsync(we => outdatedExerciseIds.Contains(we.ExerciseId)));
+            }
+            NavigationManager.NavigateTo($"/workoutview");
         }
-        // remove outdated
-        if (outdatedExerciseIds.Any())
-        {
-            await WorkoutExerciseRepository.DeleteAsync(await WorkoutExerciseRepository.ReadAsync(we => outdatedExerciseIds.Contains(we.ExerciseId)));
-        }
-
-
-        NavigationManager.NavigateTo($"/workoutview");
     }
 
     private async void AskDeleteWorkout()
