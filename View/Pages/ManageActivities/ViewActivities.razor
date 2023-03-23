@@ -75,7 +75,7 @@
     {
         try
         {
-            Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(DateManager.SelectedDate.Year, DateManager.SelectedDate.Month, DateManager.SelectedDate.Day));
+            Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, DateOnly.FromDateTime(DateManager.SelectedDate));
             StateHasChanged();
         }
         catch (Exception exception)
