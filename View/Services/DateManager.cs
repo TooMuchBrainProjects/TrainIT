@@ -5,7 +5,7 @@ public class DateManager
     public event EventHandler? SelectedDateChanged;
 
     private DateTime? _selectedDate;
-    public DateTime SelectedDate
+    public DateTime? SelectedDate
     {
         get { return _selectedDate ??= DateTime.Today; }
         set
@@ -13,7 +13,7 @@ public class DateManager
             _selectedDate = value;
             
             // raise event
-            OnSelectedDateChanged();
+            SelectedDateChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -38,22 +38,17 @@ public class DateManager
 
     public void PrevDate()
     {
-        SelectedDate = SelectedDate.AddDays(-1);
+        SelectedDate = SelectedDate?.AddDays(-1);
     }
 
     public void NextDate()
     {
-        SelectedDate = SelectedDate.AddDays(1);
+        SelectedDate = SelectedDate?.AddDays(1);
     }
     
     public async Task DatePickerToday()
     {
         await DatePicker!.GoToDate(DateTime.Today);
         DatePicker.Close();
-    }
-
-    protected virtual void OnSelectedDateChanged()
-    {
-        SelectedDateChanged?.Invoke(this, EventArgs.Empty);
     }
 }

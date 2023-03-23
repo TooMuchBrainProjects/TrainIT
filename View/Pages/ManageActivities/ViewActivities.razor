@@ -10,7 +10,7 @@
 
                 <MudCardActions>
                     <MudIconButton OnClick="DateManager.PrevDate" Icon="@Icons.Material.Filled.ArrowBackIos" aria-label="previous day"></MudIconButton>
-                    <MudDatePicker Label="Choose date" @ref="DateManager.DatePicker" Date="DateManager.SelectedDate" AutoClose="true" MaxDate="DateManager.Today" class="mx-4">
+                    <MudDatePicker Label="Choose date" @ref="DateManager.DatePicker" @bind-Date="DateManager.SelectedDate" AutoClose="true" MaxDate="DateManager.Today" class="mx-4">
                         <PickerActions Context="_">
                             <MudButton Class="mr-auto align-self-start" OnClick="DateManager.DatePickerToday">Today</MudButton>
                         </PickerActions>
@@ -75,7 +75,8 @@
     {
         try
         {
-            Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, DateOnly.FromDateTime(DateManager.SelectedDate));
+            if (DateManager.SelectedDate == null) return;
+            Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, DateOnly.FromDateTime(DateManager.SelectedDate ?? DateTime.Today));
             StateHasChanged();
         }
         catch (Exception exception)
@@ -95,66 +96,11 @@
         NavigationManager.NavigateTo($"/newactivity");
     }
 
-    private async void AskDeleteActivities()
-    {
-        bool? result = await DialogService.ShowMessageBox(
-            "Warning",
-            "Deleting can not be undone!",
-            yesText: "Delete!", cancelText: "Cancel");
-
-        if (result is true)
-        {
-            DeleteActivities();
-        }
-
-        StateHasChanged();
-    }
-
-    private async void DeleteActivities()
-    {
-        await ActivityRepository.DeleteAsync(Activities.Where(a => a.IsSelected));
-
-        if (await UserService.IsAuthenticated())
-        {
-            Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(DateManager.SelectedDate.Year, DateManager.SelectedDate.Month, DateManager.SelectedDate.Day));
-        }
-
-        Activities.ForEach(e => e.IsSelected = false);
-        StateHasChanged();
-    }
-
-    private async void AskDeleteActivity(int activityId)
-    {
-        bool? result = await DialogService.ShowMessageBox(
-            "Warning",
-            "Deleting can not be undone!",
-            yesText: "Delete!", cancelText: "Cancel");
-
-        if (result is true)
-        {
-            DeleteActivity(activityId);
-        }
-
-        StateHasChanged();
-    }
-
-    private async void DeleteActivity(int activityId)
-    {
-        await ActivityRepository.DeleteAsync(Activities.Where(a => a.Id == activityId));
-
-        if (await UserService.IsAuthenticated())
-        {
-            Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(DateManager.SelectedDate.Year, DateManager.SelectedDate.Month, DateManager.SelectedDate.Day));
-        }
-
-        StateHasChanged();
-    }
-
     protected override async Task OnInitializedAsync()
     {
         if (await UserService.IsAuthenticated())
         {
-            Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, new DateOnly(DateManager.SelectedDate.Year, DateManager.SelectedDate.Month, DateManager.SelectedDate.Day));
+            Activities = await ActivityRepository.GetActivitiesByUserByDate(UserService.CurrentUser!.Id, DateOnly.FromDateTime(DateManager.SelectedDate ?? DateTime.Today));
         }
 
         DateManager.SelectedDateChanged += new EventHandler(async (s, e) => await ReloadActivities(s, e));
