@@ -41,6 +41,22 @@ public class ActivityRepository : ARepository<Activity>, IActivityRepository
             .ToListAsync(cancellationToken: ct);
     }
 
+    public async Task<Activity?> GetLastActivityByExercise(int exerciseId, CancellationToken ct = default)
+    {
+        return await
+            (from exercise in Context.Set<Exercise>()
+                join activity in Context.Set<Activity>()
+                    on exercise.Id equals activity.ExerciseId
+                where exerciseId == activity.ExerciseId
+                where activity.DateValue == (
+                    from activity2 in Context.Set<Activity>()
+                    where activity2.ExerciseId == exercise.Id
+                    select activity2.DateValue
+                ).Max()
+                select activity
+            ).FirstOrDefaultAsync(cancellationToken: ct);
+    }
+    
     public async Task<List<Activity>> GetLastActivitiesByExercises(IEnumerable<int> exerciseIds, CancellationToken ct = default)
     {
         return await

@@ -64,14 +64,20 @@
                                 <MudText>Please select an option above!</MudText>
                                 break;
                         }
-
-                        <div></div>
                     </MudStack>
                 </MudForm>
             </MudStack>
         </MudContainer>
         
-        <MudText>Debugging: Selected Exercise: @if(SelectedExercise != null) @SelectedExercise.Name AdditionType: @SelectedTypeOfAddition Activity Exercise: @Activity.Exercise</MudText>
+        <MudText>
+            Debugging: 
+            <br/>
+            Selected Exercise: @if (SelectedExercise != null) @SelectedExercise.Name
+            <br/>
+            AdditionType: @SelectedTypeOfAddition 
+            <br/>
+            Activity Exercise: @Activity.Exercise
+        </MudText>
 
         <div Style="position: fixed; bottom: 13vh; right: 2vh; display: grid; gap: 1rem;">
             <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Check" OnClick="SaveNewActivity"/>
@@ -84,11 +90,22 @@
 
 
 @code {
-    public AdditionType SelectedTypeOfAddition = AdditionType.ONE;
+    AdditionType? _selectedTypeOfAddition = AdditionType.ONE;
+
+    AdditionType SelectedTypeOfAddition
+    {
+        get => _selectedTypeOfAddition ??= AdditionType.ONE;
+        set
+        {
+            if (_selectedTypeOfAddition == value) return;
+            _selectedTypeOfAddition = value;
+            ResetValues();
+        }
+    }
 
     Activity Activity { get; set; } = new Activity();
 
-    List<Exercise> Exercises { get; set; } = null!;
+    List<Exercise> Exercises { get; set; }
 
     Exercise? _selectedExercise;
 
@@ -100,43 +117,43 @@
             if (_selectedExercise == value) return;
             _selectedExercise = value;
             SelectedExerciseChanged();
-            // ResetValues();
         }
     }
 
-    Func<Exercise, string> GetExerciseName = e => e.Name;
+    readonly Func<Exercise, string> GetExerciseName = e => e.Name;
 
     public async Task SelectedExerciseChanged()
     {
-        if (SelectedExercise != null)
-        {
-            var lastActivity = (await ActivityRepository.GetLastActivitiesByExercises(new List<int>() { SelectedExercise.Id })).FirstOrDefault();
+        if (SelectedExercise == null) return;
+        
+        var lastActivity = await ActivityRepository.GetLastActivityByExercise(SelectedExercise.Id);
 
-            if (lastActivity != null)
+        if (lastActivity != null)
+        {
+            Activity = new Activity()
             {
-                Activity = new Activity()
-                {
-                    Exercise = SelectedExercise,
-                    Repetition = lastActivity.Repetition,
-                    Set = lastActivity.Set,
-                    Weight = lastActivity.Weight
-                };
-            }
-            else
-            {
-                Activity = new Activity()
-                {
-                    Exercise = SelectedExercise
-                };
-            }
+                Exercise = SelectedExercise,
+                Repetition = lastActivity.Repetition,
+                Set = lastActivity.Set,
+                Weight = lastActivity.Weight
+            };
         }
+        else
+        {
+            Activity = new Activity()
+            {
+                Exercise = SelectedExercise
+            };
+        }
+        
+        StateHasChanged();
     }
 
-    /*public void ResetValues()
+    public void ResetValues()
     {
         Activity = new Activity();
         _selectedExercise = null;
-    }*/
+    }
 
     async Task SaveNewActivity()
     {
@@ -147,6 +164,7 @@
         }
 
         Activity.Exercise = SelectedExercise;
+        Activity.DateValue = DateOnly.FromDateTime(DateTime.Today);
 
         await ActivityRepository.CreateAsync(Activity);
 

@@ -34,6 +34,13 @@ public interface IActivityRepository : IRepository<Activity>
     Task<List<Activity>> GetActivitiesByUserByDate(int userId, DateOnly date, CancellationToken ct = default);
 
     /// <summary>
+    /// Returns the last activity for the exercise given.
+    /// </summary>
+    /// <param name="exerciseId">Exercise</param>
+    /// <returns>Last activity</returns>
+    Task<Activity?> GetLastActivityByExercise(int exerciseId, CancellationToken ct = default);
+    
+    /// <summary>
     /// Returns the last activities for each exercise given.
     /// </summary>
     /// <param name="exerciseIds">List of exercises</param>
