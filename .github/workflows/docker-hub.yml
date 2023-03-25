@@ -7,7 +7,7 @@ on:
     branches:
       - "main"
     tags:
-      - "v*.*.*"
+      - 'v*'
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -60,6 +60,6 @@ jobs:
           context: "{{defaultContext}}"
           push: true
           tags: |
-            ${{ steps.meta.outputs.tags }},
+            ${{ steps.meta.outputs.tags }}
             ${{ env.IMAGE_NAME }}:latest
           labels: ${{ steps.meta.outputs.labels }}
