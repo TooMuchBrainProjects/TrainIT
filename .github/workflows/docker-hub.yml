@@ -54,7 +54,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push Docker image
-        if: ${{ steps.meta.outputs.tags }} != ${{ env.IMAGE_NAME }}:main
+        if: ${{ steps.meta.outputs.tags }} != ${{ env.IMAGE_NAME }} + ':main'
         uses: docker/build-push-action@v4
         with:
           context: "{{defaultContext}}"
@@ -63,3 +63,6 @@ jobs:
             ${{ steps.meta.outputs.tags }},
             ${{ env.IMAGE_NAME }}:latest
           labels: ${{ steps.meta.outputs.labels }}
+          
+      - name: Build the Docker image
+        run: echo ${{ steps.meta.outputs.tags }}
