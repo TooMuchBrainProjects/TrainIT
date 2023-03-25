@@ -6,13 +6,9 @@ on:
   push:
     branches:
       - "main"
-    tags:
-      - 'v*'
 
 env:
-  # Use docker.io for Docker Hub if empty
   REGISTRY: docker.io
-  # github.repository as <account>/<repo>
   IMAGE_NAME: trueberryless/trainit
 
 jobs:
@@ -60,6 +56,6 @@ jobs:
           context: "{{defaultContext}}"
           push: true
           tags: |
-            ${{ steps.meta.outputs.tags }}
+            ${{ env.IMAGE_NAME }}:${{ vars.MAJOR}}.${{ vars.MINOR}}.${{ vars.PATCH}}
             ${{ env.IMAGE_NAME }}:latest
           labels: ${{ steps.meta.outputs.labels }}
