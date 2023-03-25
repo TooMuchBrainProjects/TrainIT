@@ -27,7 +27,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Test the Docker image
         run: docker-compose up -d 
   
@@ -58,5 +58,5 @@ jobs:
         with:
           context: "{{defaultContext}}"
           push: true
-          tags: ${{ steps.meta.outputs.tags }},trueberryless/trainit:latest
+          tags: ${{ steps.meta.outputs.tags }},${{ env.IMAGE_NAME }}:latest
           labels: ${{ steps.meta.outputs.labels }}
