@@ -58,5 +58,5 @@ jobs:
         with:
           context: "{{defaultContext}}"
           push: true
-          tags: ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.tags }},${{ env.IMAGE_NAME }}:latest
+          tags: trueberryless/trainit:${{ steps.meta.outputs.tags }},trueberryless/trainit:latest
           labels: ${{ steps.meta.outputs.labels }}
