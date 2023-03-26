@@ -127,9 +127,9 @@ jobs:
         if: ${{ env.FILE_EXISTS == 'false' }} 
         run: mkdir -p .github/artifacts
       
-      - name: write json
+      - name: write_json
         id: create-json
-        uses: jsdaniell/create-json@v1
+        uses: jsdaniell/create-json@release
         with:
           name: "version.json"
           json: '{ "major": ${{ env.MAJOR }}, "minor": ${{ env.MINOR }}, "patch": ${{ env.PATCH }} }'
