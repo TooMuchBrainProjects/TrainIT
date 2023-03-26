@@ -124,7 +124,6 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
       - name: Build and push Docker image
-        if: ${{ steps.meta.outputs.tags }} != docker.io/***/trainit:main
         uses: docker/build-push-action@v4
         with:
           context: "{{defaultContext}}"
