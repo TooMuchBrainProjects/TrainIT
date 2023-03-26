@@ -129,7 +129,7 @@ jobs:
       
       - name: write_json
         id: create-json
-        uses: jsdaniell/create-json@1.2.2
+        uses: jsdaniell/create-json@v1.2.2
         with:
           name: "version.json"
           json: '{ "major": ${{ env.MAJOR }}, "minor": ${{ env.MINOR }}, "patch": ${{ env.PATCH }} }'
