@@ -59,6 +59,26 @@
                                 }
                                 break;
                             case AdditionType.MULTIPLE:
+                                <DataInit Data="Exercises">
+                                    <ChildContent Context="exercises">
+                                        <MudList Clickable="true">
+                                            @foreach (var exercise in exercises)
+                                            {
+                                                <MudListItem>
+                                                    <MudGrid Style="min-height: 4rem;">
+                                                        <MudItem xs="10" Style="display: flex; align-items: center;">
+                                                            <MudCheckBox Color="Color.Primary" Label="@exercise.Name" @bind-Checked="@exercise.IsSelected" Style="min-width: 50%"></MudCheckBox>
+                                                        </MudItem>
+                                                        <MudItem xs="2">
+                                                            <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => EditExercise(exercise.Id)"/>
+                                                        </MudItem>
+                                                    </MudGrid>
+
+                                                </MudListItem>
+                                            }
+                                        </MudList>
+                                    </ChildContent>
+                                </DataInit>
                                 break;
                             default:
                                 <MudText>Please select an option above!</MudText>
@@ -68,8 +88,8 @@
                 </MudForm>
             </MudStack>
         </MudContainer>
-        
-        <MudText>
+
+        @*<MudText>
             Debugging: 
             <br/>
             Selected Exercise: @if (SelectedExercise != null) @SelectedExercise.Name
@@ -77,7 +97,7 @@
             AdditionType: @SelectedTypeOfAddition 
             <br/>
             Activity Exercise: @Activity.Exercise
-        </MudText>
+        </MudText>*@
 
         <div Style="position: fixed; bottom: 13vh; right: 2vh; display: grid; gap: 1rem;">
             <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Check" OnClick="SaveNewActivity"/>
@@ -103,8 +123,13 @@
         }
     }
 
+    // one Activity
     Activity Activity { get; set; } = new Activity();
+    
+    // multiple Activities
+    List<Activity> Activities { get; set; }
 
+    // all Exercises from User
     List<Exercise> Exercises { get; set; }
 
     Exercise? _selectedExercise;
@@ -125,7 +150,7 @@
     public async Task SelectedExerciseChanged()
     {
         if (SelectedExercise == null) return;
-        
+
         var lastActivity = await ActivityRepository.GetLastActivityByExercise(SelectedExercise.Id);
 
         if (lastActivity != null)
@@ -145,7 +170,7 @@
                 Exercise = SelectedExercise
             };
         }
-        
+
         StateHasChanged();
     }
 
@@ -157,19 +182,56 @@
 
     async Task SaveNewActivity()
     {
-        if (SelectedExercise == null)
+        switch (SelectedTypeOfAddition)
         {
-            Snackbar.Add($"Please select an exercise!", Severity.Info);
-            return;
+            case AdditionType.MULTIPLE:
+                Exercises = Exercises.Where(e => e.IsSelected).ToList();
+
+                var lastActivities = await ActivityRepository.GetLastActivitiesByExercises(Exercises.Select(exercise => exercise.Id).ToList());
+                var newActivities = new List<Activity>();
+                if (lastActivities.Any())
+                {
+                    newActivities = Exercises.Select((t, i) => new Activity()
+                    {
+                        ExerciseId = t.Id, Exercise = t, DateValue = DateOnly.FromDateTime(DateManager.SelectedDate ?? DateTime.Today), Repetition = lastActivities[i].Repetition, Set = lastActivities[i].Set, Weight = lastActivities[i].Weight
+                    }).ToList();
+                }
+                else
+                {
+                    newActivities = Exercises.Select((t, i) => new Activity()
+                    {
+                        ExerciseId = t.Id, Exercise = t, DateValue = DateOnly.FromDateTime(DateManager.SelectedDate ?? DateTime.Today), Repetition = default, Set = default, Weight = default
+                    }).ToList();
+                }
+
+                await ActivityRepository.CreateAsync(newActivities);
+                Exercises.ForEach(e => e.IsSelected = false);
+
+                Snackbar.Add("Activities created successfully", Severity.Success);
+                break;
+            case AdditionType.ONE:
+            default:
+                if (SelectedExercise == null)
+                {
+                    Snackbar.Add($"Please select an exercise!", Severity.Info);
+                    return;
+                }
+
+                Activity.Exercise = SelectedExercise;
+                Activity.DateValue = DateOnly.FromDateTime(DateManager.SelectedDate ?? DateTime.Today);
+
+                await ActivityRepository.CreateAsync(Activity);
+
+                Snackbar.Add("Activity created successfully", Severity.Success);
+                break;
         }
-
-        Activity.Exercise = SelectedExercise;
-        Activity.DateValue = DateOnly.FromDateTime(DateTime.Today);
-
-        await ActivityRepository.CreateAsync(Activity);
-
-        Snackbar.Add("Activity created successfully", Severity.Success);
+        
         NavigationManager.NavigateTo($"/activityview");
+    }
+    
+    void EditExercise(int exerciseId)
+    {
+        NavigationManager.NavigateTo($"/editexercise/{exerciseId}");
     }
 
     protected override async Task OnInitializedAsync()
