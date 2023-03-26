@@ -1,8 +1,6 @@
 name: Build and Push Docker Image to Docker Hub
 
 on:
-  schedule:
-    - cron: "30 2 * * 6"
   push:
     branches:
       - "main"
@@ -14,21 +12,97 @@ env:
 jobs:
 
   build:
+    if: contains(github.event.head_commit.message, 'version')
     runs-on: ubuntu-latest
     steps:
+      - name: Check out the repo
       - uses: actions/checkout@v3
+      
       - name: Build the Docker image
         run: docker-compose build --no-cache --force-rm 
   
   test:
+    needs: build
     runs-on: ubuntu-latest
+    if: ${{ needs.build.result == 'success' }}
     steps:
+      - name: Check out the repo
       - uses: actions/checkout@v3
+      
       - name: Test the Docker image
         run: docker-compose up -d 
   
-  push_to_registry:
+  read-current-version:
+    if: contains(github.event.head_commit.message, 'version')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+      - uses: actions/checkout@v3
+      
+      - name: Check if file exists
+        run: |
+          if [ -f .github/artifacts/version.json ]; then
+            echo "File exists"
+            echo "FILE_EXISTS=true" >> $GITHUB_ENV
+          else
+            mkdir -p .github/artifacts
+            echo "File does not exist"
+            echo "FILE_EXISTS=false" >> $GITHUB_ENV
+          fi
+          
+      - name: Create new file if necessary
+        if: ${{ env.FILE_EXISTS == 'false' }} 
+        uses: jsdaniell/create-json@v1
+        with:
+          name: "version.json"
+          json: '{ "major": 0, "minor": 0, "patch": 0 }'
+          dir: '.github/artifacts/'
+      
+      - name: read_json
+        id: version
+        uses: zoexx/github-action-json-file-properties@release
+        with:
+          file_path: ".github/artifacts/version.json"
+          
+      - run: |
+          echo "MAJOR=${{steps.version.outputs.major}}" >> $GITHUB_ENV
+          echo "MINOR=${{steps.version.outputs.minor}}" >> $GITHUB_ENV
+          echo "PATCH=${{steps.version.outputs.patch}}" >> $GITHUB_ENV
+      - run: |
+          echo ${{ env.MINOR }}
+          echo ${{ env.MINOR }}
+          echo ${{ env.MINOR }}
+          
+  calc-new-version:
+    needs: read-current-version
+    runs-on: ubuntu-latest
+    if: ${{ needs.read-current-version.result == 'success' }}
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+      
+      - name: Major version
+        if: contains(github.event.head_commit.message, 'version-major')
+        run: |
+          echo "New major version"
+          echo "MAJOR=$((${{ env.MAJOR }}+1))" >> $GITHUB_ENV
+
+      - name: Minor version
+        if: contains(github.event.head_commit.message, 'version-minor')
+        run: |
+          echo "New minor version"
+          echo "MINOR=$((${{ env.MINOR }}+1))" >> $GITHUB_ENV
+        
+      - name: Patch version
+        if: contains(github.event.head_commit.message, 'version-patch')
+        run: |
+          echo "New patch version"
+          echo "PATCH=$((${{ env.PATCH }}+1))" >> $GITHUB_ENV
+  
+  push:
+    needs: [ build, calc-new-version ]
     name: Push Docker image to Docker Hub
+    if: ${{ needs.build.result == 'success' && needs.calc-new-version.result == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
@@ -56,6 +130,27 @@ jobs:
           context: "{{defaultContext}}"
           push: true
           tags: |
-            ${{ env.IMAGE_NAME }}:${{ vars.MAJOR}}.${{ vars.MINOR}}.${{ vars.PATCH}}
+            ${{ env.IMAGE_NAME }}:${{ env.MAJOR}}.${{ env.MINOR}}.${{ env.PATCH}}
             ${{ env.IMAGE_NAME }}:latest
           labels: ${{ steps.meta.outputs.labels }}
+    
+  write-new-version:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out the repo
+      - uses: actions/checkout@v3
+      
+      - name: write json
+        id: create-json
+        uses: jsdaniell/create-json@v1
+        with:
+          name: "version.json"
+          json: '{ "major": ${{ env.MAJOR }}, "minor": ${{ env.MINOR }}, "patch": ${{ env.PATCH }} }'
+          dir: '.github/artifacts/'
+          
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: update version.json (automated)
+      
