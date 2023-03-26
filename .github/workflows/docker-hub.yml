@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
-      - uses: actions/checkout@v3
+        uses: actions/checkout@v3
       
       - name: Build the Docker image
         run: docker-compose build --no-cache --force-rm 
@@ -27,7 +27,7 @@ jobs:
     if: ${{ needs.build.result == 'success' }}
     steps:
       - name: Check out the repo
-      - uses: actions/checkout@v3
+        uses: actions/checkout@v3
       
       - name: Test the Docker image
         run: docker-compose up -d 
@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
-      - uses: actions/checkout@v3
+        uses: actions/checkout@v3
       
       - name: Check if file exists
         run: |
@@ -140,7 +140,7 @@ jobs:
       contents: write
     steps:
       - name: Check out the repo
-      - uses: actions/checkout@v3
+        uses: actions/checkout@v3
       
       - name: write json
         id: create-json
