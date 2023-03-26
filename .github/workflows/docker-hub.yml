@@ -49,26 +49,30 @@ jobs:
             echo "File does not exist"
             echo "FILE_EXISTS=false" >> $GITHUB_ENV
           fi
-          
-      - name: Create new file if necessary
-        if: ${{ env.FILE_EXISTS == 'false' }} 
-        uses: jsdaniell/create-json@v1
-        with:
-          name: "version.json"
-          json: '{ "major": 0, "minor": 0, "patch": 0 }'
-          dir: '.github/artifacts/'
       
       - name: read_json
+        if: ${{ env.FILE_EXISTS == 'true' }}
         id: version
         uses: zoexx/github-action-json-file-properties@release
         with:
           file_path: ".github/artifacts/version.json"
           
-      - run: |
+      - name: save environment variables
+        if: ${{ env.FILE_EXISTS == 'true' }}
+        run: |
           echo "MAJOR=${{steps.version.outputs.major}}" >> $GITHUB_ENV
           echo "MINOR=${{steps.version.outputs.minor}}" >> $GITHUB_ENV
           echo "PATCH=${{steps.version.outputs.patch}}" >> $GITHUB_ENV
-      - run: |
+          
+      - name: create environment variables        
+        if: ${{ env.FILE_EXISTS == 'false' }}
+        run: |
+          echo "MAJOR=0" >> $GITHUB_ENV
+          echo "MINOR=0" >> $GITHUB_ENV
+          echo "PATCH=0" >> $GITHUB_ENV          
+      
+      - name: echo environment variables
+        run: |
           echo ${{ env.MINOR }}
           echo ${{ env.MINOR }}
           echo ${{ env.MINOR }}
@@ -142,6 +146,10 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v3
+        
+      - name: Create folder if necessary
+        if: ${{ env.FILE_EXISTS == 'false' }} 
+        run: mkdir -p .github/artifacts
       
       - name: write json
         id: create-json
