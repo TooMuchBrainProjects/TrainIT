@@ -135,9 +135,9 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
     
   write-new-version:
-    needs: [ push, calc-new-version ]
+    needs: calc-new-version
     runs-on: ubuntu-latest
-    if: ${{ needs.push.result == 'success' && needs.calc-new-version.result == 'success' }}
+    if: ${{ needs.calc-new-version.result == 'success' }}
     permissions:
       contents: write
     steps:
