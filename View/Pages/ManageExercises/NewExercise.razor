@@ -33,6 +33,27 @@
                         </ChildContent>
                     </DataInit>
                 </MudForm>
+                <h2 class="ms-0 mb-5 mt-10">Workouts where Exercise is in:</h2>
+                <DataInit Data="Workouts">
+                    <ChildContent Context="workouts">
+                        <MudStack Spacing="4">
+                            <MudPaper class="pa-4" Elevation="3">
+                                <MudList Clickable="true">
+                                    @foreach (var workout in workouts)
+                                    {
+                                        <MudListItem>
+                                            <MudGrid Style="min-height: 4rem;">
+                                                <MudItem xs="10" Style="display: flex; align-items: center;">
+                                                    <MudCheckBox Color="Color.Primary" Label="@workout.Name" @bind-Checked="@workout.IsSelected" Style="min-width: 50%"></MudCheckBox>
+                                                </MudItem>
+                                            </MudGrid>
+                                        </MudListItem>
+                                    }
+                                </MudList>
+                            </MudPaper>
+                        </MudStack>
+                    </ChildContent>
+                </DataInit>
 
             </MudStack>
         </MudContainer>
@@ -49,10 +70,14 @@
     [Inject]
     private IDialogService DialogService { get; set; }
 
-    Exercise? Exercise { get; set; }
+    Exercise? Exercise { get; set; } = new Exercise();
 
     [Parameter]
     public int? ExerciseId { get; set; }
+
+    List<Workout> Workouts { get; set; } = null!;
+
+    List<Workout> SelectedWorkouts { get; set; } = null!;
 
     async Task CreateExercise()
     {
@@ -65,7 +90,13 @@
         }
         else
         {
+            Workouts = Workouts.Where(e => e.IsSelected == true).ToList();
+            Exercise.User = UserService.CurrentUser!;
+            Exercise.UserId = UserService.CurrentUser!.Id;
             await ExerciseRepository.CreateAsync(Exercise);
+            var workoutExercises = Workouts.Select(workout => new WorkoutExercise() { Exercise = Exercise, Workout = workout }).ToList();
+            await WorkoutExerciseRepository.CreateAsync(workoutExercises);
+
             NavigationManager.NavigateTo($"/exerciseview");
         }
     }
@@ -74,10 +105,17 @@
     protected override async Task OnInitializedAsync()
     {
         if (!await UserService.IsAuthenticated()) return;
-        Exercise = new Exercise()
+        
+        Workouts = await WorkoutRepository.GetWorkoutsByUser(UserService.CurrentUser!.Id);
+        Workouts.ForEach(e => e.IsSelected = false);
+
+        var selectedExercisesId = (await WorkoutExerciseRepository.ReadAsync(we => we.Exercise == Exercise)).Select(we => we.WorkoutId);
+        SelectedWorkouts = await WorkoutRepository.ReadAsync(w => selectedExercisesId.Contains(w.Id));
+
+        foreach (var workout in Workouts.Where(e => selectedExercisesId.Contains(e.Id)))
         {
-            UserId = UserService.CurrentUser.Id
-        };
+            workout.IsSelected = true;
+        }
     }
 
 }

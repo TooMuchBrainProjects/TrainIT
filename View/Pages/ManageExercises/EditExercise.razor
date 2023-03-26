@@ -33,6 +33,27 @@
                             </MudStack>
                         </ChildContent>
                     </DataInit>
+                    <h2 class="ms-0 mb-5 mt-10">Workouts where Exercise is in:</h2>
+                    <DataInit Data="Workouts">
+                        <ChildContent Context="workouts">
+                            <MudStack Spacing="4">
+                                <MudPaper class="pa-4" Elevation="3">
+                                    <MudList Clickable="true">
+                                        @foreach (var workout in workouts)
+                                        {
+                                            <MudListItem>
+                                                <MudGrid Style="min-height: 4rem;">
+                                                    <MudItem xs="10" Style="display: flex; align-items: center;">
+                                                        <MudCheckBox Color="Color.Primary" Label="@workout.Name" @bind-Checked="@workout.IsSelected" Style="min-width: 50%"></MudCheckBox>
+                                                    </MudItem>
+                                                </MudGrid>
+                                            </MudListItem>
+                                        }
+                                    </MudList>
+                                </MudPaper>
+                            </MudStack>
+                        </ChildContent>
+                    </DataInit>
                 </MudForm>
             </MudStack>
             <MudButton class="mt-5" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" FullWidth="true" OnClick="DeleteExercise">Delete Exercise</MudButton>
@@ -54,6 +75,10 @@
 
     [Parameter]
     public int? ExerciseId { get; set; }
+    
+    List<Workout> Workouts { get; set; } = null!;
+
+    List<Workout> SelectedWorkouts { get; set; } = null!;
 
     async Task SaveExerciseChanges()
     {
@@ -66,7 +91,42 @@
         }
         else
         {
+            // Exercise update
             await ExerciseRepository.UpdateAsync(Exercise);
+            
+            // Workouts update
+            Workouts = Workouts.Where(w => w.IsSelected == true).ToList();
+
+            var oldStateIds = SelectedWorkouts.Select(s => s.Id).ToList();
+            var newStateIds = Workouts.Select(w => w.Id).ToList();
+
+            var additionalWorkoutIds = newStateIds.Except(oldStateIds).ToList();
+
+            var outdatedWorkoutIds = oldStateIds.Except(newStateIds).ToList();
+
+            // add new
+            if (additionalWorkoutIds.Any())
+            {
+                var workouts = await WorkoutRepository.GetWorkoutsByUser(UserService.CurrentUser!.Id);
+
+                workouts = workouts.Where(e => additionalWorkoutIds.Contains(e.Id)).ToList();
+
+                List<WorkoutExercise> workoutExercises = new List<WorkoutExercise>();
+
+                foreach (var workout in workouts)
+                {
+                    workoutExercises.Add(new WorkoutExercise() { Workout = workout, Exercise = Exercise });
+                }
+
+                await WorkoutExerciseRepository.CreateAsync(workoutExercises);
+            }
+            
+            // remove outdated
+            if (outdatedWorkoutIds.Any())
+            {
+                await WorkoutExerciseRepository.DeleteAsync(await WorkoutExerciseRepository.ReadAsync(we => outdatedWorkoutIds.Contains(we.WorkoutId)));
+            }
+            
             NavigationManager.NavigateTo($"/exerciseview");
         }
     }
@@ -90,6 +150,17 @@
     {
         if (!await UserService.IsAuthenticated()) return;
         Exercise = await ExerciseRepository.GetExerciseById(ExerciseId.Value);
+        
+        Workouts = await WorkoutRepository.GetWorkoutsByUser(UserService.CurrentUser!.Id);
+        Workouts.ForEach(e => e.IsSelected = false);
+
+        var selectedExercisesId = (await WorkoutExerciseRepository.ReadAsync(we => we.Exercise == Exercise)).Select(we => we.WorkoutId);
+        SelectedWorkouts = await WorkoutRepository.ReadAsync(w => selectedExercisesId.Contains(w.Id));
+
+        foreach (var workout in Workouts.Where(e => selectedExercisesId.Contains(e.Id)))
+        {
+            workout.IsSelected = true;
+        }
     }
 
 }

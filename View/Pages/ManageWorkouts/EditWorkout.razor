@@ -28,7 +28,7 @@
                             </MudStack>
                         </ChildContent>
                     </DataInit>
-                    <h2 class="ms-0 mb-5 mt-10">Add Exercises</h2>
+                    <h2 class="ms-0 mb-5 mt-10">Exercises in this Workout</h2>
                     <DataInit Data="Exercises">
                         <ChildContent Context="exercises">
                             <MudStack Spacing="4">
@@ -91,12 +91,11 @@
         }
         else
         {
-    // Workout updaten
+            // Workout update
             await WorkoutRepository.UpdateAsync(Workout);
 
+            // Exercises update
             Exercises = Exercises.Where(e => e.IsSelected == true).ToList();
-    // SelectedExercises = oldState
-    // Exercises = newState
 
             var oldStateIds = SelectedExercises.Select(s => s.Id).ToList();
             var newStateIds = Exercises.Select(e => e.Id).ToList();
@@ -105,8 +104,7 @@
 
             var outdatedExerciseIds = oldStateIds.Except(newStateIds).ToList();
 
-    // add new
-
+            // add new
             if (additionalExerciseIds.Any())
             {
                 var exercises = await ExerciseRepository.GetExercisesByUser(UserService.CurrentUser!.Id);
@@ -122,7 +120,8 @@
 
                 await WorkoutExerciseRepository.CreateAsync(workoutExercises);
             }
-    // remove outdated
+            
+            // remove outdated
             if (outdatedExerciseIds.Any())
             {
                 await WorkoutExerciseRepository.DeleteAsync(await WorkoutExerciseRepository.ReadAsync(we => outdatedExerciseIds.Contains(we.ExerciseId)));

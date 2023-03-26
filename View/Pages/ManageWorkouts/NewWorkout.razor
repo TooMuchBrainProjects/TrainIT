@@ -26,7 +26,7 @@
                             </MudStack>
                         </ChildContent>
                     </DataInit>
-                    <h2 class="ms-0 mb-5 mt-10">Add Exercises</h2>
+                    <h2 class="ms-0 mb-5 mt-10">Exercises in this Workout</h2>
                     <DataInit Data="Exercises">
                         <ChildContent Context="exercises">
                             <MudStack Spacing="4">
@@ -92,7 +92,7 @@
         {
             Exercises = Exercises.Where(e => e.IsSelected == true).ToList();
             Workout.User = UserService.CurrentUser!;
-            Workout.UserId = UserService.CurrentUser.Id;
+            Workout.UserId = UserService.CurrentUser!.Id;
             await WorkoutRepository.CreateAsync(Workout);
             var workoutExercises = Exercises.Select(exercise => new WorkoutExercise() { Exercise = exercise, Workout = Workout }).ToList();
             await WorkoutExerciseRepository.CreateAsync(workoutExercises);
