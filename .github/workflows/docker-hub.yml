@@ -45,7 +45,6 @@ jobs:
             echo "File exists"
             echo "FILE_EXISTS=true" >> $GITHUB_ENV
           else
-            mkdir -p .github/artifacts
             echo "File does not exist"
             echo "FILE_EXISTS=false" >> $GITHUB_ENV
           fi
