@@ -82,12 +82,15 @@ jobs:
         run: |
           echo "New major version"
           echo "MAJOR=$((${{ env.MAJOR }}+1))" >> $GITHUB_ENV
+          echo "MINOR=0" >> $GITHUB_ENV
+          echo "PATCH=0" >> $GITHUB_ENV
 
       - name: Minor version
         if: contains(github.event.head_commit.message, 'version-minor')
         run: |
           echo "New minor version"
           echo "MINOR=$((${{ env.MINOR }}+1))" >> $GITHUB_ENV
+          echo "PATCH=0" >> $GITHUB_ENV
         
       - name: Patch version
         if: contains(github.event.head_commit.message, 'version-patch')
