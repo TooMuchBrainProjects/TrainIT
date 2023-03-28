@@ -4,9 +4,10 @@ services:
     networks:
       - db
     environment:
-      MYSQL_ROOT_PASSWORD: 'toor'
+      MYSQL_ROOT_PASSWORD: 'root'
     healthcheck:
       test: "exit 0"
+      #volume
   
   trainit:
     image: trueberryless/trainit
