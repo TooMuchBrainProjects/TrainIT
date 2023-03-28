@@ -7,7 +7,7 @@ services:
       MYSQL_ROOT_PASSWORD: 'root'
     healthcheck:
       test: "exit 0"
-      #volume
+    #volume
   
   trainit:
     image: trueberryless/trainit
