@@ -76,7 +76,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-/*using (var scope = app.Services.CreateScope())
+using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
 
@@ -86,7 +86,7 @@ if (!app.Environment.IsDevelopment())
     {
         context.Database.Migrate();
     }
-}*/
+}
 
 app.UseHttpsRedirection();
 
