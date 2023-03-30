@@ -29,8 +29,10 @@
                         <div Style="position: fixed; bottom: 13vh; right: 2vh; display: grid; gap: 1rem;">
                             <MudFab Color="Color.Info" StartIcon="@Icons.Material.Filled.Add" OnClick="AddWorkout"/>
                         </div>
+                        
                     </ChildContent>
                 </DataInit>
+                
             </MudStack>
         </MudContainer>
     </Authorized>
@@ -51,60 +53,6 @@
     void NavigateToExerciseView(int workoutId)
     {
         NavigationManager.NavigateTo($"/exerciseview/{workoutId}");
-    }
-
-    private async void AskDeleteWorkouts()
-    {
-        bool? result = await DialogService.ShowMessageBox(
-            "Warning",
-            "Deleting can not be undone!",
-            yesText: "Delete!", cancelText: "Cancel");
-
-        if (result is true)
-        {
-            DeleteWorkouts();
-        }
-
-        StateHasChanged();
-    }
-
-    private async void DeleteWorkouts()
-    {
-        await WorkoutRepository.DeleteAsync(Workouts.Where(a => a.IsSelected));
-
-        if (UserService.CurrentUser != null)
-        {
-            Workouts = await WorkoutRepository.GetWorkoutsByUser(UserService.CurrentUser!.Id);
-        }
-
-        StateHasChanged();
-    }
-
-    private async void AskDeleteWorkout(int activityId)
-    {
-        bool? result = await DialogService.ShowMessageBox(
-            "Warning",
-            "Deleting can not be undone!",
-            yesText: "Delete!", cancelText: "Cancel");
-
-        if (result is true)
-        {
-            DeleteWorkout(activityId);
-        }
-
-        StateHasChanged();
-    }
-
-    private async void DeleteWorkout(int activityId)
-    {
-        await WorkoutRepository.DeleteAsync(Workouts.Where(a => a.Id == activityId));
-
-        if (UserService.CurrentUser != null)
-        {
-            Workouts = await WorkoutRepository.GetWorkoutsByUser(UserService.CurrentUser!.Id);
-        }
-
-        StateHasChanged();
     }
 
     async Task AddWorkout()

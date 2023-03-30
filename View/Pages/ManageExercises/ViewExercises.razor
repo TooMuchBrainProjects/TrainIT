@@ -6,6 +6,7 @@
 <AuthorizeView>
     <Authorized>
         <MudContainer Class="mt-8">
+            
             <MudStack Spacing="8">
                 @if (Workout == null)
                 {
@@ -42,15 +43,14 @@
                     </MudList>
                 </ChildContent>
             </DataInit>
+            
         </MudContainer>
 
         <div Style="position: fixed; bottom: 13vh; right: 2vh;">
             <MudFab Color="Color.Info" StartIcon="@Icons.Material.Filled.Add" OnClick="AddExercise"/>
         </div>
+        
     </Authorized>
-    <NotAuthorized>
-
-    </NotAuthorized>
 </AuthorizeView>
 
 
@@ -65,21 +65,17 @@
     Workout? Workout { get; set; }
 
     List<Exercise> Exercises { get; set; } = null!;
-
-
+    
     void EditExercise(int exerciseId)
     {
         NavigationManager.NavigateTo($"/editexercise/{exerciseId}");
     }
     
-
     async Task AddExercise()
     {
         NavigationManager.NavigateTo($"/newexercise");
     }
     
-
-
     protected override async Task OnInitializedAsync()
     {
         if (await UserService.IsAuthenticated())
@@ -88,6 +84,7 @@
             {
                 Workout = await WorkoutRepository.GetWorkoutById(WorkoutId.Value);
                 Exercises = await ExerciseRepository.GetExercisesByWorkout(WorkoutId.Value);
+                
                 foreach (var exercise in Exercises)
                 {
                     exercise.IsSelected = true;

@@ -41,28 +41,28 @@
                         }
                     </MudList>
 
-
                     <div Style="position: fixed; bottom: 13vh; right: 2vh; display: grid; gap: 1rem;">
                         <MudFab Color="Color.Info" StartIcon="@Icons.Material.Filled.Add" OnClick="NewActivity"/>
                     </div>
+                    
                 </ChildContent>
             </DataInit>
+            
         </MudContainer>
-
-
     </Authorized>
     <NotAuthorized>
         <MudContainer Class="mt-8">
             <MudStack Spacing="4">
                 <h1 class="ms-4 mb-12">You are not logged in!</h1>
+                
                 <MudPaper class="pa-4" Elevation="3">
                     <div>Please click <a href="/login" style="color: yellow;">here</a> in order to get redirected to the Log In site!</div>
                 </MudPaper>
+                
             </MudStack>
         </MudContainer>
     </NotAuthorized>
 </AuthorizeView>
-
 
 @code {
 
@@ -84,8 +84,7 @@
             Console.WriteLine(exception);
         }
     }
-
-
+    
     async Task EditActivity(int activityId)
     {
         NavigationManager.NavigateTo($"/editactivity/{activityId}");

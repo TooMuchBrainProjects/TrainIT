@@ -2,41 +2,47 @@
 
 <PageTitle>Edit Exercise</PageTitle>
 
-
 <AuthorizeView>
     <Authorized>
         <MudContainer Class="mt-8">
             <MudStack Spacing="4">
                 <h1 class="ms-4 mb-12">Edit Exercise</h1>
+                
                 <MudForm>
                     <DataInit Data="Exercise">
                         <ChildContent Context="exercise">
                             <MudStack Spacing="4">
+
                                 <MudPaper class="pa-4" Elevation="3">
                                     <MudTextField @bind-Value="exercise.Name" Label="Name" Variant="Variant.Outlined"
                                                   Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.TextFormat" AdornmentColor="Color.Secondary"
                                                   Counter="100" MaxLength="100"
                                                   Immediate="true"/>
                                 </MudPaper>
+
                                 <MudPaper class="pa-4" Elevation="3">
                                     <MudTextField @bind-Value="exercise.Machine" Label="Machine" Variant="Variant.Outlined"
                                                   Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.FitnessCenter" AdornmentColor="Color.Secondary"
                                                   Counter="100" MaxLength="100"
                                                   Immediate="true"/>
                                 </MudPaper>
+
                                 <MudPaper class="pa-4" Elevation="3">
                                     <MudTextField @bind-Value="exercise.Description" Label="Description" Variant="Variant.Outlined"
                                                   Adornment="Adornment.Start" AdornmentIcon="@Icons.Filled.Description" AdornmentColor="Color.Secondary"
                                                   Immediate="true"
                                                   Lines="5"/>
                                 </MudPaper>
+
                             </MudStack>
                         </ChildContent>
                     </DataInit>
                     <h2 class="ms-0 mb-5 mt-10">Workouts where Exercise is in:</h2>
+                    
                     <DataInit Data="Workouts">
                         <ChildContent Context="workouts">
                             <MudStack Spacing="4">
+
                                 <MudPaper class="pa-4" Elevation="3">
                                     <MudList Clickable="true">
                                         @foreach (var workout in workouts)
@@ -51,17 +57,21 @@
                                         }
                                     </MudList>
                                 </MudPaper>
+
                             </MudStack>
                         </ChildContent>
                     </DataInit>
                 </MudForm>
             </MudStack>
+            
             <MudButton class="mt-5" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" FullWidth="true" OnClick="DeleteExercise">Delete Exercise</MudButton>
+            
         </MudContainer>
 
         <div Style="position: fixed; bottom: 13vh; right: 2vh; display: grid; gap: 1rem;">
             <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Check" OnClick="SaveExerciseChanges"/>
         </div>
+
     </Authorized>
 </AuthorizeView>
 
@@ -75,7 +85,7 @@
 
     [Parameter]
     public int? ExerciseId { get; set; }
-    
+
     List<Workout> Workouts { get; set; } = null!;
 
     List<Workout> SelectedWorkouts { get; set; } = null!;
@@ -84,51 +94,45 @@
     {
         if (String.IsNullOrEmpty(Exercise.Name))
         {
-            await DialogService.ShowMessageBox(
-                "Warning",
-                "There must be a Name!"
-                );
+            Snackbar.Add($"There must be a Name!", Severity.Warning);
+            return;
         }
-        else
+
+        // Exercise update
+        await ExerciseRepository.UpdateAsync(Exercise);
+
+        // Workouts update
+        Workouts = Workouts.Where(w => w.IsSelected == true).ToList();
+
+        var oldStateIds = SelectedWorkouts.Select(s => s.Id).ToList();
+        var newStateIds = Workouts.Select(w => w.Id).ToList();
+
+        var additionalWorkoutIds = newStateIds.Except(oldStateIds).ToList();
+        var outdatedWorkoutIds = oldStateIds.Except(newStateIds).ToList();
+
+        // add new
+        if (additionalWorkoutIds.Any())
         {
-            // Exercise update
-            await ExerciseRepository.UpdateAsync(Exercise);
-            
-            // Workouts update
-            Workouts = Workouts.Where(w => w.IsSelected == true).ToList();
+            var workouts = await WorkoutRepository.GetWorkoutsByUser(UserService.CurrentUser!.Id);
+            workouts = workouts.Where(e => additionalWorkoutIds.Contains(e.Id)).ToList();
 
-            var oldStateIds = SelectedWorkouts.Select(s => s.Id).ToList();
-            var newStateIds = Workouts.Select(w => w.Id).ToList();
+            List<WorkoutExercise> workoutExercises = new List<WorkoutExercise>();
 
-            var additionalWorkoutIds = newStateIds.Except(oldStateIds).ToList();
-
-            var outdatedWorkoutIds = oldStateIds.Except(newStateIds).ToList();
-
-            // add new
-            if (additionalWorkoutIds.Any())
+            foreach (var workout in workouts)
             {
-                var workouts = await WorkoutRepository.GetWorkoutsByUser(UserService.CurrentUser!.Id);
-
-                workouts = workouts.Where(e => additionalWorkoutIds.Contains(e.Id)).ToList();
-
-                List<WorkoutExercise> workoutExercises = new List<WorkoutExercise>();
-
-                foreach (var workout in workouts)
-                {
-                    workoutExercises.Add(new WorkoutExercise() { Workout = workout, Exercise = Exercise });
-                }
-
-                await WorkoutExerciseRepository.CreateAsync(workoutExercises);
+                workoutExercises.Add(new WorkoutExercise() { Workout = workout, Exercise = Exercise });
             }
-            
-            // remove outdated
-            if (outdatedWorkoutIds.Any())
-            {
-                await WorkoutExerciseRepository.DeleteAsync(await WorkoutExerciseRepository.ReadAsync(we => outdatedWorkoutIds.Contains(we.WorkoutId)));
-            }
-            
-            NavigationManager.NavigateTo($"/exerciseview");
+
+            await WorkoutExerciseRepository.CreateAsync(workoutExercises);
         }
+
+        // remove outdated
+        if (outdatedWorkoutIds.Any())
+        {
+            await WorkoutExerciseRepository.DeleteAsync(await WorkoutExerciseRepository.ReadAsync(we => outdatedWorkoutIds.Contains(we.WorkoutId)));
+        }
+
+        NavigationManager.NavigateTo($"/exerciseview");
     }
 
     private async void DeleteExercise()
@@ -150,7 +154,7 @@
     {
         if (!await UserService.IsAuthenticated()) return;
         Exercise = await ExerciseRepository.GetExerciseById(ExerciseId.Value);
-        
+
         Workouts = await WorkoutRepository.GetWorkoutsByUser(UserService.CurrentUser!.Id);
         Workouts.ForEach(e => e.IsSelected = false);
 
