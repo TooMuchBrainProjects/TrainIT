@@ -26,6 +26,7 @@
                             </MudStack>
                         </ChildContent>
                     </DataInit>
+                    
                     <h2 class="ms-0 mb-5 mt-10">Exercises in this Workout</h2>
                     <DataInit Data="Exercises">
                         <ChildContent Context="exercises">
@@ -66,9 +67,9 @@
 
     Workout? Workout { get; set; } = new Workout();
 
-    List<Exercise> Exercises { get; set; } = null!;
+    List<Exercise> Exercises { get; set; }
 
-    List<Exercise> SelectedExercises { get; set; } = null!;
+    List<Exercise> SelectedExercises { get; set; }
 
     async Task CreateWorkout()
     {
@@ -76,21 +77,11 @@
 
         if (String.IsNullOrEmpty(Workout.Name))
         {
-            await DialogService.ShowMessageBox(
-                "Warning",
-                "Please name it!"
-                );
-        }
-        else if (!Exercises.Exists(e => e.IsSelected))
-        {
-            await DialogService.ShowMessageBox(
-                "Warning",
-                "Please select at least one exercise!"
-                );
+            Snackbar.Add($"Workout must have a name!", Severity.Warning);
         }
         else
         {
-            Exercises = Exercises.Where(e => e.IsSelected == true).ToList();
+            Exercises = Exercises.Where(e => e.IsSelected).ToList();
             Workout.User = UserService.CurrentUser!;
             Workout.UserId = UserService.CurrentUser!.Id;
             await WorkoutRepository.CreateAsync(Workout);

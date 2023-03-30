@@ -33,6 +33,7 @@
                         </ChildContent>
                     </DataInit>
                 </MudForm>
+
                 <h2 class="ms-0 mb-5 mt-10">Workouts where Exercise is in:</h2>
                 <DataInit Data="Workouts">
                     <ChildContent Context="workouts">
@@ -54,7 +55,6 @@
                         </MudStack>
                     </ChildContent>
                 </DataInit>
-
             </MudStack>
         </MudContainer>
 
@@ -75,37 +75,33 @@
     [Parameter]
     public int? ExerciseId { get; set; }
 
-    List<Workout> Workouts { get; set; } = null!;
+    List<Workout> Workouts { get; set; }
 
-    List<Workout> SelectedWorkouts { get; set; } = null!;
+    List<Workout> SelectedWorkouts { get; set; }
 
     async Task CreateExercise()
     {
         if (String.IsNullOrEmpty(Exercise.Name))
         {
-            await DialogService.ShowMessageBox(
-                "Warning",
-                "There must be a Name!"
-                );
+            Snackbar.Add($"Exercise must have a name!", Severity.Warning);
+            return;
         }
-        else
-        {
-            Workouts = Workouts.Where(e => e.IsSelected == true).ToList();
-            Exercise.User = UserService.CurrentUser!;
-            Exercise.UserId = UserService.CurrentUser!.Id;
-            await ExerciseRepository.CreateAsync(Exercise);
-            var workoutExercises = Workouts.Select(workout => new WorkoutExercise() { Exercise = Exercise, Workout = workout }).ToList();
-            await WorkoutExerciseRepository.CreateAsync(workoutExercises);
+        
+        Workouts = Workouts.Where(e => e.IsSelected == true).ToList();
+        Exercise.User = UserService.CurrentUser!;
+        Exercise.UserId = UserService.CurrentUser!.Id;
+        await ExerciseRepository.CreateAsync(Exercise);
+        var workoutExercises = Workouts.Select(workout => new WorkoutExercise() { Exercise = Exercise, Workout = workout }).ToList();
+        await WorkoutExerciseRepository.CreateAsync(workoutExercises);
 
-            NavigationManager.NavigateTo($"/exerciseview");
-        }
+        NavigationManager.NavigateTo($"/exerciseview");
     }
 
 
     protected override async Task OnInitializedAsync()
     {
         if (!await UserService.IsAuthenticated()) return;
-        
+
         Workouts = await WorkoutRepository.GetWorkoutsByUser(UserService.CurrentUser!.Id);
         Workouts.ForEach(e => e.IsSelected = false);
 

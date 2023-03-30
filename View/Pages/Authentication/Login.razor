@@ -14,11 +14,13 @@
                         @(_error)
                     </MudAlert>
                 }
+                
                 <MudTextField
                     T="string" Immediate="true" InputType="InputType.Text" InputMode="InputMode.text"
                     Label="Email"
                     @bind-Value="Model.Email"
                     For="() => Model.Email"/>
+                
                 <MudTextField
                     T="string" Immediate="true" InputMode="InputMode.text"
                     Label="Password" Class="mt-3"
@@ -28,9 +30,11 @@
                     For="() => Model.Password"/>
             </MudForm>
         </div>
+        
         <MudOverlay @bind-Visible="_isLoggingIn" DarkBackground="true" AutoClose="false" LockScroll="true" Absolute="true" Style="position: fixed; top: 0; bottom: 0; left: 0; right: 0;">
             <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large"/>
         </MudOverlay>
+        
         <MudCardActions>
             <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Primary" OnClick="async () => await HandleLoginAsync()">Login</MudButton>
             <MudSpacer/>
@@ -78,8 +82,7 @@
     bool _isShow;
     string _passwordInputIcon = Icons.Material.Filled.VisibilityOff;
     InputType _passwordInputType = InputType.Password;
-
-
+    
     LoginModel Model { get; } = new();
 
     void ShowPwd()
@@ -115,8 +118,8 @@
         }
         catch (LoginException)
         {
-    // this is the only exception that can be thrown by the login method (we wrote that ourselves :))
             _error = "Invalid email or password";
+            Snackbar.Add($"Invalid email of password!", Severity.Error);
         }
         catch (TaskCanceledException)
         {

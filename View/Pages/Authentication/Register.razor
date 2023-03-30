@@ -14,6 +14,7 @@
                         @(_error)
                     </MudAlert>
                 }
+                
                 <MudTextField
                     T="string"
                     InputMode="InputMode.text" InputType="InputType.Text" Immediate="true"
@@ -21,6 +22,7 @@
                     Label="Username"
                     @bind-Value="RegUser.Username"
                     For="() => RegUser.Username"/>
+                
                 <MudTextField
                     T="string"
                     InputMode="InputMode.text" InputType="InputType.Text" Immediate="true"
@@ -28,6 +30,7 @@
                     Label="Email"
                     @bind-Value="RegUser.Email"
                     For="() => RegUser.Email"/>
+                
                 <MudTextField
                     T="string"
                     InputMode="InputMode.text" InputType="_passwordInputType" Immediate="true"
@@ -38,9 +41,11 @@
                     For="() => RegUser.LoginPassword"/>
             </MudForm>
         </div>
+        
         <MudOverlay @bind-Visible="_isRegistering" DarkBackground="true" AutoClose="false" Absolute="true" Style="position: fixed; top: 0; bottom: 0; left: 0; right: 0;">
             <MudProgressCircular Color="Color.Primary" Indeterminate="true" Size="Size.Large" StrokeWidth="5"/>
         </MudOverlay>
+        
         <MudCardActions>
             <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Primary" OnClick="async () => await HandleRegisterAsync()">
                 Register
@@ -126,11 +131,13 @@
         }
         catch (DuplicateEmailException)
         {
-            _error = "Invalid email!";
+            _error = "Email already exists!";
+            Snackbar.Add($"Email already exists!", Severity.Error);
         }
         catch (LoginException)
         {
-            _error = "Invalid email or LoginPassword!";
+            _error = "Invalid email or password!";
+            Snackbar.Add($"Invalid email of password!", Severity.Error);
         }
         catch (TaskCanceledException)
         {
