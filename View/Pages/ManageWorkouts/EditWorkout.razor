@@ -90,12 +90,7 @@
             Snackbar.Add($"There must be a name", Severity.Warning);
             return;
         }
-        if (!Exercises.Exists(e => e.IsSelected))
-        {
-            Snackbar.Add($"Please select at least one exercise!", Severity.Warning);
-            return;
-        }
-        
+
         // Workout update
         await WorkoutRepository.UpdateAsync(Workout);
 
