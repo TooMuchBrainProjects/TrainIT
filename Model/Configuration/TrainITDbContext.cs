@@ -1,4 +1,5 @@
 ﻿using Model.Entities;
+using Model.Entities.Library;
 using Model.Entities.Log;
 
 namespace Model.Configuration;
@@ -67,6 +68,46 @@ public class TrainITDbContext : DbContext
             .WithMany()
             .HasForeignKey(le => le.UserId);
         
+        modelBuilder.Entity<Exercise>()
+            .HasOne(e => e.MachineLibrary)
+            .WithMany()
+            .HasForeignKey(e => e.MachineLibraryId);
+        
+        modelBuilder.Entity<ExerciseLibrary>()
+            .HasOne(el => el.MachineLibrary)
+            .WithMany()
+            .HasForeignKey(el => el.MachineLibraryId);
+        
+        modelBuilder.Entity<ExerciseMuscleLibrary>()
+            .HasOne(eml => eml.Exercise)
+            .WithMany()
+            .HasForeignKey(eml => eml.ExerciseId);
+        
+        modelBuilder.Entity<ExerciseMuscleLibrary>()
+            .HasOne(eml => eml.MuscleLibrary)
+            .WithMany()
+            .HasForeignKey(eml => eml.MuscleLibraryId);
+        
+        modelBuilder.Entity<ExerciseLibraryMuscleLibrary>()
+            .HasOne(elml => elml.ExerciseLibrary)
+            .WithMany()
+            .HasForeignKey(elml => elml.ExerciseLibraryId);
+        
+        modelBuilder.Entity<ExerciseLibraryMuscleLibrary>()
+            .HasOne(elml => elml.MuscleLibrary)
+            .WithMany()
+            .HasForeignKey(elml => elml.MusclesLibraryId);
+        
+        modelBuilder.Entity<WorkoutLibraryExerciseLibrary>()
+            .HasOne(wlel => wlel.ExerciseLibrary)
+            .WithMany()
+            .HasForeignKey(wlel => wlel.ExerciseLibraryId);
+        
+        modelBuilder.Entity<WorkoutLibraryExerciseLibrary>()
+            .HasOne(wlel => wlel.WorkoutLibrary)
+            .WithMany()
+            .HasForeignKey(wlel => wlel.WorkoutLibraryId);
+        
         // UNIQUE
         modelBuilder.Entity<User>()
             .HasIndex(u => u.Email)
@@ -82,6 +123,12 @@ public class TrainITDbContext : DbContext
         
         modelBuilder.Entity<WorkoutExercise>()
             .HasKey(d => new { d.ExerciseId, d.WorkoutId });
+        
+        modelBuilder.Entity<ExerciseLibraryMuscleLibrary>()
+            .HasKey(elml => new { elml.ExerciseLibraryId, elml.MusclesLibraryId });
+        
+        modelBuilder.Entity<WorkoutLibraryExerciseLibrary>()
+            .HasKey(wlel => new { wlel.WorkoutLibraryId, wlel.ExerciseLibraryId });
         
         // OTHER
         // SEEDING

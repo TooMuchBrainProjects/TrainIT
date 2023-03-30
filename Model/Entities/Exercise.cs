@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Model.Entities.Library;
 
 namespace Model.Entities;
 
@@ -14,9 +15,9 @@ public class Exercise
     [Column("NAME")]
     public string Name { get; set; }
     
-    [StringLength(100)]
-    [Column("MACHINE")]
-    public string? Machine { get; set; }
+    [Column("MACHINE_LIBRARY_ID")]
+    public int? MachineLibraryId { get; set; }
+    public MachineLibrary? MachineLibrary { get; set; }
     
     [DataType(DataType.Text)]
     [Column("DESCRIPTION")]
