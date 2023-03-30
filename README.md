@@ -2,8 +2,8 @@
 
 These files need to stay unchanged in the repo for the Github Action (Docker Image Build) to work properly (at least temporary).
 
-1. [./View/Program.cs](View/Program.cs)
-2. [./View/appsettings.json](View/appsettings.json)
+1. <code>[./View/Program.cs](View/Program.cs)</code>
+2. <code>[./View/appsettings.json](View/appsettings.json)</code>
 
 If you want to contribute to this repo, make sure to run these commands **once** _before_ adding, commiting, or pushing:
 
