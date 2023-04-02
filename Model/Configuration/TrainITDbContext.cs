@@ -1,5 +1,5 @@
 ﻿using Model.Entities;
-using Model.Entities.Library;
+using Model.Entities.Assets;
 using Model.Entities.Log;
 using Model.Entities.per_User;
 
@@ -9,15 +9,15 @@ public class TrainITDbContext : DbContext
 {
     public DbSet<Activity> Activities { get; set; }
     public DbSet<Exercise> Exercises { get; set; }
-    public DbSet<ExerciseMuscleLibrary> ExerciseMuscleLibraries { get; set; }
+    public DbSet<ExerciseMuscleAsset> ExerciseMuscleAssets { get; set; }
     public DbSet<Workout> Workouts { get; set; }
     public DbSet<WorkoutExercise> WorkoutExercises { get; set; }
-    public DbSet<ExerciseLibrary> ExerciseLibraries { get; set; }
-    public DbSet<ExerciseLibraryMuscleLibrary> ExerciseLibraryMuscleLibraries { get; set; }
-    public DbSet<MachineLibrary> MachineLibraries { get; set; }
-    public DbSet<MuscleLibrary> MuscleLibraries { get; set; }
-    public DbSet<WorkoutLibrary> WorkoutLibraries { get; set; }
-    public DbSet<WorkoutLibraryExerciseLibrary> WorkoutLibraryExerciseLibraries { get; set; }
+    public DbSet<ExerciseAsset> ExerciseAssets { get; set; }
+    public DbSet<ExerciseAssetMuscleAsset> ExerciseAssetMuscleAssets { get; set; }
+    public DbSet<MachineAsset> MachineAssets { get; set; }
+    public DbSet<MuscleAsset> MuscleAssets { get; set; }
+    public DbSet<WorkoutAsset> WorkoutAssets { get; set; }
+    public DbSet<WorkoutAssetExerciseAsset> WorkoutAssetExerciseAssets { get; set; }
     
     public DbSet<User> Users { get; set; }
     public DbSet<Role> Roles { get; set; }
@@ -49,9 +49,9 @@ public class TrainITDbContext : DbContext
             .WithMany(u => u.Exercises)
             .HasForeignKey(e => e.UserId);
         
-        modelBuilder.Entity<ExerciseMuscleLibrary>()
+        modelBuilder.Entity<ExerciseMuscleAsset>()
             .HasOne(eml => eml.Exercise)
-            .WithMany(e => e.ExerciseMuscleLibraries)
+            .WithMany(e => e.ExerciseMuscleAssets)
             .HasForeignKey(eml => eml.ExerciseId);
         
         modelBuilder.Entity<Workout>()
@@ -69,42 +69,42 @@ public class TrainITDbContext : DbContext
             .WithMany(w => w.WorkoutExercises)
             .HasForeignKey(we => we.WorkoutId);
         
-        // per User - Library
+        // per User - Asset
         modelBuilder.Entity<Exercise>()
-            .HasOne(e => e.MachineLibrary)
+            .HasOne(e => e.MachineAsset)
             .WithMany()
-            .HasForeignKey(e => e.MachineLibraryId);
+            .HasForeignKey(e => e.MachineAssetId);
         
-        modelBuilder.Entity<ExerciseMuscleLibrary>()
-            .HasOne(eml => eml.MuscleLibrary)
+        modelBuilder.Entity<ExerciseMuscleAsset>()
+            .HasOne(eml => eml.MuscleAsset)
             .WithMany()
-            .HasForeignKey(eml => eml.MuscleLibraryId);
+            .HasForeignKey(eml => eml.MuscleAssetId);
         
-        // Library
-        modelBuilder.Entity<ExerciseLibrary>()
-            .HasOne(el => el.MachineLibrary)
-            .WithMany(ml => ml.ExerciseLibraries)
-            .HasForeignKey(el => el.MachineLibraryId);
+        // Asset
+        modelBuilder.Entity<ExerciseAsset>()
+            .HasOne(el => el.MachineAsset)
+            .WithMany(ml => ml.ExerciseAssets)
+            .HasForeignKey(el => el.MachineAssetId);
         
-        modelBuilder.Entity<ExerciseLibraryMuscleLibrary>()
-            .HasOne(elml => elml.ExerciseLibrary)
-            .WithMany(el => el.ExerciseLibraryMuscleLibraries)
-            .HasForeignKey(elml => elml.ExerciseLibraryId);
+        modelBuilder.Entity<ExerciseAssetMuscleAsset>()
+            .HasOne(elml => elml.ExerciseAsset)
+            .WithMany(el => el.ExerciseAssetMuscleAssets)
+            .HasForeignKey(elml => elml.ExerciseAssetId);
         
-        modelBuilder.Entity<ExerciseLibraryMuscleLibrary>()
-            .HasOne(elml => elml.MuscleLibrary)
-            .WithMany(ml => ml.ExerciseLibraryMuscleLibraries)
-            .HasForeignKey(elml => elml.MuscleLibraryId);
+        modelBuilder.Entity<ExerciseAssetMuscleAsset>()
+            .HasOne(elml => elml.MuscleAsset)
+            .WithMany(ml => ml.ExerciseAssetMuscleAssets)
+            .HasForeignKey(elml => elml.MuscleAssetId);
         
-        modelBuilder.Entity<WorkoutLibraryExerciseLibrary>()
-            .HasOne(wlel => wlel.ExerciseLibrary)
-            .WithMany(el => el.WorkoutLibraryExerciseLibraries)
-            .HasForeignKey(wlel => wlel.ExerciseLibraryId);
+        modelBuilder.Entity<WorkoutAssetExerciseAsset>()
+            .HasOne(wlel => wlel.ExerciseAsset)
+            .WithMany(el => el.WorkoutAssetExerciseAssets)
+            .HasForeignKey(wlel => wlel.ExerciseAssetId);
         
-        modelBuilder.Entity<WorkoutLibraryExerciseLibrary>()
-            .HasOne(wlel => wlel.WorkoutLibrary)
-            .WithMany(wl => wl.WorkoutLibraryExerciseLibraries)
-            .HasForeignKey(wlel => wlel.WorkoutLibraryId);
+        modelBuilder.Entity<WorkoutAssetExerciseAsset>()
+            .HasOne(wlel => wlel.WorkoutAsset)
+            .WithMany(wl => wl.WorkoutAssetExerciseAssets)
+            .HasForeignKey(wlel => wlel.WorkoutAssetId);
         
         // Authentification
         modelBuilder.Entity<RoleClaim>()
@@ -138,14 +138,14 @@ public class TrainITDbContext : DbContext
         modelBuilder.Entity<WorkoutExercise>()
             .HasKey(we => new { we.ExerciseId, we.WorkoutId });
         
-        modelBuilder.Entity<ExerciseMuscleLibrary>()
-            .HasKey(eml => new { eml.ExerciseId, eml.MuscleLibraryId });
+        modelBuilder.Entity<ExerciseMuscleAsset>()
+            .HasKey(eml => new { eml.ExerciseId, eml.MuscleAssetId });
         
-        modelBuilder.Entity<ExerciseLibraryMuscleLibrary>()
-            .HasKey(elml => new { elml.ExerciseLibraryId, elml.MuscleLibraryId });
+        modelBuilder.Entity<ExerciseAssetMuscleAsset>()
+            .HasKey(elml => new { elml.ExerciseAssetId, elml.MuscleAssetId });
         
-        modelBuilder.Entity<WorkoutLibraryExerciseLibrary>()
-            .HasKey(wlel => new { wlel.WorkoutLibraryId, wlel.ExerciseLibraryId });
+        modelBuilder.Entity<WorkoutAssetExerciseAsset>()
+            .HasKey(wlel => new { wlel.WorkoutAssetId, wlel.ExerciseAssetId });
         
         // SEEDING
         modelBuilder.Entity<Role>()

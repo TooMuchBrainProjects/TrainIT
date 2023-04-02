@@ -1,4 +1,4 @@
-﻿using Model.Entities.Library;
+﻿using Model.Entities.Assets;
 
 namespace Model.Entities.per_User;
 
@@ -13,9 +13,9 @@ public class Exercise
     [Column("NAME")]
     public string Name { get; set; }
     
-    [Column("MACHINE_LIBRARY_ID")]
-    public int? MachineLibraryId { get; set; }
-    public MachineLibrary? MachineLibrary { get; set; }
+    [Column("MACHINE_ASSET_ID")]
+    public int? MachineAssetId { get; set; }
+    public MachineAsset? MachineAsset { get; set; }
     
     [DataType(DataType.Text)]
     [Column("DESCRIPTION")]
@@ -28,7 +28,7 @@ public class Exercise
     
     public List<WorkoutExercise> WorkoutExercises { get; set; }
     public List<Activity> Activities { get; set; }
-    public List<ExerciseMuscleLibrary> ExerciseMuscleLibraries { get; set; }
+    public List<ExerciseMuscleAsset> ExerciseMuscleAssets { get; set; }
 
     [NotMapped]
     public bool IsSelected { get; set; }

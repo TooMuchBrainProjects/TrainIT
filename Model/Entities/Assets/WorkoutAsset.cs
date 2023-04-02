@@ -1,10 +1,10 @@
-﻿namespace Model.Entities.Library;
+﻿namespace Model.Entities.Assets;
 
-[Table("WORKOUT_LIBRARIES")]
-public class WorkoutLibrary
+[Table("WORKOUT_ASSETS")]
+public class WorkoutAsset
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    [Column("WORKOUT_LIBRARY_ID")]
+    [Column("WORKOUT_ASSET_ID")]
     public int Id { get; set; }
     
     [Required, StringLength(100)]
@@ -15,5 +15,5 @@ public class WorkoutLibrary
     [Column("DESCRIPTION")]
     public string? Description { get; set; }
     
-    public List<WorkoutLibraryExerciseLibrary> WorkoutLibraryExerciseLibraries { get; set; }
+    public List<WorkoutAssetExerciseAsset> WorkoutAssetExerciseAssets { get; set; }
 }
