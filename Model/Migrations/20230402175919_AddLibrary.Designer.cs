@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Model.Configuration;
 
@@ -10,9 +11,11 @@ using Model.Configuration;
 namespace Model.Migrations
 {
     [DbContext(typeof(TrainITDbContext))]
-    partial class TrainITDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230402175919_AddLibrary")]
+    partial class AddLibrary
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -123,7 +126,7 @@ namespace Model.Migrations
 
                     b.HasIndex("MachineLibraryId");
 
-                    b.ToTable("EXERCISE_LIBRARIES");
+                    b.ToTable("ExerciseLibraries");
                 });
 
             modelBuilder.Entity("Model.Entities.Library.ExerciseLibraryMuscleLibrary", b =>
@@ -132,15 +135,15 @@ namespace Model.Migrations
                         .HasColumnType("int")
                         .HasColumnName("EXERCISE_LIBRARY_ID");
 
-                    b.Property<int>("MuscleLibraryId")
+                    b.Property<int>("MusclesLibraryId")
                         .HasColumnType("int")
-                        .HasColumnName("MUSCLE_LIBRARY_ID");
+                        .HasColumnName("MUSCLES_LIBRARY_ID");
 
-                    b.HasKey("ExerciseLibraryId", "MuscleLibraryId");
+                    b.HasKey("ExerciseLibraryId", "MusclesLibraryId");
 
-                    b.HasIndex("MuscleLibraryId");
+                    b.HasIndex("MusclesLibraryId");
 
-                    b.ToTable("EXERCISE_LIBRARY_HAS_MUSCLE_LIBRARIES_JT");
+                    b.ToTable("ExerciseLibraryMuscleLibraries");
                 });
 
             modelBuilder.Entity("Model.Entities.Library.MachineLibrary", b =>
@@ -158,7 +161,7 @@ namespace Model.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MACHINE_LIBRARIES");
+                    b.ToTable("MachineLibraries");
                 });
 
             modelBuilder.Entity("Model.Entities.Library.MuscleLibrary", b =>
@@ -176,7 +179,7 @@ namespace Model.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MUSCLE_LIBRARIES");
+                    b.ToTable("MuscleLibraries");
                 });
 
             modelBuilder.Entity("Model.Entities.Library.WorkoutLibrary", b =>
@@ -198,7 +201,7 @@ namespace Model.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("WORKOUT_LIBRARIES");
+                    b.ToTable("WorkoutLibraries");
                 });
 
             modelBuilder.Entity("Model.Entities.Library.WorkoutLibraryExerciseLibrary", b =>
@@ -215,7 +218,7 @@ namespace Model.Migrations
 
                     b.HasIndex("ExerciseLibraryId");
 
-                    b.ToTable("WORKOUT_LIBRARY_HAS_EXERCISE_LIBRARIES_JT");
+                    b.ToTable("WorkoutLibraryExerciseLibraries");
                 });
 
             modelBuilder.Entity("Model.Entities.Log.LogEntry", b =>
@@ -337,7 +340,7 @@ namespace Model.Migrations
 
                     b.HasIndex("MuscleLibraryId");
 
-                    b.ToTable("EXERCISE_HAS_MUSCLE_LIBRARIES_JT");
+                    b.ToTable("ExerciseMuscleLibraries");
                 });
 
             modelBuilder.Entity("Model.Entities.per_User.Workout", b =>
@@ -423,7 +426,7 @@ namespace Model.Migrations
 
                     b.HasOne("Model.Entities.Library.MuscleLibrary", "MuscleLibrary")
                         .WithMany("ExerciseLibraryMuscleLibraries")
-                        .HasForeignKey("MuscleLibraryId")
+                        .HasForeignKey("MusclesLibraryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

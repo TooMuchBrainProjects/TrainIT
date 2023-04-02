@@ -1,6 +1,7 @@
 ﻿using Domain.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Model.Entities;
+using Model.Entities.per_User;
 
 namespace Domain.Repositories.Implementations;
 

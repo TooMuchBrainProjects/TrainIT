@@ -1,5 +1,6 @@
 ﻿namespace Model.Entities.Library;
 
+[Table("WORKOUT_LIBRARIES")]
 public class WorkoutLibrary
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -13,4 +14,6 @@ public class WorkoutLibrary
     [DataType(DataType.Text)]
     [Column("DESCRIPTION")]
     public string? Description { get; set; }
+    
+    public List<WorkoutLibraryExerciseLibrary> WorkoutLibraryExerciseLibraries { get; set; }
 }

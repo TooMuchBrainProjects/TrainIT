@@ -1,7 +1,8 @@
 ﻿using Model.Entities.Library;
 
-namespace Model.Entities;
+namespace Model.Entities.per_User;
 
+[Table("EXERCISE_HAS_MUSCLE_LIBRARIES_JT")]
 public class ExerciseMuscleLibrary
 {
     [Column("EXERCISE_ID")] 

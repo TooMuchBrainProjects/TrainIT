@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Model.Entities;
+using Model.Entities.per_User;
 
 namespace Domain.Repositories.Implementations;
 

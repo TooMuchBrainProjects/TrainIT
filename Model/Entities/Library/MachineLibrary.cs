@@ -1,5 +1,6 @@
 ﻿namespace Model.Entities.Library;
 
+[Table("MACHINE_LIBRARIES")]
 public class MachineLibrary
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -9,4 +10,6 @@ public class MachineLibrary
     [Required, StringLength(100)]
     [Column("NAME")]
     public string Name { get; set; }
+    
+    public List<ExerciseLibrary> ExerciseLibraries { get; set; }
 }

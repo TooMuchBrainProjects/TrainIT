@@ -1,5 +1,6 @@
 ﻿namespace Model.Entities.Library;
 
+[Table("EXERCISE_LIBRARIES")]
 public class ExerciseLibrary
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -17,4 +18,8 @@ public class ExerciseLibrary
     [Column("MACHINE_LIBRARY_ID")]
     public int? MachineLibraryId { get; set; }
     public MachineLibrary? MachineLibrary { get; set; }
+    
+    public List<ExerciseLibraryMuscleLibrary> ExerciseLibraryMuscleLibraries { get; set; }
+    
+    public List<WorkoutLibraryExerciseLibrary> WorkoutLibraryExerciseLibraries { get; set; }
 }

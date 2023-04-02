@@ -1,8 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Model.Entities.Library;
+﻿using Model.Entities.Library;
 
-namespace Model.Entities;
+namespace Model.Entities.per_User;
 
 [Table("EXERCISES")]
 public class Exercise
@@ -28,6 +26,10 @@ public class Exercise
     public int UserId { get; set; }
     public User User { get; set; }
     
+    public List<WorkoutExercise> WorkoutExercises { get; set; }
+    public List<Activity> Activities { get; set; }
+    public List<ExerciseMuscleLibrary> ExerciseMuscleLibraries { get; set; }
+
     [NotMapped]
     public bool IsSelected { get; set; }
     

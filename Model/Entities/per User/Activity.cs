@@ -1,8 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-
-namespace Model.Entities;
+﻿namespace Model.Entities.per_User;
 
 [Table("ACTIVITIES")]
 public class Activity

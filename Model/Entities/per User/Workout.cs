@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Model.Entities;
+﻿namespace Model.Entities.per_User;
 
 [Table("WORKOUTS")]
 public class Workout
@@ -24,6 +21,8 @@ public class Workout
     
     public User User { get; set; }
     
+    public List<WorkoutExercise> WorkoutExercises { get; set; }
+
     [NotMapped]
     public bool IsSelected { get; set; }
     

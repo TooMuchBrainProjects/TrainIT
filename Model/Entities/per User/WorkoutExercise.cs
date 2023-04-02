@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Model.Entities;
+﻿namespace Model.Entities.per_User;
 
 [Table("WORKOUT_HAS_EXERCISES_JT")]
 public class WorkoutExercise

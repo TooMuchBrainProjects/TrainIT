@@ -1,4 +1,6 @@
-﻿namespace Model.Entities.Auth;
+﻿using Model.Entities.per_User;
+
+namespace Model.Entities.Auth;
 
 [Table("USERS")]
 public class User {
@@ -7,15 +9,10 @@ public class User {
     public int Id { get; set; }
 
     [Required]
-    [StringLength(32)]
-    [MinLength(4)]
-    [MaxLength(32)]
     [Column("USERNAME")]
     public string Username { get; set; } = null!;
 
     [Required]
-    [EmailAddress]
-    [StringLength(50)]
     [DataType(DataType.EmailAddress)]
     [Column("EMAIL")]
     public string Email { get; set; } = null!;
@@ -23,16 +20,17 @@ public class User {
 
     [Required]
     [DataType(DataType.Text)]
-    [MinLength(8)]
     [Column("PASSWORD_HASH")]
     public string PasswordHash { get; set; } = null!;
 
     [Required]
     [NotMapped]
-    [MinLength(8)]
     public string LoginPassword { get; set; } = null!;
     
-    public List<RoleClaim> RoleClaims { get; set; } = new();
+    public List<RoleClaim> RoleClaims { get; set; }
+    
+    public List<Exercise> Exercises { get; set; }
+    public List<Workout> Workouts { get; set; }
 
     [NotMapped] 
     public IEnumerable<string> PlainRoles => RoleClaims.Select(x => x.Role.Identifier);

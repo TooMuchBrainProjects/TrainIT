@@ -1,5 +1,6 @@
 ﻿namespace Model.Entities.Library;
 
+[Table("WORKOUT_LIBRARY_HAS_EXERCISE_LIBRARIES_JT")]
 public class WorkoutLibraryExerciseLibrary
 {
     [Column("EXERCISE_LIBRARY_ID")] 
