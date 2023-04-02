@@ -1,25 +1,22 @@
 services:
-  db:
+  mysql:
     image: mysql:8.0.27
     networks:
-      - db
+      - network_mysql
     environment:
-      MYSQL_ROOT_PASSWORD: 'root'
-    healthcheck:
-      test: "exit 0"
-    #volume
+      MYSQL_ROOT_PASSWORD: 'toor'
   
   trainit:
     image: trueberryless/trainit
     ports:
       - "80:80"
+      - "443:443"
     networks:
-      - db
+      - network_mysql
     depends_on:
-      db:
-        condition: service_healthy
+      - mysql
 
 networks:
-  db: { }
+  network_mysql: 
   
   
