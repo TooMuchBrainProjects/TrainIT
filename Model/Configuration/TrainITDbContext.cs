@@ -1,5 +1,6 @@
 ﻿using Model.Entities;
 using Model.Entities.Assets;
+using Model.Entities.Authentication;
 using Model.Entities.Log;
 using Model.Entities.per_User;
 
@@ -18,7 +19,6 @@ public class TrainITDbContext : DbContext
     public DbSet<MuscleAsset> MuscleAssets { get; set; }
     public DbSet<WorkoutAsset> WorkoutAssets { get; set; }
     public DbSet<WorkoutAssetExerciseAsset> WorkoutAssetExerciseAssets { get; set; }
-    
     public DbSet<User> Users { get; set; }
     public DbSet<Role> Roles { get; set; }
     public DbSet<RoleClaim> RoleClaims { get; set; }

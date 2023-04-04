@@ -9,7 +9,5 @@ global using Microsoft.AspNetCore.Components.Authorization;
 global using Microsoft.EntityFrameworkCore;
 global using Model.Configuration;
 global using Model.Entities;
-global using Model.Entities.Auth;
-global using Model.Entities.Auth.Models;
 global using MudBlazor;
 global using MudBlazor.Utilities;

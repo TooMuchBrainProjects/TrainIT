@@ -1,4 +1,6 @@
-﻿namespace Model.Entities.per_User;
+﻿using Model.Entities.Authentication;
+
+namespace Model.Entities.per_User;
 
 [Table("WORKOUTS")]
 public class Workout

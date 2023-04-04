@@ -1,6 +1,6 @@
 ﻿using Model.Entities.per_User;
 
-namespace Model.Entities.Auth;
+namespace Model.Entities.Authentication;
 
 [Table("USERS")]
 public class User {

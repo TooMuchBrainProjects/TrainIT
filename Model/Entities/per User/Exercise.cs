@@ -1,4 +1,5 @@
 ﻿using Model.Entities.Assets;
+using Model.Entities.Authentication;
 
 namespace Model.Entities.per_User;
 

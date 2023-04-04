@@ -1,4 +1,6 @@
-﻿namespace View.Services;
+﻿using Model.Entities.Authentication.Models;
+
+namespace View.Services;
 
 public class UserService {
     private readonly CustomAuthStateProvider _authenticationStateProvider;

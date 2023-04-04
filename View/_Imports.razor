@@ -42,13 +42,24 @@
 
 @inject UserService UserService
 @inject NavigationManager NavigationManager
-@inject IUserRepository UserRepository
+
 @inject IActivityRepository ActivityRepository
-@inject IWorkoutRepository WorkoutRepository
-@inject IWorkoutExerciseRepository WorkoutExerciseRepository
+@inject IExerciseAssetMuscleAssetRepository ExerciseAssetMuscleAssetRepository
+@inject IExerciseAssetRepository ExerciseAssetRepository
+@inject IExerciseMuscleAssetRepository ExerciseMuscleAssetRepository
 @inject IExerciseRepository ExerciseRepository
 @inject ILogEntryRepository LogEntryRepository
+@inject IMachineAssetRepository MachineAssetRepository
+@inject IMuscleAssetRepository MuscleAssetRepository
+@inject IRoleClaimRepository RoleClaimRepository
+@inject IRoleRepository RoleRepository
 @inject IStatistic Statistic
+@inject IUserRepository UserRepository
+@inject IWorkoutAssetExerciseAssetRepository WorkoutAssetExerciseAssetRepository
+@inject IWorkoutAssetRepository WorkoutAssetRepository
+@inject IWorkoutExerciseRepository WorkoutExerciseRepository
+@inject IWorkoutRepository WorkoutRepository
+
 @inject ILogger<Login> Logger
 @inject ISnackbar Snackbar
 @inherits CancellationComponent

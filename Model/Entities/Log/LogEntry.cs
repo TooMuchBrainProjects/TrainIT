@@ -1,4 +1,6 @@
-﻿namespace Model.Entities.Log;
+﻿using Model.Entities.Authentication;
+
+namespace Model.Entities.Log;
 
 [Table("LOG_ENTRIES")]
 public class LogEntry

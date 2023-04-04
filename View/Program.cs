@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Model.Entities;
 using MudBlazor;
 using MudBlazor.Services;
+using Pomelo.EntityFrameworkCore.MySql.Internal;
 using View.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,16 +45,24 @@ builder.Services.AddMudServices(config =>
 
 // Repositories
 builder.Services.AddScoped<IActivityRepository, ActivityRepository>();
-builder.Services.AddScoped<IWorkoutRepository, WorkoutRepository>();
-builder.Services.AddScoped<IWorkoutExerciseRepository, WorkoutExerciseRepository>();
+builder.Services.AddScoped<IExerciseAssetMuscleAssetRepository, ExerciseAssetMuscleAssetRepository>();
+builder.Services.AddScoped<IExerciseAssetRepository, ExerciseAssetRepository>();
+builder.Services.AddScoped<IExerciseMuscleAssetRepository, ExerciseMuscleAssetRepository>();
 builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
+builder.Services.AddScoped<ILogEntryRepository, LogEntryRepository>();
+builder.Services.AddScoped<IMachineAssetRepository, MachineAssetRepository>();
+builder.Services.AddScoped<IMuscleAssetRepository, MuscleAssetRepository>();
+builder.Services.AddScoped<IRoleClaimRepository, RoleClaimRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IStatistic, Statistic>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IWorkoutAssetExerciseAssetRepository, WorkoutAssetExerciseAssetRepository>();
+builder.Services.AddScoped<IWorkoutAssetRepository, WorkoutAssetRepository>();
+builder.Services.AddScoped<IWorkoutExerciseRepository, WorkoutExerciseRepository>();
+builder.Services.AddScoped<IWorkoutRepository, WorkoutRepository>();
+
 builder.Services.AddScoped<IThemeHandler, ThemeHandler>();
 builder.Services.AddScoped<CircuitHandler, CircuitTracker>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IRoleRepository, RoleRepository>();
-builder.Services.AddScoped<IRoleClaimRepository, RoleClaimRepository>();
-builder.Services.AddScoped<ILogEntryRepository, LogEntryRepository>();
 
 builder.Services.AddSingleton<DateManager>();
 
