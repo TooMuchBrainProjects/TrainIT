@@ -16,6 +16,7 @@
                             <MudRadioGroup @bind-SelectedOption="@SelectedTypeOfAddition">
                                 <MudRadio Option="@(AdditionType.ONE)" Color="Color.Primary">Add 1 Activity!</MudRadio>
                                 <MudRadio Option="@(AdditionType.MULTIPLE)" Color="Color.Secondary">Add multiple Activities!</MudRadio>
+                                <MudRadio Option="@(AdditionType.WORKOUT)" Color="Color.Tertiary">Add all Activities from Workout!</MudRadio>
                             </MudRadioGroup>
                         </MudPaper>
 
@@ -85,6 +86,22 @@
 
                                 break;
 
+                            case AdditionType.WORKOUT:
+                                <MudPaper class="pa-4" Elevation="3">
+                                    <DataInit Data="Workouts">
+                                        <ChildContent Context="workouts">
+                                            <MudSelect T="Workout" @bind-value="SelectedWorkout" Label="Workout" ToStringFunc="@GetWorkoutName" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+                                                @foreach (var workout in workouts)
+                                                {
+                                                    <MudSelectItem Value="@workout"/>
+                                                }
+                                            </MudSelect>
+                                        </ChildContent>
+                                    </DataInit>
+                                </MudPaper>
+
+                                break;
+
                             default:
                                 <MudText>Please select an option above!</MudText>
 
@@ -123,6 +140,9 @@
     // all Exercises from User
     List<Exercise> Exercises { get; set; }
 
+    // all Workouts from User
+    List<Workout> Workouts { get; set; }
+
     Exercise? _selectedExercise;
 
     Exercise? SelectedExercise
@@ -136,7 +156,21 @@
         }
     }
 
+    Workout? _selectedWorkout;
+
+    Workout? SelectedWorkout
+    {
+        get => _selectedWorkout;
+        set
+        {
+            if (_selectedWorkout == value) return;
+            _selectedWorkout = value;
+    // SelectedWorkoutChanged();
+        }
+    }
+
     readonly Func<Exercise, string> GetExerciseName = e => e.Name;
+    readonly Func<Workout, string> GetWorkoutName = w => w.Name;
 
     public async Task SelectedExerciseChanged()
     {
@@ -165,6 +199,11 @@
         StateHasChanged();
     }
 
+    public async Task SelectedWorkoutChanged()
+    {
+        StateHasChanged();
+    }
+
     public void ResetValues()
     {
         Activity = new Activity();
@@ -175,8 +214,13 @@
     {
         switch (SelectedTypeOfAddition)
         {
-            case AdditionType.MULTIPLE:
-                Exercises = Exercises.Where(e => e.IsSelected).ToList();
+            case AdditionType.WORKOUT:
+                if (SelectedWorkout == null)
+                {
+                    Snackbar.Add("Please select a workout!", Severity.Info);
+                    return;
+                }
+                Exercises = await ExerciseRepository.GetExercisesByWorkout(SelectedWorkout.Id);
 
                 var lastActivities = await ActivityRepository.GetLastActivitiesByExercises(Exercises.Select(exercise => exercise.Id).ToList());
                 var newActivities = new List<Activity>();
@@ -196,6 +240,31 @@
                 }
 
                 await ActivityRepository.CreateAsync(newActivities);
+                Exercises.ForEach(e => e.IsSelected = false);
+
+                Snackbar.Add("Activities created successfully", Severity.Success);
+                break;
+            case AdditionType.MULTIPLE:
+                Exercises = Exercises.Where(e => e.IsSelected).ToList();
+
+                var lastActivities2 = await ActivityRepository.GetLastActivitiesByExercises(Exercises.Select(exercise => exercise.Id).ToList());
+                var newActivities2 = new List<Activity>();
+                if (lastActivities2.Any())
+                {
+                    newActivities2 = Exercises.Select((t, i) => new Activity()
+                    {
+                        ExerciseId = t.Id, Exercise = t, DateValue = DateOnly.FromDateTime(DateManager.SelectedDate ?? DateTime.Today), Repetition = lastActivities2[i].Repetition, Set = lastActivities2[i].Set, Weight = lastActivities2[i].Weight
+                    }).ToList();
+                }
+                else
+                {
+                    newActivities2 = Exercises.Select((t, i) => new Activity()
+                    {
+                        ExerciseId = t.Id, Exercise = t, DateValue = DateOnly.FromDateTime(DateManager.SelectedDate ?? DateTime.Today), Repetition = default, Set = default, Weight = default
+                    }).ToList();
+                }
+
+                await ActivityRepository.CreateAsync(newActivities2);
                 Exercises.ForEach(e => e.IsSelected = false);
 
                 Snackbar.Add("Activities created successfully", Severity.Success);
@@ -230,12 +299,14 @@
         if (!await UserService.IsAuthenticated()) return;
 
         Exercises = await ExerciseRepository.ReadAsync(e => e.UserId == UserService.CurrentUser!.Id);
+        Workouts = await WorkoutRepository.ReadAsync(w => w.UserId == UserService.CurrentUser!.Id);
     }
 
     public enum AdditionType
     {
         ONE,
-        MULTIPLE
+        MULTIPLE,
+        WORKOUT
     }
 
 }

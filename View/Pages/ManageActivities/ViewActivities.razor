@@ -104,6 +104,9 @@
         }
 
         DateManager.SelectedDateChanged += new EventHandler(async (s, e) => await ReloadActivities(s, e));
+        
+        // sometimes buggy
+        if(DateManager.MaxDateReached) StateHasChanged();
     }
 
 }
