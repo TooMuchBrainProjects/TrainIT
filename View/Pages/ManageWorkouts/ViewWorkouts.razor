@@ -14,7 +14,7 @@
                         <MudList Clickable="true">
                             @foreach (var workout in workouts)
                             {
-                                <MudListItem OnClick="() => NavigateToExerciseView(workout.Id)">
+                                <MudListItem OnClick="() => NavigateToDetailedView(workout.Id)">
                                     <MudGrid Style="min-height: 4rem;">
                                         <MudItem xs="10" Style="display: flex; align-items: center;">
                                             @workout.Name
@@ -51,9 +51,9 @@
         NavigationManager.NavigateTo($"/editworkout/{workoutId}");
     }
 
-    void NavigateToExerciseView(int workoutId)
+    void NavigateToDetailedView(int workoutId)
     {
-        NavigationManager.NavigateTo($"/exerciseview/{workoutId}");
+        NavigationManager.NavigateTo($"/workoutview/{workoutId}");
     }
 
     async Task AddWorkout()

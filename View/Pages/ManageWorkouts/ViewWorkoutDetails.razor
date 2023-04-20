@@ -1,14 +1,21 @@
-﻿@page "/exerciseview"
+﻿@page "/workoutview/{WorkoutId:int}"
 @using Model.Entities.per_User
 
-<PageTitle>Exercise View</PageTitle>
+<PageTitle>Workout View</PageTitle>
 
 <AuthorizeView>
     <Authorized>
         <MudContainer Class="mt-8">
 
             <MudStack Spacing="8">
-                <h1 class="ms-4">All Exercises</h1>
+                <h1 class="ms-4">
+                    Workout: <br/>
+                    @if (Workout != null)
+                    {
+                        @Workout.Name
+                    }
+                </h1>
+
                 <MudDivider/>
             </MudStack>
 
@@ -48,6 +55,11 @@
     [Inject]
     private IDialogService DialogService { get; set; }
 
+    [Parameter]
+    public int? WorkoutId { get; set; }
+
+    Workout? Workout { get; set; }
+
     List<Exercise> Exercises { get; set; } = null!;
 
     void EditExercise(int exerciseId)
@@ -64,7 +76,13 @@
     {
         if (await UserService.IsAuthenticated())
         {
-            Exercises = await ExerciseRepository.GetExercisesByUser(UserService.CurrentUser!.Id);
+            Workout = await WorkoutRepository.GetWorkoutById(WorkoutId.Value);
+            Exercises = await ExerciseRepository.GetExercisesByWorkout(WorkoutId.Value);
+
+            foreach (var exercise in Exercises)
+            {
+                exercise.IsSelected = true;
+            }
         }
     }
 

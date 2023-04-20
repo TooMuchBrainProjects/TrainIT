@@ -17,7 +17,7 @@ public class DateManager
         }
     }
 
-    public bool MaxDateReached { get; private set; }
+    public bool MaxDateReached { get; private set; } = true;
 
     public readonly DateTime Today;
     

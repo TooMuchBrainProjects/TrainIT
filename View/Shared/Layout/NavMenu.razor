@@ -30,6 +30,10 @@
 
 
 @code {
+    
+    [CascadingParameter]
+    public MainLayout? MainLayout { get; set; }
+    
     private string[] active = new string[3];
 
     private void LocationChanged(object sender, LocationChangedEventArgs e)
@@ -99,21 +103,17 @@
 
 }
 
-<style>
-    :root {
-        --clr: #32333D;
-    }
-    
+<style>    
     .navigation {
         position: fixed;
         height: 4rem;
-        bottom: 0rem;
+        bottom: -0.1rem;
         left: 0rem;
         right: 0rem;
         
         border-top-left-radius: .8rem;
         border-top-right-radius: .8rem;
-        background: #fff;
+        background: @(MainLayout.IsDarkMode ? ThemeHandler.Theme.PaletteDark.White : ThemeHandler.Theme.Palette.Black);
         
         display: flex;
         justify-content: center;
@@ -152,7 +152,7 @@
         font-size: 1.5em;
         text-align: center;
         transition: 0.5s;
-        color: var(--clr);
+        color: @(MainLayout.IsDarkMode ? ThemeHandler.Theme.PaletteDark.Dark : ThemeHandler.Theme.Palette.White);
     }
     
    /* .navigation ul li.active a .icon {
@@ -161,7 +161,7 @@
     
     .navigation ul li a .text {
         position: absolute;
-        color: #000;
+        color: @(MainLayout.IsDarkMode ? ThemeHandler.Theme.PaletteDark.Black : ThemeHandler.Theme.Palette.White);
         font-weight: 400;
         font-size: 0.75em;
         letter-spacing: 0.05em;
@@ -180,9 +180,8 @@
         top: 0.32rem;
         width: 3rem;
         height: 3rem;
-        background: #29fd53;
+        background: @ThemeHandler.Theme.Palette.Tertiary;
         border-radius: 50%;
-        /*border: .4rem solid var(--clr); */
         transition: 0.5s;
         opacity: 1;
     }
@@ -196,7 +195,7 @@
         height: 20px;
         background: transparent;
         border-top-right-radius: 20px;
-        box-shadow: 1px -10px 0 0 var(--clr);
+        box-shadow: 1px -10px 0 0 @ThemeHandler.Theme.Palette.Dark;
     }
     
     .indicator::after {
@@ -208,7 +207,7 @@
         height: 20px;
         background: transparent;
         border-top-left-radius: 20px;
-        box-shadow: -1px -10px 0 0 var(--clr);
+        box-shadow: -1px -10px 0 0 @ThemeHandler.Theme.Palette.Dark;
     }*/
     
     :has(ul>li:nth-child(1).active) .indicator {

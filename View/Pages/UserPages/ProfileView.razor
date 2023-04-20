@@ -9,7 +9,7 @@
                 <h1 class="ms-4 mb-12">Profile</h1>
 
                 <MudPaper class="pa-4" Elevation="3">
-                    <div Style="@($"color:{Colors.Amber.Darken2};")">Username:</div>
+                    <div Style="@($"color:{(MainLayout.IsDarkMode ? ThemeHandler.Theme.PaletteDark.Warning : ThemeHandler.Theme.Palette.Secondary)};")">Username:</div>
                     @if (UserService.CurrentUser != null)
                     {
                         <p style="font-size: clamp(1rem, 20px, 2rem);">
@@ -25,7 +25,7 @@
                 </MudPaper>
 
                 <MudPaper class="pa-4" Elevation="3">
-                    <div Style="@($"color:{Colors.Amber.Darken2};")">E-Mail Address:</div>
+                    <div Style="@($"color:{(MainLayout.IsDarkMode ? ThemeHandler.Theme.PaletteDark.Warning : ThemeHandler.Theme.Palette.Secondary)};")">E-Mail Address:</div>
 
                     @if (UserService.CurrentUser != null)
                     {
@@ -40,104 +40,14 @@
                         </p>
                     }
                 </MudPaper>
-
-                <MudGrid Spacing="2" Justify="Justify.SpaceAround">
-                    <MudItem Style="min-width: 8rem;">
-                        <MudPaper class="pa-4" Elevation="3">
-                            <div Style="">Training Days</div>
-
-                            @if (UserService.CurrentUser != null)
-                            {
-                                <p style="width: 100%; text-align: center; margin-top: 1rem; font-size: clamp(1rem, 40px, 3rem); @($"color:{Colors.Amber.Darken2};")">
-                                    @_trainingDays
-                                </p>
-                            }
-                            else
-                            {
-                                <p>
-                                    Loading...
-                                </p>
-                            }
-                        </MudPaper>
-                    </MudItem>
-                    <MudItem Style="min-width: 8rem;">
-                        <MudPaper class="pa-4" Elevation="3">
-                            <div Style="">Workouts</div>
-
-                            @if (UserService.CurrentUser != null)
-                            {
-                                <p style="width: 100%; text-align: center; margin-top: 1rem; font-size: clamp(1rem, 40px, 3rem); @($"color:{Colors.Amber.Darken2};")">
-                                    @_workoutCount
-                                </p>
-                            }
-                            else
-                            {
-                                <p>
-                                    Loading...
-                                </p>
-                            }
-                        </MudPaper>
-                    </MudItem>
-                    <MudItem Style="min-width: 8rem;">
-                        <MudPaper class="pa-4" Elevation="3">
-                            <div Style="">Exercises</div>
-
-                            @if (UserService.CurrentUser != null)
-                            {
-                                <p style="width: 100%; text-align: center; margin-top: 1rem; font-size: clamp(1rem, 40px, 3rem); @($"color:{Colors.Amber.Darken2};")">
-                                    @_exerciseCount
-                                </p>
-                            }
-                            else
-                            {
-                                <p>
-                                    Loading...
-                                </p>
-                            }
-                        </MudPaper>
-                    </MudItem>
-                    <MudItem Style="min-width: 8rem;">
-                        <MudPaper class="pa-4" Elevation="3">
-                            <div Style="">Activities</div>
-
-                            @if (UserService.CurrentUser != null)
-                            {
-                                <p style="width: 100%; text-align: center; margin-top: 1rem; font-size: clamp(1rem, 40px, 3rem); @($"color:{Colors.Amber.Darken2};")">
-                                    @_activityCount
-                                </p>
-                            }
-                            else
-                            {
-                                <p>
-                                    Loading...
-                                </p>
-                            }
-                        </MudPaper>
-                    </MudItem>
-                </MudGrid>
-
-                <div></div>
             </MudStack>
         </MudContainer>
     </Authorized>
 </AuthorizeView>
 
-
 @code {
-    int _workoutCount;
-    int _exerciseCount;
-    int _activityCount;
-    int _trainingDays;
 
-    protected override async Task OnInitializedAsync()
-    {
-        if (!await UserService.IsAuthenticated()) return;
-        
-        _workoutCount = (await WorkoutRepository.GetWorkoutsByUser(UserService.CurrentUser!.Id)).Count;
-        _exerciseCount = (await ExerciseRepository.ReadAsync(e => e.UserId == UserService.CurrentUser!.Id)).Count;
-        _activityCount = (await ActivityRepository.ReadAsync(a => a.Exercise.UserId == UserService.CurrentUser!.Id)).Count;
-        _trainingDays = (await ActivityRepository.ReadAsync(a => a.Exercise.UserId == UserService.CurrentUser!.Id))
-            .GroupBy(a => a.DateValue).Count();
-    }
+    [CascadingParameter]
+    public MainLayout? MainLayout { get; set; }
 
 }

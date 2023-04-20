@@ -3,7 +3,7 @@
 @inject UserService UserService
 @inject ProtectedLocalStorage ProtectedLocalStorage;
 
-<MudThemeProvider IsDarkMode="@_isDarkMode" @ref="@_mudThemeProvider"/>
+<MudThemeProvider IsDarkMode="@IsDarkMode" @ref="@_mudThemeProvider"/>
 <MudDialogProvider/>
 <MudSnackbarProvider/>
 
@@ -14,59 +14,45 @@
         </CascadingValue>
         <div style="height: 7rem;"></div>
     </MudMainContent>
-    <NavMenu/>
+    <CascadingValue Value="@this">
+        <NavMenu/>
+    </CascadingValue>
     <ProfileMenu/>
     <div style="height: 10vh"></div>
 </MudLayout>
 
 @code {
-
-    bool _isDarkMode;
-    /*bool _askWhenDelete;*/
+    public bool IsDarkMode;
     private MudThemeProvider? _mudThemeProvider;
 
     public async void ToggleDarkMode(bool? changedDarkMode)
     {
         if (changedDarkMode.HasValue)
         {
-            _isDarkMode = changedDarkMode.Value;
+            IsDarkMode = changedDarkMode.Value;
         }
         else
         {
-            _isDarkMode = await _mudThemeProvider!.GetSystemPreference();
+            IsDarkMode = await _mudThemeProvider!.GetSystemPreference();
         }
         StateHasChanged();
         await ProtectedLocalStorage.SetAsync("DarkMode", changedDarkMode!);
     }
-
-    /*public async void ToggleAskWhenDelete(bool? changedAskWhenDelete)
-    {
-        if (changedAskWhenDelete.HasValue)
-        {
-            _askWhenDelete = changedAskWhenDelete.Value;
-        }
-        else
-        {
-            _askWhenDelete = await _mudThemeProvider!.GetSystemPreference();
-        }
-        StateHasChanged();
-        await ProtectedLocalStorage.SetAsync("AskWhenDelete", changedAskWhenDelete!);
-    }*/
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender)
             return;
 
-        // darkMode
+    // darkMode
         try
         {
             var darkModeResult = await ProtectedLocalStorage.GetAsync<bool?>("DarkMode");
 
-            _isDarkMode = await _mudThemeProvider!.GetSystemPreference();
+            IsDarkMode = await _mudThemeProvider!.GetSystemPreference();
             if (darkModeResult is { Success: true, Value: { } })
             {
-                _isDarkMode = darkModeResult.Value.Value;
+                IsDarkMode = darkModeResult.Value.Value;
             }
         }
         catch (CryptographicException)
@@ -75,19 +61,10 @@
         }
         catch (Exception e)
         {
-            _isDarkMode = true;
+            IsDarkMode = true;
             await ProtectedLocalStorage.SetAsync("DarkMode", true);
         }
 
-
-    // ask when delete
-    /*var askWhenDeleteResult = await ProtectedLocalStorage.GetAsync<bool?>("AskWhenDelete");
-
-        _askWhenDelete = await _mudThemeProvider!.GetSystemPreference();
-        if (askWhenDeleteResult is { Success: true, Value: { } })
-        {
-            _askWhenDelete = askWhenDeleteResult.Value.Value;
-        }*/
         StateHasChanged();
     }
 
