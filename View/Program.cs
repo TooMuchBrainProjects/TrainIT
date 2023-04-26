@@ -91,6 +91,8 @@ using (var scope = app.Services.CreateScope())
 
     var context = services.GetRequiredService<TrainITDbContext>();
 
+    context.Database.EnsureCreated();
+
     if (context.Database.GetPendingMigrations().Any())
     {
         context.Database.Migrate();
